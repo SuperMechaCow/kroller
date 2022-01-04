@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+</head>
+
+<body>
+    <% if(forceData.units) { %>
+        <% for (let i = 0 ; i < forceData.units.length ; i++) { %>
+            <div class="unitName">
+                <%= forceData.units[i].name %>
+            </div>
+            <% for (let j = 0 ; j < forceData.units[i].models.length ; j++) { %>
+                <div class="modelName">
+                    <%= forceData.units[i].models[j].name %>
+                </div>
+            <% } %>
+        <% } %>
+    <% } else { %>
+    <div class="container">
+        <h1>File Upload</h1>
+        <p> plz upload your rosz file </p>
+        <form action="/upload" enctype="multipart/form-data" method="post">
+            <div class="form-group">
+                <input type="file" class="form-control-file" name="atkr_file">
+                <!-- <input type="text" class="form-control" placeholder="Number of speakers" name="nspeakers"> -->
+                <input type="submit" value="Get me the stats!" class="btn btn-default">
+            </div>
+        </form>
+    </div>
+    <% } %>
+
+</body>
+
+</html>

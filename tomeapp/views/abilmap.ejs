@@ -1,0 +1,22 @@
+<!-- https://www.javascripttutorial.net/web-apis/javascript-canvas/ -->
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Doodle</title>
+
+</head>
+
+<body>
+    <canvas width="600" height="1200" id="canvas">The browser doesn't support the canvas element</canvas>
+</body>
+<script src="data/stratagems.js" charset="utf-8" defer></script>
+<script type="text/javascript">
+var forceData = <%- JSON.stringify(forceData) %>;
+console.log(forceData);
+</script>
+<script src="js/abilmap.js" charset="utf-8"></script>
+
+</html>
