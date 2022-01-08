@@ -40,6 +40,10 @@ $(function() {
 		hide: {
 			delay: 0,
 			duration: 0
+		},
+		activate: function(event, ui) {
+			// Save the last unit you were viewing
+			// atkr_lastactive = $("#content").accordion("option", "active");
 		}
 	});
 });

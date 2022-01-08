@@ -1,19 +1,14 @@
-/* jura-regular - latin */
-@font-face {
-  font-family: 'Jura';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/jura-v19-latin-regular.eot'); /* IE9 Compat Modes */
-  src: local(''),
-       url('../fonts/jura-v19-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('../fonts/jura-v19-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/jura-v19-latin-regular.woff') format('woff'), /* Modern Browsers */
-       url('../fonts/jura-v19-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('../fonts/jura-v19-latin-regular.svg#Jura') format('svg'); /* Legacy iOS */
-}
-
 * {
     font-family: 'Jura';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/jura-v19-latin-regular.eot'); /* IE9 Compat Modes */
+    src: local(''),
+         url('../fonts/jura-v19-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('../fonts/jura-v19-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+         url('../fonts/jura-v19-latin-regular.woff') format('woff'), /* Modern Browsers */
+         url('../fonts/jura-v19-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('../fonts/jura-v19-latin-regular.svg#Jura') format('svg'); /* Legacy iOS */
     font-weight: bold;
     border-radius: 5px;
     scrollbar-width: thin;

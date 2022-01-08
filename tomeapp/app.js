@@ -6,7 +6,8 @@ https://www.battlescribe.net/
 
 */
 
-const parser = require('xml2json'); //Convert ros files (as xml) to json
+// const parser = require('xml2json'); //Convert ros files (as xml) to json
+const xml2js = require('xml2js');
 const fs = require('fs'); //for reading file systems
 const https = require('https');
 const multer = require('multer'); //
@@ -33,10 +34,10 @@ const disclient = new Client({
 var app = express()
 
 var URL = 'http://kroller.supermechacow.com/'
-var HOST = '192.168.1.103'
-var PORT = 4040
+var HOST = '192.168.1.103';
+var PORT = 4040;
 
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -86,21 +87,20 @@ app.post('/upload', upload.fields([{
 	maxCount: 1
 }]), (req, res) => {
 	let forceBSData = forceFromBS(req.files);
-	console.log(forceBSData);
+	// console.log(forceBSData);
 	if (!req.body.gameid || !gameList[req.body.gameid]) {
 		req.body.gameid = crypto.randomBytes(4).toString("hex");
 		createGame(req.body.gameid, req);
 		gameList[req.body.gameid].forceData = forceBSData;
 	}
 
-	console.log(req.body.gameid);
-	console.log(gameList[req.body.gameid]);
+	// console.log(gameList[req.body.gameid]);
 	if (forceBSData.atkr_file[1]) gameList[req.body.gameid].outputBox += forceBSData.atkr_file[1]
 	else if (forceBSData.atkr_file.length)
-	gameList[req.body.gameid].forceData.atkr_file = forceBSData.atkr_file;
+		gameList[req.body.gameid].forceData.atkr_file = forceBSData.atkr_file;
 	if (forceBSData.dfdr_file[1]) gameList[req.body.gameid].outputBox += forceBSData.dfdr_file[1]
 	else if (forceBSData.dfdr_file.length)
-	gameList[req.body.gameid].forceData.dfdr_file = forceBSData.dfdr_file;
+		gameList[req.body.gameid].forceData.dfdr_file = forceBSData.dfdr_file;
 
 	res.redirect(url.format({
 		pathname: "/",
@@ -109,8 +109,6 @@ app.post('/upload', upload.fields([{
 		}
 	}));
 });
-
-
 
 function forceFromBS(files) {
 	// console.log(files);
@@ -130,18 +128,25 @@ function forceFromBS(files) {
 			var zipEntries = zip.getEntries(); // an array of ZipEntry records
 			zipEntries.forEach(function(zipEntry) {
 				if (zipEntry.entryName.split('.')[1] == 'ros') {
-					forceData[forceName] = JSON.parse(parser.toJson(zipEntry.getData().toString("utf8")))
-					forceData[forceName] = parseBS(forceData[forceName]);
-					//Returns parsed force (0), error object (1), and original data (2)
-					//If there is an error
-					if (forceData[forceName][1]) {
-						forceData[forceName][1].message = 'Oopsies poopsie! There was an error! Could not create a roster from that roster file. The most common cause of this is uploading a roster file made on a mobile app. This is a problem I am working on.<br><br>' + forceData[forceName][1].message
-					}
-					//Immediately delete the file after parsing
-					fs.unlink(`uploads/${filedata.filename}`, (err) => {
+					xml2js.parseString(zipEntry.getData().toString("utf8"), (err, result) => {
 						if (err) {
 							throw err;
 						}
+
+						// forceData[forceName] = JSON.parse(parser.toJson(zipEntry.getData().toString("utf8")))
+						forceData[forceName] = result;
+						forceData[forceName] = parseBS(forceData[forceName]);
+						//Returns parsed force (0), error object (1), and original data (2)
+						//If there is an error
+						if (forceData[forceName][1]) {
+							forceData[forceName][1].message = 'Oopsies poopsie! There was an error! Could not create a roster from that roster file. The most common cause of this is uploading a roster file made on a mobile app. This is a problem I am working on.<br><br>' + forceData[forceName][1].message
+						}
+						//Immediately delete the file after parsing
+						fs.unlink(`uploads/${filedata.filename}`, (err) => {
+							if (err) {
+								throw err;
+							}
+						});
 					});
 				}
 			});
@@ -177,6 +182,9 @@ disclient.on('messageCreate', message => {
 					// console.log(__dirname + `/uploads/${newFileName}`);
 					resolve()
 				});
+				writeStream.on("error", (err) => {
+					console.log(err);
+				})
 			});
 		})
 	}
@@ -204,10 +212,9 @@ disclient.on('messageCreate', message => {
 				}
 			}
 
-			let forceData = await forceFromBS(files)
+			let forceData = await forceFromBS(files);
 			gameid = crypto.randomBytes(4).toString("hex");
 
-			if (forceData.dfdr_file.length) gameList[gameid].forceData.dfdr_file = forceData.dfdr_file;
 			if (forceData.atkr_file.length) {
 				let gameData = await createGame(gameid);
 				gameList[gameid].forceData = forceData;
@@ -244,7 +251,7 @@ disclient.on('messageCreate', message => {
 });
 
 const discordtoken = require('./discordtoken');
-disclient.login(discordtoken.TOKEN);
+// disclient.login(discordtoken.TOKEN);
 
 var gameList = {}
 
@@ -281,6 +288,7 @@ function createGame(sessionID, req) {
 				throw err
 				reject()
 			} else {
+				console.log('Started a new game: ' + sessionID);
 				resolve({
 					url: resString
 				})
@@ -342,98 +350,102 @@ function parseBS(data) {
 	try {
 		//Each "tier" in the list hierarchy  starts with an empty object
 		var force = {
-			name: data.roster.name,
+			name: data.roster.$.name,
 			detachments: [],
 			costs: [],
 		}
 
 		//Grab customName
-		if (data.roster.customName) {
-			force.customName = data.roster.customName
+		if (data.roster.$.customName) {
+			force.customName = data.roster.$.customName
 		}
 		if (data.roster.customNotes) {
-			force.customNotes = data.roster.customNotes
+			force.customNotes = data.roster.customNotes[0]
 		}
 
 		//Grab all of the army costs
-		for (cost of data.roster.costs.cost) {
+		for (cost of data.roster.costs[0].cost) {
 			let costObj = {}
-			costObj[cost.name] = parseInt(cost.value)
+			costObj[cost.$.name.replace(/\s/g, '')] = parseInt(cost.$.value)
 			force.costs.push({
-				[cost.name]: parseInt(cost.value)
+				[cost.$.name.replace(/\s/g, '')]: parseInt(cost.$.value)
 			})
 		}
 
 		//Grab all of the detachment data
-		let detachmentParse = data.roster.forces.force
+		let detachmentParse = data.roster.forces[0].force
 		//If it's not an array, put it in one so the for loop can work
 		if (!Array.isArray(detachmentParse)) detachmentParse = [detachmentParse]
 
 		//Loop through every detachment in the list
 		for (detachment of detachmentParse) {
-			//Grab faction
-			let faction = detachment.catalogueName
+			let faction = detachment.$.catalogueName;
 			//Imperium usually have two faction keywords
-			if (detachment.catalogueName.split(' - ').length > 1) faction = detachment.catalogueName.split(' - ')[1]
+			if (detachment.$.catalogueName.split(' - ').length > 1) faction = detachment.$.catalogueName.split(' - ')[1];
 
 			//Start building the detachment object
 			let newDetachment = {
-				name: detachment.name,
+				name: detachment.$.name,
 				faction: faction,
 				units: []
 			}
 
+			let wahaFaction = wahaData.Factions.find(wahaFact => wahaFact.name == faction)
+			if (wahaFaction) newDetachment.wahaFaction = wahaFaction.id
+
 			//If the detachment has custom names/notes
-			if (detachment.customName) {
-				newDetachment.customName = detachment.customName
+			if (detachment.$.customName) {
+				newDetachment.customName = detachment.$.customName;
 			}
 			if (detachment.customNotes) {
-				newDetachment.customNotes = detachment.customNotes
+				newDetachment.customNotes = detachment.customNotes[0];
 			}
 
 			//If it's not a list, put it in one so it can be looped through
-			let unitData = detachment.selections.selection
+			let unitData = detachment.selections[0].selection
 			//Loop through every unit in the list
 			for (unit of unitData) {
 				//Single model units are listed as a model rather than a unit
-				if (unit.type == 'model' || unit.type == 'unit') {
+				if (unit.$.type == 'model' || unit.$.type == 'unit') {
 					//Create a new blank unit
 					let newUnit = {
 						name: '',
 						slot: '',
+						keywords: [],
 						models: [],
 						rules: [],
-						keywords: []
+						spells: []
 					}
 
 					//If the selection is not a unit (sometimes it's a configuration),
 					//this will remain "undefined".
-					newUnit.name = unit.name
-					if (unit.customName) {
-						newUnit.customName = unit.customName
+					newUnit.name = unit.$.name
+					if (unit.$.customName) {
+						newUnit.customName = unit.$.customName
 					}
 					if (unit.customNotes) {
 						newUnit.customNotes = unit.customNotes
 					}
 
 					//Find the datasheet in the wahaData
-					// let datasheet = wahaData.Datasheets.find(datasheet => datasheet.name == unit.name)
-					// if (datasheet) newUnit.waha = datasheet;
+					let datasheet = wahaData.Datasheets.find(datasheet => datasheet.name == unit.$.name)
+					if (datasheet) newUnit.waha = datasheet;
+					// else newUnit.waha = 'Not Found';
 
 					//Start collecting rules
 					//This is the most obvious place to put all of the rules for the entire unit,
 					//but there are two other places below
-					if (unit.rules) {
+					if (unit.rules && unit.rules != '') {
 						//If it's not a list, put it in one
-						if (!Array.isArray(unit.rules.rule)) unit.rules.rule = [unit.rules.rule]
+						if (!Array.isArray(unit.rules[0].rule)) unit.rules[0].rule = [unit.rules[0].rule]
 						//Loop through each rule
-						for (rule of unit.rules.rule) {
+						for (rule of unit.rules[0].rule) {
 							//New blank object for the rules
 							let newRule = {
-								name: rule.name,
-								desc: rule.description,
-								subkeys: rule.description.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
-								targets: rule.description.match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
+								name: rule.$.name,
+								desc: rule.description[0],
+								subkeys: rule.description[0].match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
+								targets: rule.description[0].match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
 								phases: []
 							}
 							//Look for specific mentions of a phase
@@ -444,19 +456,19 @@ function parseBS(data) {
 						}
 					}
 					//This is number two of the three stupid places you can store unit rules
-					if (unit.profiles) {
-						let profileParse = unit.profiles.profile
+					if (unit.profiles && unit.profiles[0] != '') {
+						let profileParse = unit.profiles[0].profile
 						if (!Array.isArray(profileParse)) profileParse = [profileParse]
 						for (profile of profileParse) {
-							if (profile.typeName == "Abilities") {
-								let charaParse = profile.characteristics.characteristic
+							if (profile.$.typeName == "Abilities") {
+								let charaParse = profile.characteristics[0].characteristic
 								if (!Array.isArray(charaParse)) charaParse = [charaParse]
 								for (chara of charaParse) {
 									let newRule = {
-										name: profile.name,
-										desc: chara.$t,
-										subkeys: rule.description.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
-										targets: rule.description.match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
+										name: profile.$.name,
+										desc: chara._,
+										subkeys: chara._.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
+										targets: chara._.match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
 										phases: []
 									}
 									for (phase of phaseList) {
@@ -479,9 +491,9 @@ function parseBS(data) {
 
 
 
-					let selectionData = unit.selections.selection
+					let selectionData = unit.selections[0].selection
 					if (!Array.isArray(selectionData)) selectionData = [selectionData]
-					if (unit.profiles) selectionData = selectionData.concat(unit.profiles.profile)
+					if (unit.profiles) selectionData = selectionData.concat(unit.profiles[0].profile)
 					//I know this next line seems weird, but single-model units'
 					//models and weapons are properties of the same object, so there is
 					//no model name for weapons in this case
@@ -490,48 +502,46 @@ function parseBS(data) {
 					//to every model found for single-model units
 					let unclaimedWeapons = []
 					for (selection of selectionData) {
+						if (!selection) break;
 						let newModel = {
 							name: '',
-							weapons: [],
-							wargear: [],
+							faction: '',
 							keywords: [],
-							faction: ''
+							weapons: [],
+							wargear: []
 						}
-						newModel.amount = selection.number
+						newModel.amount = selection.$.number
 						let profileParse = []
 						if (newModel.amount) {
 							if (selection.profiles) {
-								profileParse = selection.profiles.profile
+								profileParse = selection.profiles[0].profile
 							}
-						} else {
-							if (selection.typeName == 'Unit')
-								profileParse = selection
+						} else if (selection.$.typeName == 'Unit') {
+							profileParse = selection;
 						}
-						//uncommenting this makes it worse
-						// if (selection.type == "model") {
-						// 	console.log(selection.name);
-						// 	profileParse = selection
-						// }
+
 
 						//If it's not an array, put it in one so the for loop can work
 						if (!Array.isArray(profileParse)) profileParse = [profileParse]
 
 						//Grab the model's statline and unique abilities
 						for (profile of profileParse) {
-							if (profile.typeName == "Unit") {
-								newModel.name = profile.name
-								if (profile.customName) {
-									newModel.customName = profile.customName
+							if (!profile) break;
+
+							if (profile.$.typeName == "Unit") {
+								newModel.name = profile.$.name
+								if (profile.$.customName) {
+									newModel.customName = profile.$.customName
 								}
-								if (profile.customName) {
-									newModel.customName = profile.customName
+								if (profile.$.customNotes) {
+									newModel.customNotes = profile.$.customNotes
 								}
-								let charaParse = profile.characteristics.characteristic
+								let charaParse = profile.characteristics[0].characteristic
 								newModel.statlines = {}
 								for (chara of charaParse) {
-									let statname = chara.name
+									let statname = chara.$.name
 									if (statname == 'Save') statname = 'Sv'
-									let stattext = chara.$t
+									let stattext = chara._
 									stattext = stattext.replace('+', '')
 									stattext = stattext.replace('\"', '')
 									if (stattext == 'N/A') stattext = '*'
@@ -539,15 +549,17 @@ function parseBS(data) {
 								}
 							}
 							//This is number three of the three stupid places you can store unit rules
-							else if (profile.typeName == "Abilities") {
-								let charaParse = profile.characteristics.characteristic
+							else if (profile.$.typeName == "Abilities") {
+								let charaParse = profile.characteristics[0].characteristic
 								if (!Array.isArray(charaParse)) charaParse = [charaParse]
 								for (chara of charaParse) {
 									let newRule = {
-										name: profile.name,
-										desc: chara.$t,
-										subkeys: rule.description.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
-										targets: rule.description.match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
+										name: profile.$.name,
+										desc: chara._,
+										// subkeys: chara._.match(/(DDDDDDDDD)/g),
+										// targets: chara._.match(/(DDDDDDDDD)/g),
+										subkeys: chara._.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
+										targets: chara._.match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
 										phases: []
 									}
 									for (phase of phaseList) {
@@ -555,6 +567,8 @@ function parseBS(data) {
 									}
 									newUnit.rules.push(newRule)
 								}
+							} else {
+								// console.log(profile);
 							}
 						}
 						//
@@ -562,56 +576,57 @@ function parseBS(data) {
 						//
 						let weaponGrab = []
 						if (selection.selections) {
-							weaponGrab = selection.selections.selection
+							weaponGrab = selection.selections[0].selection
 						} else {
 							if (selection.profiles) {
-								if (selection.profiles.profile.typeName == 'Weapon')
+								if (selection.profiles[0].profile[0].$.typeName == 'Weapon')
 									weaponGrab = selection
 							}
 						}
+
 						if (!Array.isArray(weaponGrab)) weaponGrab = [weaponGrab]
 						for (weapon of weaponGrab) {
-							let weapProfList = []
+							if (!weapon) break;
 							let weaponFound = {}
-							if (weapon.selections) {
-								weaponFound = weapon.selections.selection.profiles.profile
-							} else if (weapon.profiles) {
-								weaponFound = weapon.profiles.profile
+							if (weapon.selections && weapon.selections[0] != '') {
+								weaponFound = weapon.selections[0].selection[0].profiles[0].profile[0]
+							} else if (weapon.profiles && weapon.profiles != '') {
+								weaponFound = weapon.profiles[0].profile
 							}
-
 							// If it was a weapon
 							if (!Array.isArray(weaponFound)) weaponFound = [weaponFound]
+
 							for (weapProf of weaponFound) {
 								let newWeapon = {
 									name: '',
-									amount: weapon.number
+									amount: weapon.$.number
 								}
 								let newWargear = {
 									name: '',
-									amount: weapon.number
+									amount: weapon.$.number
 								}
 								if (Object.keys(weapProf).length) {
-									let charaParse = weapProf.characteristics.characteristic
-									if (weapProf.typeName == "Weapon") {
-										newWeapon.name = weapon.name
-										if (weapon.customName) {
-											newWeapon.customName = weapon.customName
+									let charaParse = weapProf.characteristics[0].characteristic
+									if (weapProf.$.typeName == "Weapon") {
+										newWeapon.name = weapon.$.name
+										if (weapon.$.customName) {
+											newWeapon.customName = weapon.$.customName
 										}
-										if (weapon.customName) {
-											newWeapon.customName = weapon.customName
+										if (weapon.customNotes) {
+											newWeapon.customName = weapon.customNotes[0]
 										}
 										// newWeapon.amount = weapon.number
 										for (chara of charaParse) {
-											newWeapon[chara.name] = chara.$t
-											if (chara.$t) {
-
-												if (chara.$t.includes('select one of the profiles below')) {
+											newWeapon[chara.$.name] = chara._
+											if (chara._) {
+												if (chara._.includes('select one of the profiles below')) {
 													//This trick will turn off adding this weapon to the list
 													newWeapon.name = ''
 												}
 											}
 										}
 									}
+
 									//Add it to the weapons or wargear or unclaimed list
 									if (newWeapon.name) {
 										if (newModel.name) {
@@ -625,7 +640,56 @@ function parseBS(data) {
 								}
 								//If it was a wargear/upgrade
 								else {
-									newWeapon.name = weapon.name
+									newWeapon.name = weapon.$.name
+								}
+							}
+						}
+
+						//
+						//  Start collecting weapons
+						//
+						let spellGrab = []
+						if (selection.selections) {
+							spellGrab = selection.selections[0].selection
+						} else {
+							if (selection.profiles) {
+								if (selection.profiles[0].profile[0].$.typeName == 'Psychic Power')
+									spellGrab = selection
+							}
+						}
+
+						if (!Array.isArray(spellGrab)) spellGrab = [spellGrab]
+						for (spell of spellGrab) {
+							if (!spell) break;
+							let spellFound = {}
+							if (spell.selections && spell.selections[0] != '') {
+								spellFound = spell.selections[0].selection[0].profiles[0].profile[0]
+							} else if (spell.profiles && spell.profiles != '') {
+								spellFound = spell.profiles[0].profile;
+							}
+							if (!Array.isArray(spellFound)) spellFound = [spellFound]
+							for (spellProf of spellFound) {
+								let newSpell = {
+									name: '',
+									warpcharge: 0,
+									range: 0
+								}
+								if (Object.keys(spellProf).length) {
+									let charaParse = spellProf.characteristics[0].characteristic
+									if (spellProf.$.typeName == "Psychic Power") {
+										newSpell.name = spellProf.$.name;
+
+										let spellChara = spellProf.characteristics[0].characteristic
+
+										for (chara of spellChara) {
+											newSpell[chara.$.name.toLowerCase().replace(/\s/g, '')] = chara._;
+										}
+
+										if (newUnit.name) {
+											//Add it to the spells list for the Unit if it exists
+											newUnit.spells.push(newSpell);
+										}
+									}
 								}
 							}
 						}
@@ -653,19 +717,19 @@ function parseBS(data) {
 					//
 
 					if (unit.categories) {
-						if (!Array.isArray(unit.categories.category)) unit.categories.category = [unit.categories.category]
-						for (category of unit.categories.category) {
-							if (category.primary == "true") {
-								newUnit.slot = category.name
+						if (!Array.isArray(unit.categories[0].category)) unit.categories[0].category = [unit.categories[0].category]
+						for (category of unit.categories[0].category) {
+							if (category.$.primary == "true") {
+								newUnit.slot = category.$.name
 							} else {
 								//BS factions format: "Faction: <faction name>".
 								//Try to Split by ": ", and if the first word is "Faction"
-								if (category.name.split(": ")[0] == "Faction") {
+								if (category.$.name.split(": ")[0] == "Faction") {
 									//Dump the "Faction" and keep the "<faction name>"
-									newUnit.faction = category.name.split(":")[1]
+									newUnit.faction = category.$.name.split(":")[1].trim()
 								} else {
 									//Otherwise, dump the keyword straight to the list
-									newUnit.keywords.push(category.name)
+									newUnit.keywords.push(category.$.name)
 								}
 							}
 						}

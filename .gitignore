@@ -1,0 +1,8 @@
+bs_*.*
+tomeapp/node_modules/*
+**token.js
+tomeapp/public/img/svg*
+tomeapp/public/data/wahadata/*.csv
+tomeapp/public/data/wahadata/*.xlsx
+tomeapp/public/shares/*
+exampledata/*
