@@ -6,3 +6,4 @@ tomeapp/public/data/wahadata/*.csv
 tomeapp/public/data/wahadata/*.xlsx
 tomeapp/public/shares/*
 exampledata/*
+tomeapp/uploads*

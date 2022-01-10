@@ -74,8 +74,8 @@ function updatePhaseTags() {
 			// currentPhase = '';
 		}
 	}
-	populateNav('leftSidenav', Stratagems);
-	populateNav('rightSidenav', Stratagems);
+	populateNav('leftSidenav');
+	populateNav('rightSidenav');
 }
 
 for (phaseBox of document.getElementById('phaser').getElementsByClassName('phaseTag')) {
@@ -90,8 +90,8 @@ for (phaseBox of document.getElementById('phaser').getElementsByClassName('phase
 			currentPhase = thisPhase.innerText;
 			thisPhase.classList.add('phaseActive');
 		}
-		populateNav('leftSidenav', Stratagems);
-		populateNav('rightSidenav', Stratagems);
+		populateNav('leftSidenav');
+		populateNav('rightSidenav');
 	});
 }
 
@@ -164,11 +164,11 @@ function swiperDrag(e) {
 	if (swiping) {
 		let drag = e.clientX || e.targetTouches[0].pageX;
 		if (drag - swipeStartPos > swipeLength) {
-			populateNav('leftSidenav', Stratagems);
+			populateNav('leftSidenav');
 			openNav('leftSidenav');
 			swiping = false;
 		} else if (drag - swipeStartPos < -swipeLength) {
-			populateNav('rightSidenav', Stratagems);
+			populateNav('rightSidenav');
 			openNav('rightSidenav');
 			swiping = false;
 		}
@@ -365,7 +365,7 @@ function makeUseTag(text) {
 	return false
 }
 
-function populateNav(navDiv, stratList) {
+function populateNav(navDiv) {
 	//We will populate the current army later
 	let currentArmy;
 	let atkrdfdr;
@@ -660,81 +660,160 @@ function populateNav(navDiv, stratList) {
 			});
 
 
-			let newAbil = document.createElement('div')
-			newAbil.classList.add('abilNav');
-			unit.rules.forEach((abil, i) => {
-				let ability = document.createElement('div');
-				ability.appendChild(document.createTextNode(abil.name));
-				ability.classList.add('tag', 'abilTag')
-				//Make tooltip
-				// ability.title = abil.desc
-				let augmentAbil = `<span class="outputCataG" title="Unit Ability: ${unit.name}">${abil.name}</span><p>${abil.desc}</p>`
-				for (phase of Object.keys(phaseList)) {
-					if (makeUseTag(augmentAbil)) {
-						ability.classList.add('useTag')
-						containsUseTag = true;
+			function listActions(actionList, actionType) {
+				let actionNav = document.createElement('div');
+				actionNav.classList.add('abilNav');
+				actionList.forEach((action, i) => {
+					let actionTag = document.createElement('div');
+					actionTag.appendChild(document.createTextNode(action.name));
+					actionTag.classList.add('tag')
+					let augmentAbil = `<span class="outputCataG" title="Unit Ability: ${unit.name}">${action.name}</span><p>`
+					if (actionType == 'spells') {
+						augmentAbil += `${action.details}</p>`;
+						actionTag.classList.add('spellTag')
 					}
-					augmentAbil = augmentAbil.replaceAll(phase + " phase", `<span class="outputCataR" title="${phase}">${phase} phase</span>`)
-				}
-				// for (keyword of strat.keywords) {
-				// 	augmentAbil = augmentAbil.replaceAll(keyword, `<span class="outputCataG" title="${keyword}">${keyword}</span>`)
-				// }
-				ability.addEventListener("click", function(e) {
-					$("#content").accordion("option", "active", 6);
-					getBoxes()
-					outputBox.innerHTML = augmentAbil;
-					closeNav()
+					if (actionType == 'stratagems') {
+						augmentAbil += `${action.descText}</p>`;
+						actionTag.classList.add('stratTag')
+					}
+					if (actionType == 'abilities') {
+						augmentAbil += `${action.desc}</p>`;
+						actionTag.classList.add('tag', 'abilTag');
+					}
+					for (phase of Object.keys(phaseList)) {
+						if (makeUseTag(augmentAbil)) {
+							actionTag.classList.add('useTag')
+							containsUseTag = true;
+						}
+						augmentAbil = augmentAbil.replaceAll(phase + " phase", `<span class="outputCataR" title="${phase}">${phase} phase</span>`)
+					}
+					if (action.keywords) {
+						for (keyword of action.keywords) {
+							augmentAbil = augmentAbil.replaceAll(keyword, `<span class="outputCataG" title="${keyword}">${keyword}</span>`)
+						}
+					}
+					actionTag.addEventListener("click", function(e) {
+						$("#content").accordion("option", "active", 6);
+						getBoxes()
+						outputBox.innerHTML = augmentAbil;
+						closeNav()
+					});
+					actionNav.appendChild(actionTag);
 				});
-				newAbil.appendChild(ability);
-			});
+				newUnit.appendChild(actionNav);
+			}
+
+			listActions(unit.rules, 'abilities');
+			listActions(unit.spells, 'spells');
+			listActions(unit.stratagems, 'stratagems');
+
+			// let newAbil = document.createElement('div')
+			// newAbil.classList.add('abilNav');
+			// unit.rules.forEach((abil, i) => {
+			// 	let ability = document.createElement('div');
+			// 	ability.appendChild(document.createTextNode(abil.name));
+			// 	ability.classList.add('tag', 'abilTag')
+			// 	//Make tooltip
+			// 	// ability.title = abil.desc
+			// 	let augmentAbil = `<span class="outputCataG" title="Unit Ability: ${unit.name}">${abil.name}</span><p>${abil.desc}</p>`
+			// 	for (phase of Object.keys(phaseList)) {
+			// 		if (makeUseTag(augmentAbil)) {
+			// 			ability.classList.add('useTag')
+			// 			containsUseTag = true;
+			// 		}
+			// 		augmentAbil = augmentAbil.replaceAll(phase + " phase", `<span class="outputCataR" title="${phase}">${phase} phase</span>`)
+			// 	}
+			// 	for (keyword of strat.keywords) {
+			// 		augmentAbil = augmentAbil.replaceAll(keyword, `<span class="outputCataG" title="${keyword}">${keyword}</span>`)
+			// 	}
+			// 	ability.addEventListener("click", function(e) {
+			// 		$("#content").accordion("option", "active", 6);
+			// 		getBoxes()
+			// 		outputBox.innerHTML = augmentAbil;
+			// 		closeNav()
+			// 	});
+			// 	newAbil.appendChild(ability);
+			// });
+
+			// unit.stratagems.forEach((strat, i) => {
+			// 	if (strat.type == gameType && strat.type != "Requisition Stratagem") {
+			// 	if (strat.type != "Requisition Stratagem") {
+			// 		let stratTag = document.createElement('div');
+			// 		stratTag.appendChild(document.createTextNode(strat.name));
+			// 		stratTag.classList.add('tag', 'stratTag')
+			// 		//Make tooltip
+			// 		// stratTag.title = strat.desc
+			// 		let augmentStrat = `<p>${strat.descText}</p>`
+			// 		for (phase of Object.keys(phaseList)) {
+			// 			augmentStrat = augmentStrat.replaceAll(phase + " phase", `<span class="outputCataR" title="${phase}">${phase} phase</span>`)
+			// 		}
+			// 		for (keyword of strat.keywords) {
+			// 			augmentStrat = augmentStrat.replaceAll(keyword, `<span class="outputCataG" title="${keyword}">${keyword}</span>`)
+			// 		}
+			// 		augmentStrat = `<span class="outputCataG" title="${detachment.faction}">${strat.name}</span><span class="outputCataB" style="float: right;" title="Command Point Cost: ${strat.cost}">${strat.cost}</span><p>${strat.type}</p><p class="outputFlavor">${strat.desc}</p>` + augmentStrat
+			// 		if (makeUseTag(augmentStrat)) {
+			// 			stratTag.classList.add('useTag');
+			// 			containsUseTag = true;
+			// 		}
+			// 		stratTag.addEventListener("click", function(e) {
+			// 			$("#content").accordion("option", "active", 6);
+			// 			getBoxes()
+			// 			outputBox.innerHTML = augmentStrat
+			// 			closeNav()
+			// 		});
+			// 	}
+			// });
+
 
 			//Match faction to stratagem list key
-			let unitStrats = []
-			for (factionName of Object.keys(stratList)) {
-				//If the faction in the strat list is the same as the detachment's name
-				let thisFaction = detachment.faction.toLowerCase().replaceAll(" ", "") || unit.faction.toLowerCase().replaceAll(" ", "")
-				if (factionName == thisFaction) {
-					for (strat of stratList[factionName]) {
-						let prevStrat = ''
-						for (subkey of strat.subkeys.concat(strat.keywords)) {
-							unit.keywords.forEach((keyword, i) => {
-								if (keyword.toLowerCase().replaceAll(" ", "") == subkey.toLowerCase().replaceAll(" ", "")) {
-									if (strat.type == gameType && strat.category != "Requisition Stratagem") {
-										let stratTag = document.createElement('div');
-										stratTag.appendChild(document.createTextNode(strat.name));
-										stratTag.classList.add('tag', 'stratTag')
-										//Make tooltip
-										// stratTag.title = strat.desc
-										let augmentStrat = `<p>${strat.rulesText}</p>`
-										for (phase of Object.keys(phaseList)) {
-											augmentStrat = augmentStrat.replaceAll(phase + " phase", `<span class="outputCataR" title="${phase}">${phase} phase</span>`)
-										}
-										for (keyword of strat.keywords) {
-											augmentStrat = augmentStrat.replaceAll(keyword, `<span class="outputCataG" title="${keyword}">${keyword}</span>`)
-										}
-										augmentStrat = `<span class="outputCataG" title="${detachment.faction}">${strat.name}</span><span class="outputCataB" style="float: right;" title="Command Point Cost: ${strat.cost}">${strat.cost}</span><p>${strat.category}</p><p class="outputFlavor">${strat.desc}</p>` + augmentStrat
-										if (makeUseTag(augmentStrat)) {
-											stratTag.classList.add('useTag');
-											containsUseTag = true;
-										}
-										stratTag.addEventListener("click", function(e) {
-											$("#content").accordion("option", "active", 6);
-											getBoxes()
-											outputBox.innerHTML = augmentStrat
-											closeNav()
-										});
-										if (JSON.stringify(stratTag) != JSON.stringify(prevStrat)) {
-											newAbil.appendChild(stratTag);
-											prevStrat = stratTag
-										}
-									}
-								}
-							});
-						};
-					}
-				}
-				newUnit.appendChild(newAbil);
-			}
+			// let unitStrats = []
+			// for (factionName of Object.keys(stratList)) {
+			// 	//If the faction in the strat list is the same as the detachment's name
+			// 	let thisFaction = detachment.faction.toLowerCase().replaceAll(" ", "") || unit.faction.toLowerCase().replaceAll(" ", "")
+			// 	if (factionName == thisFaction) {
+			// 		for (strat of stratList[factionName]) {
+			// 			let prevStrat = ''
+			// 			for (subkey of strat.subkeys.concat(strat.keywords)) {
+			// 				unit.keywords.forEach((keyword, i) => {
+			// 					if (keyword.toLowerCase().replaceAll(" ", "") == subkey.toLowerCase().replaceAll(" ", "")) {
+			// 						if (strat.type == gameType && strat.category != "Requisition Stratagem") {
+			// 							let stratTag = document.createElement('div');
+			// 							stratTag.appendChild(document.createTextNode(strat.name));
+			// 							stratTag.classList.add('tag', 'stratTag')
+			// 							//Make tooltip
+			// 							// stratTag.title = strat.desc
+			// 							let augmentStrat = `<p>${strat.rulesText}</p>`
+			// 							for (phase of Object.keys(phaseList)) {
+			// 								augmentStrat = augmentStrat.replaceAll(phase + " phase", `<span class="outputCataR" title="${phase}">${phase} phase</span>`)
+			// 							}
+			// 							for (keyword of strat.keywords) {
+			// 								augmentStrat = augmentStrat.replaceAll(keyword, `<span class="outputCataG" title="${keyword}">${keyword}</span>`)
+			// 							}
+			// 							augmentStrat = `<span class="outputCataG" title="${detachment.faction}">${strat.name}</span><span class="outputCataB" style="float: right;" title="Command Point Cost: ${strat.cost}">${strat.cost}</span><p>${strat.category}</p><p class="outputFlavor">${strat.desc}</p>` + augmentStrat
+			// 							if (makeUseTag(augmentStrat)) {
+			// 								stratTag.classList.add('useTag');
+			// 								containsUseTag = true;
+			// 							}
+			// 							stratTag.addEventListener("click", function(e) {
+			// 								$("#content").accordion("option", "active", 6);
+			// 								getBoxes()
+			// 								outputBox.innerHTML = augmentStrat
+			// 								closeNav()
+			// 							});
+			// 							if (JSON.stringify(stratTag) != JSON.stringify(prevStrat)) {
+			// 								newAbil.appendChild(stratTag);
+			// 								prevStrat = stratTag
+			// 							}
+			// 						}
+			// 					}
+			// 				});
+			// 			};
+			// 		}
+			// 	}
+			// 	newUnit.appendChild(newAbil);
+			// }
+
+
 			if (containsUseTag) newUnitHeader.classList.add('useTag');
 			newDet.appendChild(newUnit);
 		});

@@ -390,6 +390,7 @@ function parseBS(data) {
 				units: []
 			}
 
+			// Try to grab waha faction
 			let wahaFaction = wahaData.Factions.find(wahaFact => wahaFact.name == faction)
 			if (wahaFaction) newDetachment.wahaFaction = wahaFaction.id
 
@@ -411,10 +412,12 @@ function parseBS(data) {
 					let newUnit = {
 						name: '',
 						slot: '',
+						faction: [],
 						keywords: [],
 						models: [],
 						rules: [],
-						spells: []
+						spells: [],
+						stratagems: []
 					}
 
 					//If the selection is not a unit (sometimes it's a configuration),
@@ -484,12 +487,9 @@ function parseBS(data) {
 					//  Start collecting models
 					//
 
-
 					//The way this is handled is so whacky, leading to either
 					//Sometimes it loads as many weapons as there are models
 					//and sometimes is loads many models with one weapon
-
-
 
 					let selectionData = unit.selections[0].selection
 					if (!Array.isArray(selectionData)) selectionData = [selectionData]
@@ -519,7 +519,6 @@ function parseBS(data) {
 						} else if (selection.$.typeName == 'Unit') {
 							profileParse = selection;
 						}
-
 
 						//If it's not an array, put it in one so the for loop can work
 						if (!Array.isArray(profileParse)) profileParse = [profileParse]
@@ -716,24 +715,84 @@ function parseBS(data) {
 					//  Start collecting keywords
 					//
 
-					if (unit.categories) {
-						if (!Array.isArray(unit.categories[0].category)) unit.categories[0].category = [unit.categories[0].category]
-						for (category of unit.categories[0].category) {
-							if (category.$.primary == "true") {
-								newUnit.slot = category.$.name
-							} else {
-								//BS factions format: "Faction: <faction name>".
-								//Try to Split by ": ", and if the first word is "Faction"
-								if (category.$.name.split(": ")[0] == "Faction") {
-									//Dump the "Faction" and keep the "<faction name>"
-									newUnit.faction = category.$.name.split(":")[1].trim()
+					//Try to pull from waha first
+					if (newUnit.waha) {
+						let unitKeys = wahaData.Datasheets_keywords.filter(function(key) {
+							return key.datasheet_id == newUnit.waha.id;
+						});
+						for (var key of unitKeys) {
+							if (key.is_faction_keyword == 'true') newUnit.faction.push(key.keyword);
+							else newUnit.keywords.push(key.keyword.toLowerCase());
+						}
+						newUnit.slot = newUnit.waha.role;
+					}
+					//Otherwise, pull from battlescribe
+					else {
+						if (unit.categories) {
+							if (!Array.isArray(unit.categories[0].category)) unit.categories[0].category = [unit.categories[0].category]
+							for (category of unit.categories[0].category) {
+								if (category.$.primary == "true") {
+									newUnit.slot = category.$.name
 								} else {
-									//Otherwise, dump the keyword straight to the list
-									newUnit.keywords.push(category.$.name)
+									//BS factions format: "Faction: <faction name>".
+									//Try to Split by ": ", and if the first word is "Faction"
+									if (category.$.name.split(": ")[0] == "Faction") {
+										//Dump the "Faction" and keep the "<faction name>"
+										newUnit.faction = category.$.name.split(":")[1].trim()
+									} else {
+										//Otherwise, dump the keyword straight to the list
+										newUnit.keywords.push(category.$.name.toLowerCase())
+									}
 								}
 							}
 						}
 					}
+
+					//
+					//Stratagems
+					//
+
+					if (newUnit.waha) {
+						// Find all strat ID's on the datasheet
+						let stratIDfind = wahaData.Datasheets_stratagems.filter(function(strat) {
+							return strat.datasheet_id == newUnit.waha.id;
+						});
+						for (var stratID of stratIDfind) {
+							//Find all data by strat ID
+							let stratDatafind = wahaData.Stratagems.filter(function(strat) {
+								return strat.id == stratID.stratagem_id;
+							});
+							for (var stratData of stratDatafind) {
+								let strat = stratData;
+								stratData.keys = [];
+								stratData.activate = [];
+								stratData.descText = stratData.description.replaceAll("<[^>]*>", "");
+								//Find all phases of stratagems
+								let stratPhasefind = wahaData.StratagemPhases.filter(function(strat) {
+									return strat.stratagem_id == stratData.id;
+								});
+								for (var stratPhase of stratPhasefind) {
+									stratData.activate.push(stratPhase.phase);
+								}
+								// Search for all keywords in the waha description
+								// Find a group of words inside a span if those words are also in a span
+								let span = strat.description.replace(/<span [^>]+>/g, 'ス');
+								span = span.replace(/<\/span>/g, 'ミ');
+								span = span.matchAll(/スス.*?ミミ/g);
+								for (var sp of span) {
+									sp[0] = sp[0].replaceAll('ス', '');
+									sp[0] = sp[0].replaceAll('ミ', '');
+									sp[0] = sp[0].toLowerCase();
+									if (!stratData.keys.includes(sp[0])) stratData.keys.push(sp[0]);
+								}
+								for (var key of stratData.description.matchAll(/<span [^>]+>([^<]+)<\/span>/g)) {
+									if (!stratData.keys.includes(key[1])) stratData.keys.push(key[1].toLowerCase());
+								}
+								newUnit.stratagems.push(stratData)
+							}
+						}
+					}
+
 					if (newUnit.models) {
 						if (unclaimedWeapons.length) {
 							for (model in newUnit.models) {
