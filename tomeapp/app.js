@@ -18,6 +18,7 @@ const url = require('url');
 const qrcode = require('qrcode');
 const crypto = require('crypto');
 const Discord = require('discord.js');
+const Fuse = require('fuse.js');
 // Require the necessary discord.js classes
 const {
 	Client,
@@ -78,6 +79,55 @@ app.get('/abilmap', (req, res) => {
 		res.render('abilmap', gameList[req.query.gameid])
 	}
 });
+
+app.get('/search', function(req, res) {
+	if (req.query.string) {
+		let result = fuzzysearch(req.query.string);
+		console.log(result);
+		res.send(JSON.stringify(result));
+	} else {
+		let result = fuzzysearch('hi');
+		console.log(result);
+		res.send(JSON.stringify(result));
+	}
+});
+
+function fuzzysearch(searchString) {
+	let newData = []
+	for (var category of Object.keys(wahaData)) {
+		console.log(wahaData[category]);
+		newData.concat(wahaData[category]);
+	}
+	console.log(newData);
+	const fuse = new Fuse(newData, {
+		// isCaseSensitive: false,
+		includeScore: true,
+		shouldSort: true,
+		// includeMatches: false,
+		// findAllMatches: false,
+		// minMatchCharLength: 1,
+		// location: 0,
+		// threshold: 0.6,
+		// distance: 100,
+		// useExtendedSearch: false,
+		// ignoreLocation: false,
+		// ignoreFieldNorm: false,
+		// fieldNormWeight: 1,
+		keys: [
+			{
+				name: "name",
+				weight: 2
+			}
+		]
+	})
+
+	let allResult = fuse.search('searchString');
+	let result = [];
+	for (var i = 0; i < 5; i++) {
+		result.push(allResult.shift())
+	}
+	return result;
+}
 
 app.post('/upload', upload.fields([{
 	name: 'atkr_file',
@@ -251,7 +301,7 @@ disclient.on('messageCreate', message => {
 });
 
 const discordtoken = require('./discordtoken');
-// disclient.login(discordtoken.TOKEN);
+disclient.login(discordtoken.TOKEN);
 
 var gameList = {}
 
