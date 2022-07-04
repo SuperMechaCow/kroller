@@ -80,53 +80,48 @@ app.get('/abilmap', (req, res) => {
 	}
 });
 
-app.get('/search', function(req, res) {
+app.get('/api/search', function(req, res) {
 	if (req.query.string) {
-		let result = fuzzysearch(req.query.string);
-		console.log(result);
-		res.send(JSON.stringify(result));
+		let result = fuzzysearch(req.query.string, wahaData, 5);
+		res.json(result);
 	} else {
-		let result = fuzzysearch('hi');
-		console.log(result);
-		res.send(JSON.stringify(result));
+		res.send(JSON.stringify({error: "You must include a 'string' query parameter with the value of your search."}));
 	}
 });
 
-function fuzzysearch(searchString) {
-	let newData = []
-	for (var category of Object.keys(wahaData)) {
-		console.log(wahaData[category]);
-		newData.concat(wahaData[category]);
-	}
-	console.log(newData);
-	const fuse = new Fuse(newData, {
-		// isCaseSensitive: false,
-		includeScore: true,
-		shouldSort: true,
-		// includeMatches: false,
-		// findAllMatches: false,
-		// minMatchCharLength: 1,
-		// location: 0,
-		// threshold: 0.6,
-		// distance: 100,
-		// useExtendedSearch: false,
-		// ignoreLocation: false,
-		// ignoreFieldNorm: false,
-		// fieldNormWeight: 1,
-		keys: [
-			{
-				name: "name",
-				weight: 2
-			}
-		]
-	})
+function fuzzysearch(searchString, dataset, numResults) {
+  let newData = []
+  // Convert dataset object to array
+  for (var category of Object.keys(dataset)) {
+    newData = newData.concat(dataset[category]);
+  }
+  const fuse = new Fuse(newData, {
+    // isCaseSensitive: false,
+    includeScore: true,
+    shouldSort: true,
+    includeMatches: true, //Maybe useful
+    //threshold: 0.3, //This one is useful!
+    // findAllMatches: false,
+    // minMatchCharLength: 1,
+    // location: 0,
+    // distance: 100,
+    // useExtendedSearch: false,
+    // ignoreLocation: false,
+    // ignoreFieldNorm: false,
+    // fieldNormWeight: 1,
+    keys: [{
+        name: `name`,
+        weight: 1
+      }
+    ]
+  })
 
-	let allResult = fuse.search('searchString');
-	let result = [];
-	for (var i = 0; i < 5; i++) {
-		result.push(allResult.shift())
-	}
-	return result;
+  let allResult = fuse.search(searchString);
+  let result = [];
+  for (var i = 0; i < numResults && i < allResult.length; i++) {
+    result.push(allResult[i])
+  }
+  return result;
 }
 
 app.post('/upload', upload.fields([{

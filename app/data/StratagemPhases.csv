@@ -1,0 +1,1811 @@
+﻿stratagem_id|phase|
+000006989003|Shooting phase|
+000006988002|Enemy Psychic phase|
+000006988003|Psychic phase|
+000006989004|Enemy Fight phase|
+000006989004|Fight phase|
+000006988004|Morale phase|
+000006989002|Charge phase|
+000004397002|Shooting phase|
+000004397003|Charge phase|
+000002140004|During deployment|
+000002144003|Movement phase|
+000002146003|Movement phase|
+000002148003|During deployment|
+000002150004|Movement phase|
+000004377003|Enemy Fight phase|
+000004377003|Fight phase|
+000004377004|Shooting phase|
+000004379002|Movement phase|
+000004379003|Movement phase|
+000004379004|At the start of battle round|
+000004380002|Movement phase|
+000004380003|Any phase|
+000004380004|Enemy Fight phase|
+000004380004|Fight phase|
+000004381002|Morale phase|
+000004381003|Movement phase|
+000004381004|Movement phase|
+000004383002|Movement phase|
+000004383003|Movement phase|
+000004383004|Shooting phase|
+000004385002|Movement phase|
+000004385004|Movement phase|
+000004387002|Movement phase|
+000004387003|Psychic phase|
+000004388002|Movement phase|
+000004388003|Enemy taking casualties|
+000004388004|At the start of battle round|
+000004390002|During deployment|
+000004390003|Shooting phase|
+000004390004|During deployment|
+000004390005|Shooting phase|
+000004392002|Movement phase|
+000004392003|During deployment|
+000004392004|At the start of battle round|
+000004392005|Enemy Movement phase|
+000004393002|Movement phase|
+000004393003|Enemy Charge phase|
+000004393004|Shooting phase|
+000004394002|Movement phase|
+000004394003|Being targeted|
+000004394004|Charge phase|
+000004395003|At the start of battle round|
+000004395004|Enemy Fight phase|
+000004395004|Fight phase|
+000004395004|Shooting phase|
+000004396003|During deployment|
+000004399002|Charge phase|
+000004399003|Shooting phase|
+000004407002|Shooting phase|
+000004407003|Enemy Fight phase|
+000004407003|Fight phase|
+000004407004|Shooting phase|
+000004408002|Enemy Movement phase|
+000004408004|During deployment|
+000004409004|At the start of your turn|
+000005696002|Before battle|
+000002134002|Any time|
+000002134003|Enemy Movement phase|
+000002134004|Movement phase|
+000002134005|Taking casualties|
+000002134006|Enemy Charge phase|
+000002134007|Enemy Fight phase|
+000002134008|Morale phase|
+000007114002|Command phase|
+000002141002|During deployment|
+000002145002|Movement phase|
+000004378003|Fight phase|
+000004378003|Enemy Fight phase|
+000004378004|Enemy Shooting phase|
+000004379005|Enemy Fight phase|
+000004379005|Fight phase|
+000004379006|Enemy Shooting phase|
+000004379007|Psychic phase|
+000004380005|Shooting phase|
+000004380006|Psychic phase|
+000004380007|Any phase|
+000004382002|At the start of battle round|
+000004382003|Any phase|
+000004382004|Enemy Shooting phase|
+000004383005|Enemy Movement phase|
+000004383006|Morale phase|
+000004383007|Movement phase|
+000004385005|Enemy Charge phase|
+000004385006|Movement phase|
+000004385007|Any phase|
+000004387005|Enemy Shooting phase|
+000004387006|Enemy Shooting phase|
+000004387007|Enemy Psychic phase|
+000004388005|Enemy Movement phase|
+000004388006|Movement phase|
+000004388007|Morale phase|
+000004391002|Movement phase|
+000004391003|Charge phase|
+000004391004|Charge phase|
+000004391005|Movement phase|
+000004392006|Enemy Shooting phase|
+000004392007|Movement phase|
+000004392008|During deployment|
+000004392009|Movement phase|
+000004393005|Movement phase|
+000004393006|Enemy Charge phase|
+000004393007|Shooting phase|
+000004394005|Shooting phase|
+000004394007|Enemy Movement phase|
+000004395005|Enemy Charge phase|
+000004395006|During deployment|
+000004395007|Being targeted|
+000004398002|Charge phase|
+000004398003|Morale phase|
+000004400002|Movement phase|
+000004407006|Fight phase|
+000004407006|Enemy Fight phase|
+000004407007|Morale phase|
+000004410003|Movement phase|
+000004411002|Movement phase|
+000004411003|At the start of battle round|
+000004411004|Any phase|
+000004405002|Morale phase|
+000004405003|Shooting phase|
+000004403002|At the start of battle round|
+000004389002|Movement phase|
+000004404002|Shooting phase|
+000006138002|Morale phase|
+000006138003|At the start of battle round|
+000007038003|During deployment|
+000007038004|Command phase|
+000007038005|During deployment|
+000007038006|Enemy Fight phase|
+000007038006|Fight phase|
+000007038007|Any phase|
+000007037002|During deployment|
+000007037003|Shooting phase|
+000007037004|Any phase|
+000007037005|Charge phase|
+000006111002|Charge phase|
+000006111003|At the start of battle round|
+000006111004|At the start of battle round|
+000006111005|Enemy Shooting phase|
+000006111006|Movement phase|
+000006111007|Movement phase|
+000006111008|Command phase|
+000006111009|At the start of battle round|
+000006112002|Movement phase|
+000006112003|At the start of battle round|
+000006112004|At the start of battle round|
+000006112006|At the start of battle round|
+000006112007|Enemy Fight phase|
+000006112007|Fight phase|
+000006112008|At the start of battle round|
+000006112009|Enemy Movement phase|
+000006112005|At the start of battle round|
+000002137002|At the start of your turn|
+000002138002|During deployment|
+000002138003|During deployment|
+000002138004|During deployment|
+000002138005|Shooting phase|
+000002142002|Being targeted|
+000002142003|Movement phase|
+000002143002|Any time|
+000002152002|At the start of your turn|
+000002155002|Shooting phase|
+000003174002|Before battle|
+000003318002|Fight phase|
+000003401002|At the start of battle round|
+000004386002|Movement phase|
+000004386003|Being targeted|
+000004386004|Being targeted|
+000004406002|At the start of your turn|
+000004406003|Movement phase|
+000006139002|At the start of enemy turn|
+000006139003|Enemy taking casualties|
+000006139004|Shooting phase|
+000004402003|At the start of battle round|
+000004401002|At the start of battle round|
+000004401003|Movement phase|
+000002576002|Being targeted|
+000002576003|Fight phase|
+000002576003|Enemy Fight phase|
+000002576004|Enemy Fight phase|
+000002576004|Fight phase|
+000002576005|At the start of battle round|
+000002576006|Enemy Fight phase|
+000002576006|Fight phase|
+000002576007|Enemy Fight phase|
+000002576007|Fight phase|
+000002576008|Any phase|
+000002576009|Shooting phase|
+000002576010|Enemy Fight phase|
+000002576010|Fight phase|
+000002576011|Command phase|
+000002576012|Command phase|
+000002576013|Taking casualties|
+000002576014|Enemy taking casualties|
+000002576015|Before battle|
+000002576016|Before battle|
+000002576017|Before battle|
+000002576018|Before battle|
+000002576019|Enemy Charge phase|
+000002576020|Command phase|
+000002576021|Enemy Fight phase|
+000002576021|Fight phase|
+000002576022|Command phase|
+000002576023|Taking casualties|
+000002576024|Movement phase|
+000002576025|Enemy Psychic phase|
+000002576026|Being targeted|
+000002576027|During deployment|
+000002576028|Enemy Psychic phase|
+000002576029|Any phase|
+000002576030|Enemy Movement phase|
+000002576031|Enemy Shooting phase|
+000002576032|Enemy Charge phase|
+000002576032|Enemy Movement phase|
+000002576033|Movement phase|
+000002576034|Shooting phase|
+000006192002|Enemy Shooting phase|
+000006190002|Movement phase|
+000006196002|At the start of battle round|
+000006186002|Command phase|
+000006188002|Being targeted|
+000006194002|Enemy taking casualties|
+000002343002|Fight phase|
+000002343002|Enemy Fight phase|
+000002343003|Movement phase|
+000002343004|Fight phase|
+000002343004|Enemy Fight phase|
+000002343005|Shooting phase|
+000002343006|Fight phase|
+000002343006|Enemy Fight phase|
+000002343007|Shooting phase|
+000002343008|Fight phase|
+000002343008|Enemy Fight phase|
+000002343009|Any phase|
+000002343010|Command phase|
+000002343010|Movement phase|
+000002343011|Command phase|
+000002343012|Command phase|
+000002343013|Before battle|
+000002343014|Before battle|
+000002343015|Before battle|
+000002343016|Before battle|
+000002343017|Any phase|
+000002343018|Morale phase|
+000002343019|Taking casualties|
+000002343020|Movement phase|
+000002343021|Enemy Movement phase|
+000002343022|Enemy Charge phase|
+000002343023|Charge phase|
+000002343024|Fight phase|
+000002343024|Enemy Fight phase|
+000002343025|End of your turn|
+000002343026|Movement phase|
+000002343027|Enemy Fight phase|
+000002343027|Fight phase|
+000002343028|Enemy Movement phase|
+000002343029|Movement phase|
+000002343030|Shooting phase|
+000002343031|Enemy Shooting phase|
+000002343032|Shooting phase|
+000002343033|Shooting phase|
+000002343034|Any phase|
+000003197002|Charge phase|
+000003197003|Movement phase|
+000003200002|Before battle|
+000003200003|Shooting phase|
+000002340002|Before battle|
+000002337002|Enemy Psychic phase|
+000002339002|During deployment|
+000002336002|Shooting phase|
+000005432002|Shooting phase|
+000005432003|Shooting phase|
+000005432004|Before battle|
+000005432005|Command phase|
+000005435002|Any phase|
+000005435003|Movement phase|
+000005435004|Shooting phase|
+000005435005|Command phase|
+000005435006|Shooting phase|
+000005435007|Before battle|
+000005435008|Morale phase|
+000005435009|Fight phase|
+000005435009|Enemy Fight phase|
+000002338002|Shooting phase|
+000002342002|Shooting phase|
+000005679002|Shooting phase|
+000005679003|Fight phase|
+000005679003|Enemy Fight phase|
+000005679004|Taking casualties|
+000005679005|Movement phase|
+000003196002|Before battle|
+000003199002|Before battle|
+000002341002|During deployment|
+000002440002|Fight phase|
+000002440002|Enemy Fight phase|
+000002440003|Shooting phase|
+000002440004|Being targeted|
+000002440005|Shooting phase|
+000002440006|Shooting phase|
+000002440006|Fight phase|
+000002440006|Enemy Fight phase|
+000002440007|Shooting phase|
+000002440008|Shooting phase|
+000002440009|Psychic phase|
+000002440010|Psychic phase|
+000002440011|Taking casualties|
+000002440012|Fight phase|
+000002440012|Enemy Fight phase|
+000002440013|Psychic phase|
+000002440014|Before battle|
+000002440015|Before battle|
+000002440016|Before battle|
+000002440017|Before battle|
+000002440018|Shooting phase|
+000002440019|Movement phase|
+000002440020|Enemy Movement phase|
+000002440021|Command phase|
+000002440022|Shooting phase|
+000002440023|At the start of battle round|
+000002440024|Command phase|
+000002440025|During deployment|
+000002440026|Enemy Charge phase|
+000002440026|Enemy Movement phase|
+000002440027|Charge phase|
+000002440028|Movement phase|
+000002440029|Shooting phase|
+000002440030|Shooting phase|
+000002440031|Fight phase|
+000002440031|Enemy Fight phase|
+000006825002|Enemy Movement phase|
+000007212002|Enemy Fight phase|
+000007212002|Fight phase|
+000007212003|Command phase|
+000007212004|Shooting phase|
+000007212005|Taking casualties|
+000007212005|Enemy Psychic phase|
+000006826002|Shooting phase|
+000006826002|Fight phase|
+000006826002|Enemy Fight phase|
+000006877002|Movement phase|
+000006877003|Enemy Movement phase|
+000006877004|Movement phase|
+000006877005|Charge phase|
+000006877006|Fight phase|
+000006877006|Enemy Fight phase|
+000006877007|Fight phase|
+000006877007|Enemy Fight phase|
+000006877008|Command phase|
+000006877009|Enemy Fight phase|
+000006877009|Fight phase|
+000006877010|Enemy Charge phase|
+000006877011|Before battle|
+000006877012|Fight phase|
+000006877012|Enemy Fight phase|
+000006877013|Morale phase|
+000006877014|Shooting phase|
+000006877015|Enemy Fight phase|
+000006877015|Fight phase|
+000006877016|Enemy Fight phase|
+000006877016|Fight phase|
+000006877017|Charge phase|
+000006877017|Enemy Charge phase|
+000006828002|Enemy Fight phase|
+000006828002|Fight phase|
+000006828002|Shooting phase|
+000006830002|Charge phase|
+000006822002|Shooting phase|
+000006822002|Fight phase|
+000006822002|Enemy Fight phase|
+000003209002|Enemy Fight phase|
+000003209002|Fight phase|
+000003209003|Shooting phase|
+000003212002|Enemy Fight phase|
+000003212002|Fight phase|
+000003212003|Movement phase|
+000006860002|Charge phase|
+000006858002|Enemy Charge phase|
+000006863002|Enemy Fight phase|
+000006863002|Fight phase|
+000003208002|Before battle|
+000003211002|Before battle|
+000006884002|Shooting phase|
+000006884002|Fight phase|
+000006884002|Enemy Fight phase|
+000004083013|Shooting phase|
+000004083014|Shooting phase|
+000004083011|Enemy Charge phase|
+000004083012|Being targeted|
+000004083010|Shooting phase|
+000004083015|Movement phase|
+000002413025|Shooting phase|
+000002413002|Shooting phase|
+000002413003|Taking casualties|
+000002413004|Charge phase|
+000002413005|Shooting phase|
+000002413005|Enemy Shooting phase|
+000002413006|At the start of your turn|
+000002413007|Movement phase|
+000002413008|Before battle|
+000002413009|At the start of battle round|
+000002413010|At the start of your turn|
+000002413011|During deployment|
+000002413012|Shooting phase|
+000002413012|Enemy Shooting phase|
+000002413013|Enemy Charge phase|
+000002413014|Enemy Shooting phase|
+000002413015|Shooting phase|
+000002413015|Enemy Charge phase|
+000002413016|Morale phase|
+000002413017|Shooting phase|
+000002413018|Shooting phase|
+000002413018|Enemy Charge phase|
+000003215002|Enemy Charge phase|
+000003215003|Movement phase|
+000003218002|Shooting phase|
+000003218003|Shooting phase|
+000003221002|Fight phase|
+000003221002|Enemy Fight phase|
+000003221003|Charge phase|
+000003224002|Shooting phase|
+000003224003|Charge phase|
+000003227002|Movement phase|
+000003227003|Enemy Charge phase|
+000004050002|Before battle|
+000004066002|At the start of your turn|
+000004066003|Shooting phase|
+000004066004|Shooting phase|
+000004066005|Charge phase|
+000004066006|Shooting phase|
+000004066007|Shooting phase|
+000004066008|Shooting phase|
+000004066009|Being targeted|
+000004066009|Enemy Shooting phase|
+000004066010|Shooting phase|
+000004066011|Shooting phase|
+000004066012|Charge phase|
+000004066013|Shooting phase|
+000004066014|Being targeted|
+000004066015|Psychic phase|
+000006009002|Any phase|
+000006009003|Movement phase|
+000006009004|Taking casualties|
+000006009005|Before battle|
+000006009006|Before battle|
+000006009007|Shooting phase|
+000006009008|Movement phase|
+000002413020|Enemy taking casualties|
+000002413026|Enemy Charge phase|
+000002413023|Enemy Movement phase|
+000004083002|Shooting phase|
+000004083003|Morale phase|
+000004083004|Movement phase|
+000004083005|Shooting phase|
+000004083006|Before battle|
+000004083007|Shooting phase|
+000004083008|Before battle|
+000004083009|Shooting phase|
+000002413019|Shooting phase|
+000003214002|Before battle|
+000003217002|Before battle|
+000003220002|Before battle|
+000003223002|Before battle|
+000003226002|Before battle|
+000002413024|During deployment|
+000002413021|Movement phase|
+000002413022|Shooting phase|
+000003076002|Shooting phase|
+000003076003|Fight phase|
+000003076004|Enemy Fight phase|
+000003076004|Fight phase|
+000003076004|Shooting phase|
+000003076005|Enemy Fight phase|
+000003076005|Fight phase|
+000003076006|Enemy Fight phase|
+000003076006|Shooting phase|
+000003076006|Fight phase|
+000003076007|Taking casualties|
+000003076008|Psychic phase|
+000003076008|Shooting phase|
+000003076008|Movement phase|
+000003076008|Charge phase|
+000003076008|Fight phase|
+000003076008|Morale phase|
+000003076009|Taking casualties|
+000003076010|Movement phase|
+000003076011|Taking casualties|
+000003076012|Fight phase|
+000003076012|Shooting phase|
+000003076012|Enemy Charge phase|
+000003076013|Fight phase|
+000003076013|Enemy Fight phase|
+000003076014|Before battle|
+000003076015|Before battle|
+000003076016|Before battle|
+000003076017|Movement phase|
+000003076018|At the start of battle round|
+000003076019|Movement phase|
+000003076020|Movement phase|
+000003076021|Enemy Fight phase|
+000003076021|Fight phase|
+000003076022|Shooting phase|
+000003076023|Charge phase|
+000003076024|Enemy Psychic phase|
+000003076025|Enemy Charge phase|
+000003076025|Enemy Fight phase|
+000003076025|Fight phase|
+000003076025|Shooting phase|
+000003076026|Enemy Fight phase|
+000003076026|Fight phase|
+000003076027|Movement phase|
+000003076028|Charge phase|
+000003076029|Shooting phase|
+000003076030|Enemy Shooting phase|
+000003076031|Shooting phase|
+000003076032|Fight phase|
+000003076032|Enemy Fight phase|
+000003076033|Enemy Psychic phase|
+000005683002|Enemy Fight phase|
+000005683002|Fight phase|
+000005683003|Enemy Fight phase|
+000005683003|Fight phase|
+000003059002|Taking casualties|
+000005683004|Command phase|
+000005683009|Before battle|
+000005683005|Enemy Shooting phase|
+000005683006|Shooting phase|
+000005683007|Movement phase|
+000005683008|Being targeted|
+000003061002|Any phase|
+000003062002|Fight phase|
+000003062002|Enemy Fight phase|
+000006926002|Command phase|
+000006926003|Fight phase|
+000006926004|Shooting phase|
+000006926005|Enemy Fight phase|
+000006926005|Fight phase|
+000006926006|At the start of battle round|
+000006926007|Being targeted|
+000006926008|Command phase|
+000006926009|Enemy Fight phase|
+000006926009|Fight phase|
+000003060002|Shooting phase|
+000003063002|Shooting phase|
+000003058002|Enemy Fight phase|
+000003058002|Fight phase|
+000003058002|Shooting phase|
+000006070002|Shooting phase|
+000006070002|Fight phase|
+000006070002|Enemy Fight phase|
+000006070003|Before battle|
+000006070004|Shooting phase|
+000006070005|Shooting phase|
+000006070006|During deployment|
+000006070007|Shooting phase|
+000002630002|During deployment|
+000002630003|Taking casualties|
+000002630004|Movement phase|
+000002630005|Before battle|
+000002630006|Movement phase|
+000002630007|Enemy Psychic phase|
+000002630008|Any phase|
+000003288002|Shooting phase|
+000003288003|Charge phase|
+000005691002|Command phase|
+000005691003|Enemy Fight phase|
+000005691003|Fight phase|
+000005691007|Taking casualties|
+000005691004|Charge phase|
+000005691004|Movement phase|
+000005691005|Morale phase|
+000005691006|Morale phase|
+000002630009|Before battle|
+000002630010|Fight phase|
+000002630010|Enemy Fight phase|
+000002630011|Enemy Fight phase|
+000002630011|Fight phase|
+000004253010|Fight phase|
+000004253010|Enemy Fight phase|
+000004253011|Charge phase|
+000004253012|Charge phase|
+000004253013|Being targeted|
+000004255002|Before battle|
+000002630012|Movement phase|
+000002630013|Before battle|
+000002630014|Any phase|
+000004253006|Fight phase|
+000004253006|Enemy Fight phase|
+000004253007|Taking casualties|
+000004253008|Enemy Fight phase|
+000004253008|Fight phase|
+000004253009|Enemy Fight phase|
+000004253009|Enemy Charge phase|
+000004253009|Enemy Shooting phase|
+000004253009|Enemy Psychic phase|
+000004253009|Enemy Movement phase|
+000004253009|Fight phase|
+000004253009|Charge phase|
+000004253009|Shooting phase|
+000004253009|Movement phase|
+000004253009|Psychic phase|
+000004257002|Before battle|
+000002630018|Enemy Fight phase|
+000002630018|Fight phase|
+000002630019|Fight phase|
+000002630019|Enemy Fight phase|
+000002630020|Before battle|
+000004253002|Enemy Fight phase|
+000004253002|Fight phase|
+000004253003|Being targeted|
+000004253004|Morale phase|
+000004253005|Fight phase|
+000004253005|Enemy Fight phase|
+000004258002|Before battle|
+000003287002|Before battle|
+000002630015|Before battle|
+000002630016|Psychic phase|
+000002630017|Psychic phase|
+000004253014|Psychic phase|
+000004253015|Enemy Fight phase|
+000004253015|Fight phase|
+000004253016|Shooting phase|
+000004253017|Movement phase|
+000004256002|Before battle|
+000003828009|Before battle|
+000003828002|During deployment|
+000003828003|Enemy Shooting phase|
+000003828004|Enemy taking casualties|
+000003828005|Enemy Movement phase|
+000003828006|Movement phase|
+000003828007|Enemy Movement phase|
+000003828008|Movement phase|
+000002235019|During deployment|
+000003298002|Fight phase|
+000003298002|Enemy Fight phase|
+000003298002|Shooting phase|
+000003298006|Enemy Fight phase|
+000003298006|Fight phase|
+000003298007|Shooting phase|
+000003298003|At the start of your turn|
+000003298005|Before battle|
+000003298009|Before battle|
+000003298004|At the start of battle round|
+000003298008|Morale phase|
+000002235025|Enemy Fight phase|
+000002235025|Fight phase|
+000002235025|Shooting phase|
+000003267002|Fight phase|
+000003267002|Enemy Fight phase|
+000003267003|Morale phase|
+000003299004|Enemy Fight phase|
+000003299004|Fight phase|
+000002235002|Shooting phase|
+000002235003|Before battle|
+000002235004|At the start of your turn|
+000002235005|Shooting phase|
+000002235006|Enemy Fight phase|
+000002235006|Fight phase|
+000002235007|Enemy Fight phase|
+000002235007|Fight phase|
+000002235007|Shooting phase|
+000002235008|Movement phase|
+000002235009|Enemy Fight phase|
+000002235009|Fight phase|
+000002235009|Shooting phase|
+000002235010|Psychic phase|
+000002235011|Psychic phase|
+000002235012|Movement phase|
+000002235013|Shooting phase|
+000002235014|Shooting phase|
+000002235015|Shooting phase|
+000002235016|Enemy Fight phase|
+000002235016|Fight phase|
+000002235017|Shooting phase|
+000002235018|Shooting phase|
+000003270002|Shooting phase|
+000003270003|Enemy Movement phase|
+000003273002|Enemy taking casualties|
+000003273003|At the start of battle round|
+000003276002|Fight phase|
+000003276002|Enemy Fight phase|
+000003276003|Movement phase|
+000003279002|Enemy Fight phase|
+000003279002|Fight phase|
+000003279003|Charge phase|
+000003282002|Movement phase|
+000003282003|Enemy taking casualties|
+000004296002|Fight phase|
+000004296002|Enemy Fight phase|
+000004296005|Fight phase|
+000004296005|Shooting phase|
+000004296005|Enemy Fight phase|
+000004296006|Enemy Shooting phase|
+000004296008|Before battle|
+000004296003|Any phase|
+000004296004|Movement phase|
+000004296007|Fight phase|
+000004296007|Enemy Fight phase|
+000003299005|Enemy Shooting phase|
+000003830003|Enemy Fight phase|
+000003830003|Fight phase|
+000003830005|Charge phase|
+000003830007|Fight phase|
+000003830007|Enemy Fight phase|
+000003830004|Enemy Charge phase|
+000003830002|Before battle|
+000003830008|At the start of battle round|
+000003830006|Shooting phase|
+000002235023|Enemy Fight phase|
+000002235023|Fight phase|
+000003285002|Enemy Shooting phase|
+000003285003|Enemy Fight phase|
+000003285003|Fight phase|
+000003299007|Fight phase|
+000004976002|Enemy Shooting phase|
+000003829004|Being targeted|
+000003829006|Shooting phase|
+000003829006|Fight phase|
+000003829006|Enemy Fight phase|
+000003829009|Fight phase|
+000003829009|Enemy Fight phase|
+000003829005|Movement phase|
+000003829002|Taking casualties|
+000003829003|Shooting phase|
+000003829008|Enemy Shooting phase|
+000003829007|Fight phase|
+000003829007|Shooting phase|
+000003829007|Enemy Fight phase|
+000002235021|Taking casualties|
+000003827002|Being targeted|
+000003827004|Shooting phase|
+000003827004|Fight phase|
+000003827004|Enemy Fight phase|
+000003827007|Charge phase|
+000003827008|Charge phase|
+000003827003|Movement phase|
+000003827005|Charge phase|
+000003827006|Enemy Movement phase|
+000003827009|Fight phase|
+000003827009|Enemy Fight phase|
+000002235024|Being targeted|
+000003299003|Shooting phase|
+000003299002|Movement phase|
+000003299006|Enemy Movement phase|
+000003284002|Before battle|
+000003266002|Before battle|
+000003269002|Before battle|
+000003272002|Before battle|
+000003275002|Before battle|
+000003278002|Before battle|
+000003281002|Before battle|
+000003826006|Fight phase|
+000003826006|Enemy Fight phase|
+000003826008|Fight phase|
+000003826008|Enemy Fight phase|
+000003826002|Movement phase|
+000003826003|Psychic phase|
+000003826007|Taking casualties|
+000003826004|Before battle|
+000003826005|During deployment|
+000002235020|Movement phase|
+000003831006|Fight phase|
+000003831006|Enemy Fight phase|
+000003831007|Fight phase|
+000003831007|Enemy Fight phase|
+000003831008|Fight phase|
+000003831008|Enemy Fight phase|
+000003831004|Enemy Fight phase|
+000003831004|Fight phase|
+000003831005|Before battle|
+000003831002|Enemy Psychic phase|
+000003831003|During deployment|
+000003831009|Enemy taking casualties|
+000002235022|Enemy Psychic phase|
+000002327002|Fight phase|
+000002327002|Enemy Fight phase|
+000002327003|Fight phase|
+000002327003|Enemy Fight phase|
+000002327004|Shooting phase|
+000002327005|Shooting phase|
+000002327006|Fight phase|
+000002327006|Enemy Fight phase|
+000002327007|Shooting phase|
+000002327008|Fight phase|
+000002327008|Enemy Fight phase|
+000002327009|Command phase|
+000002327010|Command phase|
+000002327011|Fight phase|
+000002327011|Enemy Fight phase|
+000002327012|Command phase|
+000002327013|Any phase|
+000002327014|Before battle|
+000002327015|Before battle|
+000002327016|Before battle|
+000002327017|Before battle|
+000002327018|Fight phase|
+000002327018|Shooting phase|
+000002327018|Enemy Fight phase|
+000002327019|Enemy Shooting phase|
+000002327020|Command phase|
+000002327021|Command phase|
+000002327022|Enemy Shooting phase|
+000002327023|Fight phase|
+000002327023|Enemy Fight phase|
+000002327024|Enemy Charge phase|
+000002327025|Fight phase|
+000002327025|Enemy Fight phase|
+000002327026|Command phase|
+000002327027|Any phase|
+000002327028|Enemy Shooting phase|
+000002327029|Shooting phase|
+000002327030|Shooting phase|
+000002327031|Shooting phase|
+000002327032|Shooting phase|
+000005159002|Command phase|
+000003432002|Movement phase|
+000003432003|Taking casualties|
+000003432004|Enemy Fight phase|
+000003432004|Fight phase|
+000003432005|Shooting phase|
+000003432006|Enemy Fight phase|
+000003432006|Fight phase|
+000003432007|Movement phase|
+000003432008|Enemy Psychic phase|
+000003432009|Movement phase|
+000005154002|Enemy Fight phase|
+000005154002|Fight phase|
+000005155002|Enemy Charge phase|
+000005156002|Enemy Charge phase|
+000005160002|Shooting phase|
+000005158002|Shooting phase|
+000005448002|Movement phase|
+000005448003|Movement phase|
+000005448004|Movement phase|
+000005448005|Shooting phase|
+000005157002|Before battle|
+000007324002|Before battle|
+000007324003|Before battle|
+000007324004|Before battle|
+000007324005|Fight phase|
+000007324005|Enemy taking casualties|
+000007324006|Charge phase|
+000007324007|Fight phase|
+000007324007|Enemy taking casualties|
+000007324008|Taking casualties|
+000007324009|Enemy taking casualties|
+000002782002|Fight phase|
+000002782002|Enemy Fight phase|
+000002777002|Enemy Fight phase|
+000002777002|Shooting phase|
+000002777002|Fight phase|
+000005445002|Fight phase|
+000005445002|Enemy Fight phase|
+000005445003|Movement phase|
+000005445004|Enemy taking casualties|
+000005445005|Fight phase|
+000005445005|Enemy Fight phase|
+000005445006|Enemy taking casualties|
+000005445009|Before battle|
+000005445007|Charge phase|
+000005445008|Movement phase|
+000002778002|Enemy Charge phase|
+000002779002|Fight phase|
+000002779002|Enemy Fight phase|
+000002783002|Movement phase|
+000002783003|Fight phase|
+000002783003|Enemy Fight phase|
+000002783004|Fight phase|
+000002783004|Enemy Fight phase|
+000002783005|Being targeted|
+000002783006|Being targeted|
+000002783019|Enemy taking casualties|
+000002783007|Before battle|
+000002783008|Before battle|
+000002783009|Before battle|
+000002783010|During deployment|
+000002783011|Enemy taking casualties|
+000002783012|Movement phase|
+000002783013|Shooting phase|
+000002783014|Shooting phase|
+000002783014|Fight phase|
+000002783014|Enemy Fight phase|
+000002783015|During deployment|
+000002783016|Command phase|
+000002783017|Movement phase|
+000002783018|Movement phase|
+000002783020|Movement phase|
+000002783021|Psychic phase|
+000002783022|Shooting phase|
+000002783023|Command phase|
+000002783024|Charge phase|
+000002783025|Fight phase|
+000002783025|Enemy Fight phase|
+000002783025|Shooting phase|
+000002773002|Any time|
+000002774002|Shooting phase|
+000002776002|Enemy Morale phase|
+000002776002|Morale phase|
+000002775002|At the start of battle round|
+000002780002|Enemy Fight phase|
+000002780002|Fight phase|
+000002781002|Shooting phase|
+000006297002|Before battle|
+000006291002|Any time|
+000002938002|Enemy Fight phase|
+000002938002|Fight phase|
+000002938003|Movement phase|
+000002938004|Being targeted|
+000002938005|Shooting phase|
+000002938006|Shooting phase|
+000002938007|Any phase|
+000002938008|Shooting phase|
+000002938009|Shooting phase|
+000002938010|Command phase|
+000002938011|Command phase|
+000002938012|Taking casualties|
+000002938013|Movement phase|
+000002938014|Taking casualties|
+000002938015|Psychic phase|
+000002938016|Fight phase|
+000002938016|Enemy Fight phase|
+000002938017|Before battle|
+000002938018|Before battle|
+000002938019|Shooting phase|
+000002938020|Charge phase|
+000002938021|Command phase|
+000002938021|Enemy Movement phase|
+000002938022|Before battle|
+000002938023|End of your turn|
+000002938024|Enemy Shooting phase|
+000002938025|Movement phase|
+000002938026|Charge phase|
+000002938027|Charge phase|
+000002938028|Enemy Charge phase|
+000002938029|Shooting phase|
+000002938030|Fight phase|
+000002938030|Enemy Fight phase|
+000006110002|During deployment|
+000002938031|Enemy Fight phase|
+000002938031|Fight phase|
+000002938031|Shooting phase|
+000002938032|Command phase|
+000002938033|Shooting phase|
+000003203002|Enemy Fight phase|
+000003203002|Fight phase|
+000003203003|Fight phase|
+000003206002|Fight phase|
+000003206003|Movement phase|
+000006303002|Taking casualties|
+000006300002|Movement phase|
+000003202002|Before battle|
+000003205002|Before battle|
+000006294002|Shooting phase|
+000006306002|Fight phase|
+000006306002|Enemy Fight phase|
+000005808002|Charge phase|
+000005813002|Enemy Charge phase|
+000002271002|Psychic phase|
+000002271003|Shooting phase|
+000002271004|Fight phase|
+000002271004|Enemy Fight phase|
+000002271005|Shooting phase|
+000002271006|Psychic phase|
+000002271007|Shooting phase|
+000002271008|Enemy Fight phase|
+000002271008|Fight phase|
+000002271009|Command phase|
+000002271010|Command phase|
+000002271011|Any of your phases|
+000002271012|Movement phase|
+000002271013|Psychic phase|
+000002271014|Any phase|
+000002271015|Charge phase|
+000002271016|Before battle|
+000002271017|Before battle|
+000002271018|Before battle|
+000002271019|Before battle|
+000002271020|Psychic phase|
+000002271021|Movement phase|
+000002271022|Movement phase|
+000002271023|Being targeted|
+000002271024|Command phase|
+000002271025|Before battle|
+000002271026|Command phase|
+000002271027|Fight phase|
+000002271027|Enemy Fight phase|
+000002271028|Movement phase|
+000002271029|Enemy Psychic phase|
+000002271030|Movement phase|
+000002271031|Enemy Shooting phase|
+000002271032|Being targeted|
+000002271033|Shooting phase|
+000002271034|Being targeted|
+000002271035|Shooting phase|
+000002271036|Charge phase|
+000005810002|Shooting phase|
+000005811002|Before battle|
+000005812002|Fight phase|
+000005812002|Enemy Fight phase|
+000005814002|Movement phase|
+000005807002|Shooting phase|
+000005809002|Command phase|
+000003844002|Fight phase|
+000003844002|Shooting phase|
+000003844002|Enemy Charge phase|
+000003844002|Enemy Fight phase|
+000003844003|Shooting phase|
+000003844004|Before battle|
+000003844005|Before battle|
+000003844006|Enemy taking casualties|
+000003844007|During deployment|
+000004702002|Shooting phase|
+000002747002|Movement phase|
+000002747003|Shooting phase|
+000002747004|Shooting phase|
+000002747005|Enemy Fight phase|
+000002747005|Fight phase|
+000002747006|Shooting phase|
+000002747007|Fight phase|
+000002747007|Enemy Fight phase|
+000002747007|Shooting phase|
+000002747008|Fight phase|
+000002747008|Enemy Fight phase|
+000002747009|Taking casualties|
+000002747010|Command phase|
+000002747011|Command phase|
+000002747012|Movement phase|
+000002747013|Fight phase|
+000002747013|Enemy Fight phase|
+000002747014|Before battle|
+000002747015|Before battle|
+000002747016|Before battle|
+000002747017|Enemy Charge phase|
+000002747018|Enemy Command phase|
+000002747018|Command phase|
+000002747019|Enemy Shooting phase|
+000002747020|Movement phase|
+000002747021|Fight phase|
+000002747021|Enemy Fight phase|
+000002747022|Movement phase|
+000002747023|Being targeted|
+000002747024|Enemy Movement phase|
+000002747025|Shooting phase|
+000002747026|Taking casualties|
+000002747027|Shooting phase|
+000002747028|Taking casualties|
+000002747029|Fight phase|
+000002747029|Enemy Fight phase|
+000002747030|Shooting phase|
+000002747031|Shooting phase|
+000002747032|Being targeted|
+000002747033|Being targeted|
+000002747034|Shooting phase|
+000002747035|Command phase|
+000004702003|During deployment|
+000004702004|Shooting phase|
+000004702005|Fight phase|
+000004702005|Enemy Fight phase|
+000004702006|Shooting phase|
+000004702007|Enemy Psychic phase|
+000003170004|Movement phase|
+000003170005|At the start of battle round|
+000003170006|Shooting phase|
+000003170007|Fight phase|
+000003170007|Enemy Fight phase|
+000003170008|Any phase|
+000003170009|Fight phase|
+000003170009|Enemy Fight phase|
+000003170002|Before battle|
+000003170003|Any phase|
+000003170010|Shooting phase|
+000003170011|Any phase|
+000002968002|Shooting phase|
+000002972002|Movement phase|
+000006076002|Fight phase|
+000006076002|Enemy Fight phase|
+000006076003|Fight phase|
+000006076003|Enemy Fight phase|
+000006076004|Shooting phase|
+000006076009|Shooting phase|
+000006076005|Fight phase|
+000006076005|Enemy Fight phase|
+000006076006|Charge phase|
+000006076007|Shooting phase|
+000006076008|Any phase|
+000002970002|Fight phase|
+000002970002|Shooting phase|
+000002969002|Shooting phase|
+000002973002|Command phase|
+000002967002|Enemy Fight phase|
+000002967002|Fight phase|
+000002974002|Taking casualties|
+000002974003|Enemy Fight phase|
+000002974003|Fight phase|
+000002974004|Charge phase|
+000002974005|Shooting phase|
+000002974006|Enemy Fight phase|
+000002974006|Fight phase|
+000002974007|Any phase|
+000002974008|Morale phase|
+000002974009|Taking casualties|
+000002974010|Enemy Fight phase|
+000002974010|Fight phase|
+000002974011|Before battle|
+000002974012|Before battle|
+000002974013|Charge phase|
+000002974014|Charge phase|
+000002974015|Enemy Shooting phase|
+000002974016|During deployment|
+000002974017|Charge phase|
+000002974018|Shooting phase|
+000002974019|Any phase|
+000002974020|Enemy Fight phase|
+000002974020|Fight phase|
+000002974021|Shooting phase|
+000002974022|Enemy Shooting phase|
+000002974023|Enemy Fight phase|
+000002974023|Fight phase|
+000002974024|Enemy Movement phase|
+000002974025|Shooting phase|
+000002974026|Enemy Shooting phase|
+000003230002|Enemy Fight phase|
+000003230002|Fight phase|
+000003230003|During deployment|
+000003320002|Movement phase|
+000003320003|Fight phase|
+000003323002|Shooting phase|
+000003323003|Movement phase|
+000003326002|Shooting phase|
+000003326003|Enemy Fight phase|
+000003326003|Fight phase|
+000003326004|Movement phase|
+000002971002|Enemy Psychic phase|
+000003229002|Before battle|
+000003319002|Before battle|
+000003322002|Before battle|
+000003325002|Before battle|
+000006084002|Shooting phase|
+000006084003|Charge phase|
+000006084004|Charge phase|
+000006084005|Movement phase|
+000006084006|End of your turn|
+000006084007|Shooting phase|
+000005439002|Command phase|
+000005439003|Shooting phase|
+000005439003|Fight phase|
+000005439003|Enemy Fight phase|
+000005439004|Enemy taking casualties|
+000005439005|Before battle|
+000002839002|Enemy Movement phase|
+000002837002|Shooting phase|
+000002837002|Fight phase|
+000002837002|Enemy Fight phase|
+000002838002|Enemy Charge phase|
+000002843002|Enemy Fight phase|
+000002843002|Fight phase|
+000002840002|Enemy Fight phase|
+000002840002|Fight phase|
+000002840002|Shooting phase|
+000002841002|Before battle|
+000005442002|Shooting phase|
+000005442003|Shooting phase|
+000005442004|Movement phase|
+000005442005|Enemy Fight phase|
+000005442005|Fight phase|
+000005442006|Enemy Movement phase|
+000005442007|Enemy Shooting phase|
+000005442008|Enemy Fight phase|
+000005442008|Fight phase|
+000005442009|Charge phase|
+000002842002|Taking casualties|
+000002836002|Fight phase|
+000002836002|Enemy Fight phase|
+000002844002|Shooting phase|
+000002848003|Movement phase|
+000002848004|Enemy Fight phase|
+000002848004|Fight phase|
+000002848005|Enemy Fight phase|
+000002848005|Fight phase|
+000002848007|Being targeted|
+000002848008|Enemy Fight phase|
+000002848008|Fight phase|
+000002848009|Fight phase|
+000002848009|Enemy Fight phase|
+000002848010|Shooting phase|
+000002848011|Shooting phase|
+000002848012|Enemy Fight phase|
+000002848012|Fight phase|
+000002848014|Enemy Fight phase|
+000002848014|Fight phase|
+000002848017|Taking casualties|
+000002848018|Movement phase|
+000002848018|Psychic phase|
+000002848018|Shooting phase|
+000002848018|Charge phase|
+000002848018|Morale phase|
+000002848018|Fight phase|
+000002848019|Being targeted|
+000002848020|Before battle|
+000002848021|Before battle|
+000002848022|Before battle|
+000002848023|Charge phase|
+000002848024|Movement phase|
+000002848025|Movement phase|
+000002848027|Taking casualties|
+000002848028|Shooting phase|
+000002848029|Fight phase|
+000002848029|Enemy Fight phase|
+000002848030|Being targeted|
+000002848031|Enemy Command phase|
+000002848032|Enemy Fight phase|
+000002848032|Fight phase|
+000002848006|Fight phase|
+000002848016|Taking casualties|
+000002848026|Movement phase|
+000002848002|Shooting phase|
+000002848013|Taking casualties|
+000002848015|Command phase|
+000002861003|Fight phase|
+000002861003|Enemy Fight phase|
+000002861004|Fight phase|
+000002861004|Enemy Fight phase|
+000002861005|Shooting phase|
+000002861006|Enemy Fight phase|
+000002861006|Fight phase|
+000002861007|Shooting phase|
+000002861008|Enemy Fight phase|
+000002861008|Fight phase|
+000002861009|Enemy Fight phase|
+000002861009|Fight phase|
+000002861010|Shooting phase|
+000002861010|Fight phase|
+000002861010|Enemy Fight phase|
+000002861011|Being targeted|
+000002861012|Enemy Fight phase|
+000002861012|Fight phase|
+000002861013|Taking casualties|
+000002861014|Command phase|
+000002861015|At the start of battle round|
+000002861016|Enemy Fight phase|
+000002861016|Fight phase|
+000002861017|Taking casualties|
+000002861018|Before battle|
+000002861019|Before battle|
+000002861020|Before battle|
+000002861021|Before battle|
+000002861023|Movement phase|
+000002861024|Enemy Command phase|
+000002861024|Command phase|
+000002861025|Charge phase|
+000002861026|Enemy Psychic phase|
+000002861027|Movement phase|
+000002861028|Enemy Fight phase|
+000002861028|Fight phase|
+000002861029|Being targeted|
+000002861030|Enemy Command phase|
+000002861031|Fight phase|
+000002861031|Enemy Fight phase|
+000002861032|Morale phase|
+000002861033|Shooting phase|
+000002861002|Fight phase|
+000002861002|Enemy Fight phase|
+000002861022|Fight phase|
+000002861022|Enemy Fight phase|
+000004221002|Fight phase|
+000004221002|Enemy Fight phase|
+000004226002|Movement phase|
+000004224002|Charge phase|
+000007230002|Charge phase|
+000007230002|Movement phase|
+000004223002|Movement phase|
+000004225002|Shooting phase|
+000003417002|Shooting phase|
+000003417003|Fight phase|
+000003417004|End of your turn|
+000003417005|Movement phase|
+000003417006|Movement phase|
+000003417007|Shooting phase|
+000003417008|During deployment|
+000002164002|Enemy Fight phase|
+000002164002|Fight phase|
+000002164003|Enemy Fight phase|
+000002164003|Fight phase|
+000002164004|Enemy Fight phase|
+000002164004|Fight phase|
+000002164004|Shooting phase|
+000002164005|Being targeted|
+000002164006|Shooting phase|
+000002164007|Enemy Fight phase|
+000002164007|Fight phase|
+000002164008|Being targeted|
+000002164009|Taking casualties|
+000002164009|Fight phase|
+000002164009|Enemy Fight phase|
+000002164010|Taking casualties|
+000002164011|Command phase|
+000002164012|Command phase|
+000002164013|Movement phase|
+000002164013|Psychic phase|
+000002164013|Shooting phase|
+000002164013|Charge phase|
+000002164013|Morale phase|
+000002164013|Fight phase|
+000002164014|Movement phase|
+000002164015|Before battle|
+000002164016|Before battle|
+000002164017|Movement phase|
+000002164018|Charge phase|
+000002164019|Enemy Shooting phase|
+000002164020|Shooting phase|
+000002164021|Movement phase|
+000002164022|Command phase|
+000002164023|Shooting phase|
+000002164024|Command phase|
+000002164025|Movement phase|
+000002164026|Command phase|
+000002164027|Enemy Movement phase|
+000002164028|Shooting phase|
+000002164029|Shooting phase|
+000002164030|Charge phase|
+000002164031|Fight phase|
+000002164031|Enemy Fight phase|
+000002164032|Movement phase|
+000002164033|Shooting phase|
+000002164034|Shooting phase|
+000002164035|Enemy Shooting phase|
+000003817002|Enemy Fight phase|
+000003817002|Fight phase|
+000003817003|Enemy Fight phase|
+000003817003|Fight phase|
+000003817004|Command phase|
+000003817005|Fight phase|
+000003817005|Enemy Fight phase|
+000003817006|Command phase|
+000003817007|Before battle|
+000003817008|Before battle|
+000003817009|Before battle|
+000003817010|Enemy Psychic phase|
+000003817011|Enemy Movement phase|
+000003817012|Command phase|
+000003817013|Shooting phase|
+000003817014|Movement phase|
+000003817015|Enemy Fight phase|
+000003817015|Fight phase|
+000003817016|Shooting phase|
+000003817017|Shooting phase|
+000003188002|Enemy Fight phase|
+000003188002|Fight phase|
+000003188003|Enemy Fight phase|
+000003188003|Fight phase|
+000004543002|Movement phase|
+000004543003|Enemy Fight phase|
+000004543003|Fight phase|
+000004543004|Being targeted|
+000004543006|Fight phase|
+000004543006|Enemy Fight phase|
+000004543007|Psychic phase|
+000004543008|Fight phase|
+000004543008|Enemy Fight phase|
+000004543009|Before battle|
+000004543010|Before battle|
+000004543011|Before battle|
+000004543012|Before battle|
+000004543013|Command phase|
+000004543014|Enemy Charge phase|
+000004543015|At the start of battle round|
+000004543016|Movement phase|
+000004543018|Command phase|
+000003477002|Before battle|
+000007313002|Shooting phase|
+000007313003|Enemy Fight phase|
+000007313003|Fight phase|
+000007313004|Enemy Shooting phase|
+000007313004|Being targeted|
+000007313005|Shooting phase|
+000007313006|Enemy Fight phase|
+000007313006|Fight phase|
+000007313006|Shooting phase|
+000007313007|Charge phase|
+000007313008|Enemy Charge phase|
+000007313009|At the start of battle round|
+000003693015|Shooting phase|
+000003693015|Fight phase|
+000003693015|Enemy Fight phase|
+000003693016|Shooting phase|
+000003693016|Fight phase|
+000003693016|Enemy Fight phase|
+000003184002|Shooting phase|
+000003184003|Enemy Shooting phase|
+000003453002|Shooting phase|
+000003453003|Enemy Fight phase|
+000003453003|Fight phase|
+000003453003|Shooting phase|
+000003453004|Fight phase|
+000003453004|Enemy Fight phase|
+000003453004|Shooting phase|
+000004566002|Command phase|
+000004566003|Movement phase|
+000004566004|Shooting phase|
+000004566005|Movement phase|
+000004566006|Enemy Fight phase|
+000004566006|Fight phase|
+000004566007|Enemy Shooting phase|
+000004566008|Enemy Fight phase|
+000004566008|Fight phase|
+000004566009|Before battle|
+000004566010|Before battle|
+000004566011|Before battle|
+000004566012|Command phase|
+000004566013|At the start of battle round|
+000004566014|Shooting phase|
+000004566015|Fight phase|
+000004566015|Enemy Fight phase|
+000004566016|Before battle|
+000004566017|Shooting phase|
+000004566018|Shooting phase|
+000003191002|Enemy Fight phase|
+000003191002|Fight phase|
+000003191003|Enemy taking casualties|
+000004846002|Enemy Fight phase|
+000004846002|Fight phase|
+000004846003|Shooting phase|
+000004846004|Shooting phase|
+000004846004|Fight phase|
+000004846004|Enemy Fight phase|
+000004846005|Command phase|
+000004846006|Enemy Charge phase|
+000004846007|Before battle|
+000004846008|Before battle|
+000004846009|Enemy Charge phase|
+000004846010|Command phase|
+000004846011|Enemy Shooting phase|
+000004846012|Shooting phase|
+000004846012|Fight phase|
+000004846012|Enemy Fight phase|
+000004846013|Command phase|
+000004846014|Movement phase|
+000004846015|During deployment|
+000004846016|Movement phase|
+000004846017|At the start of battle round|
+000004846018|Fight phase|
+000004846018|Enemy Fight phase|
+000004846019|Shooting phase|
+000005265002|Enemy Fight phase|
+000005265002|Fight phase|
+000005265003|Enemy Fight phase|
+000005265003|Fight phase|
+000005294002|Enemy Fight phase|
+000005294002|Fight phase|
+000005294002|Shooting phase|
+000005294003|Before battle|
+000005294004|Enemy Psychic phase|
+000004543005|Fight phase|
+000004543005|Enemy Fight phase|
+000004543017|Enemy Morale phase|
+000003693002|Enemy Fight phase|
+000003693002|Fight phase|
+000003693003|Movement phase|
+000003693004|Enemy Fight phase|
+000003693004|Fight phase|
+000003693004|Shooting phase|
+000003693007|Shooting phase|
+000003693008|Enemy Fight phase|
+000003693008|Fight phase|
+000003693008|Shooting phase|
+000003693012|Movement phase|
+000003693014|Morale phase|
+000003693009|Before battle|
+000003693010|Before battle|
+000003693013|Before battle|
+000003693005|Any phase|
+000003693006|Shooting phase|
+000003693011|Shooting phase|
+000003183002|Enemy taking casualties|
+000003183003|Shooting phase|
+000003183003|Fight phase|
+000003183003|Enemy Fight phase|
+000003672002|Enemy Fight phase|
+000003672002|Shooting phase|
+000003672002|Fight phase|
+000003672005|Enemy Fight phase|
+000003672005|Fight phase|
+000003672006|Shooting phase|
+000003672006|Fight phase|
+000003672006|Enemy Fight phase|
+000003672009|Being targeted|
+000003672010|Movement phase|
+000003672011|Enemy Fight phase|
+000003672011|Fight phase|
+000003672015|Enemy Charge phase|
+000003672013|Movement phase|
+000003672004|Before battle|
+000003672008|Before battle|
+000003672012|Enemy Shooting phase|
+000003672012|Shooting phase|
+000003672014|Before battle|
+000003672003|Movement phase|
+000003672007|Enemy Psychic phase|
+000006011002|Shooting phase|
+000006011002|Fight phase|
+000006011002|Enemy Fight phase|
+000006011004|Before battle|
+000006011003|Movement phase|
+000006011005|Shooting phase|
+000003659003|Charge phase|
+000003659006|Fight phase|
+000003659006|Enemy Fight phase|
+000003659009|Fight phase|
+000003659009|Enemy Fight phase|
+000003659010|Movement phase|
+000003659014|Before battle|
+000003659015|Before battle|
+000003659016|Before battle|
+000003659002|At the start of battle round|
+000003659004|At the start of battle round|
+000003659005|Movement phase|
+000003659007|End of your turn|
+000003659008|During deployment|
+000003659011|Enemy taking casualties|
+000003659012|End of your turn|
+000003659013|Charge phase|
+000003699002|Shooting phase|
+000003699003|Fight phase|
+000003699003|Shooting phase|
+000003699004|Fight phase|
+000003699004|Enemy Fight phase|
+000003699006|Movement phase|
+000003699010|Enemy Fight phase|
+000003699010|Fight phase|
+000003699011|Any phase|
+000003699009|Any phase|
+000003699014|Before battle|
+000003699015|Before battle|
+000003699016|Before battle|
+000003699005|Shooting phase|
+000003699007|Shooting phase|
+000003699008|Enemy Shooting phase|
+000003699012|Enemy Charge phase|
+000003699013|Movement phase|
+000005253002|Shooting phase|
+000005253003|Enemy Fight phase|
+000005253003|Fight phase|
+000003607016|Before battle|
+000003618017|Before battle|
+000003672016|Before battle|
+000003176002|Enemy Fight phase|
+000003176002|Fight phase|
+000004630002|Command phase|
+000004630003|During deployment|
+000004630004|Fight phase|
+000004630004|Enemy Fight phase|
+000004630005|Fight phase|
+000004630005|Enemy Fight phase|
+000004630006|Movement phase|
+000004630007|Charge phase|
+000004630008|Fight phase|
+000004630008|Enemy Fight phase|
+000004630009|Psychic phase|
+000004630010|Any phase|
+000004630011|Before battle|
+000004630012|Before battle|
+000004630013|Before battle|
+000004630014|Command phase|
+000004630015|Enemy Charge phase|
+000004630016|Shooting phase|
+000004630017|Enemy Psychic phase|
+000003195002|Enemy Fight phase|
+000003195002|Fight phase|
+000003195003|Charge phase|
+000003177002|Before battle|
+000003179002|Before battle|
+000003182002|Before battle|
+000003185002|Before battle|
+000003187002|Before battle|
+000003190002|Before battle|
+000003194002|Before battle|
+000003607002|Shooting phase|
+000003607003|Enemy Fight phase|
+000003607003|Fight phase|
+000003607007|Shooting phase|
+000003607007|Enemy Fight phase|
+000003607007|Fight phase|
+000003607008|Taking casualties|
+000003607009|Morale phase|
+000003607010|Movement phase|
+000003607004|Shooting phase|
+000003607004|Enemy Shooting phase|
+000003607013|Before battle|
+000003607015|Before battle|
+000003607005|At the start of battle round|
+000003607006|At the start of battle round|
+000003607011|Movement phase|
+000003607012|Enemy Charge phase|
+000003607014|Movement phase|
+000003180002|Fight phase|
+000003180002|Enemy Fight phase|
+000003180003|Enemy Charge phase|
+000006923002|Enemy Fight phase|
+000006923002|Fight phase|
+000006923003|Enemy Fight phase|
+000006923003|Fight phase|
+000006923003|Shooting phase|
+000006923009|Shooting phase|
+000006923004|Fight phase|
+000006923004|Enemy Fight phase|
+000006923005|Movement phase|
+000006923006|Command phase|
+000006923007|Shooting phase|
+000006923008|Shooting phase|
+000003618004|Movement phase|
+000003618011|Charge phase|
+000003618012|Fight phase|
+000003618015|Movement phase|
+000003618010|Enemy taking casualties|
+000003618010|Fight phase|
+000003618007|Before battle|
+000003618014|Before battle|
+000003618002|Movement phase|
+000003618003|Enemy Movement phase|
+000003618005|Movement phase|
+000003618006|Movement phase|
+000003618008|Movement phase|
+000003618009|Charge phase|
+000003618013|Movement phase|
+000003618016|During deployment|
+000005986002|Movement phase|
+000005986003|Enemy Fight phase|
+000005986003|Fight phase|
+000005986003|Shooting phase|
+000005986004|Charge phase|
+000002712002|Shooting phase|
+000002710002|Movement phase|
+000002713002|Movement phase|
+000002711002|Shooting phase|
+000002714002|Shooting phase|
+000002714003|Shooting phase|
+000002714004|Shooting phase|
+000002714005|Movement phase|
+000002714006|Shooting phase|
+000002714007|Shooting phase|
+000002714008|Movement phase|
+000002714009|Taking casualties|
+000002714010|Command phase|
+000002714011|Movement phase|
+000002714012|Morale phase|
+000002714012|Fight phase|
+000002714012|Charge phase|
+000002714012|Shooting phase|
+000002714012|Psychic phase|
+000002714012|Movement phase|
+000002714013|Taking casualties|
+000002714014|Command phase|
+000002714015|Before battle|
+000002714016|Before battle|
+000002714017|Command phase|
+000002714018|Movement phase|
+000002714019|Enemy Fight phase|
+000002714019|Fight phase|
+000002714020|Shooting phase|
+000002714021|Enemy Charge phase|
+000002714022|Shooting phase|
+000002714023|Shooting phase|
+000002714024|Enemy Shooting phase|
+000002714025|Command phase|
+000002714026|Shooting phase|
+000002714027|Shooting phase|
+000002714028|Shooting phase|
+000002714029|Enemy Charge phase|
+000002714030|Shooting phase|
+000002714031|Shooting phase|
+000002714032|Enemy Charge phase|
+000002708002|Shooting phase|
+000002709002|Shooting phase|
+000002656002|Enemy Fight phase|
+000002656002|Fight phase|
+000002656003|Shooting phase|
+000002656004|Enemy Shooting phase|
+000002656005|Shooting phase|
+000002656005|Fight phase|
+000002656005|Enemy Fight phase|
+000002656006|Shooting phase|
+000002656007|Fight phase|
+000002656007|Enemy Fight phase|
+000002656008|Fight phase|
+000002656008|Enemy Fight phase|
+000002656009|Psychic phase|
+000002656010|Command phase|
+000002656011|Psychic phase|
+000002656012|Psychic phase|
+000002656013|Taking casualties|
+000002656014|Psychic phase|
+000002656015|Enemy Psychic phase|
+000002656016|Command phase|
+000002656017|Psychic phase|
+000002656018|Fight phase|
+000002656018|Enemy Fight phase|
+000002656019|Before battle|
+000002656020|Before battle|
+000002656021|Before battle|
+000002656022|Before battle|
+000002656023|During deployment|
+000002656024|During deployment|
+000002656025|Enemy Shooting phase|
+000002656026|Command phase|
+000002656027|Movement phase|
+000002656028|Enemy Movement phase|
+000002656029|Enemy Charge phase|
+000002656030|Psychic phase|
+000002656031|Movement phase|
+000002656032|Psychic phase|
+000002656033|Shooting phase|
+000002656034|Fight phase|
+000002656034|Enemy Fight phase|
+000002656035|Enemy Shooting phase|
+000002656036|Psychic phase|
+000007335002|Fight phase|
+000007335002|Enemy Fight phase|
+000007335002|Shooting phase|
+000007335003|Fight phase|
+000007335003|Enemy Fight phase|
+000007335004|Enemy taking casualties|
+000007335004|Psychic phase|
+000007335005|Before battle|
+000007335006|Command phase|
+000007335007|Being targeted|
+000007335007|Enemy Charge phase|
+000007335008|Movement phase|
+000006654002|Enemy Fight phase|
+000006654002|Fight phase|
+000006168002|Enemy Fight phase|
+000006168002|Fight phase|
+000006168003|Morale phase|
+000006168004|Being targeted|
+000006168005|Enemy Fight phase|
+000006168005|Fight phase|
+000006168006|Charge phase|
+000006168007|Before battle|
+000006168008|Shooting phase|
+000006658002|Fight phase|
+000006658002|Enemy Fight phase|
+000006661002|Fight phase|
+000006661002|Enemy Fight phase|
+000006659002|During deployment|
+000006656002|Movement phase|
+000006660002|Enemy Psychic phase|
+000006657002|Enemy Fight phase|
+000006657002|Fight phase|
+000006034002|Shooting phase|
+000006034002|Enemy Fight phase|
+000006034002|Fight phase|
+000006034003|Movement phase|
+000006034005|Taking casualties|
+000006034006|Psychic phase|
+000006034007|Taking casualties|
+000006034004|Before battle|
+000006034008|Command phase|
+000006034009|Command phase|
+000006034010|Enemy Psychic phase|
+000006034011|Shooting phase|
+000002462002|Shooting phase|
+000002462003|Fight phase|
+000002462003|Enemy Fight phase|
+000002462004|Fight phase|
+000002462004|Enemy Fight phase|
+000002462005|Being targeted|
+000002462006|Shooting phase|
+000002462007|Being targeted|
+000006689002|Enemy Fight phase|
+000006689002|Fight phase|
+000006691002|Shooting phase|
+000002462008|Psychic phase|
+000002462009|Fight phase|
+000002462009|Enemy Fight phase|
+000002462010|Charge phase|
+000002462011|Psychic phase|
+000002462012|At the start of battle round|
+000002462013|Charge phase|
+000002462014|Movement phase|
+000002462015|Before battle|
+000002462016|Before battle|
+000002462017|Movement phase|
+000002462018|Command phase|
+000002462019|End of your turn|
+000002462020|Fight phase|
+000002462020|Enemy Fight phase|
+000002462021|Shooting phase|
+000002462022|Command phase|
+000002462023|Taking casualties|
+000002462024|Movement phase|
+000002462025|Movement phase|
+000002462026|Movement phase|
+000002462027|Shooting phase|
+000006690002|During deployment|
+000002462028|Enemy Fight phase|
+000002462028|Fight phase|
+000002462029|Morale phase|
+000002462030|Enemy Fight phase|
+000002462030|Fight phase|
+000002462031|Taking casualties|
+000002462032|Fight phase|
+000002462032|Enemy Fight phase|
+000002462033|Shooting phase|
