@@ -1,6 +1,8 @@
 ## Modules:
 - Game creation/sharing
 - Subfaction for strats
+- fix waha link builder with regex groups
+- discord trying to render image attachments
 - Discord Bot
 - Logger for debug
 - Calculator/Simulator

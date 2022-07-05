@@ -83,6 +83,10 @@ a:hover {
   color: #cccccc;
 }
 
+li {
+  font-size: 0.8em;
+}
+
 .textTiny {
   font-size: 0.6em;
 }
@@ -198,6 +202,11 @@ a:hover {
 #qrshare {
   display: none;
   margin: auto;
+}
+
+.outputIcon {
+  width: 64px;
+  display: inline;
 }
 
 /*

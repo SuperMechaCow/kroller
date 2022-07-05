@@ -6,6 +6,14 @@ https://www.battlescribe.net/
 
 */
 
+/*
+██ ███    ███ ██████   ██████  ██████  ████████
+██ ████  ████ ██   ██ ██    ██ ██   ██    ██
+██ ██ ████ ██ ██████  ██    ██ ██████     ██
+██ ██  ██  ██ ██      ██    ██ ██   ██    ██
+██ ██      ██ ██       ██████  ██   ██    ██
+*/
+
 // const parser = require('xml2json'); //Convert ros files (as xml) to json
 const xml2js = require('xml2js');
 const fs = require('fs'); //for reading file systems
@@ -17,26 +25,72 @@ const unzip = require('adm-zip');
 const url = require('url');
 const qrcode = require('qrcode');
 const crypto = require('crypto');
-const Discord = require('discord.js');
 const Fuse = require('fuse.js');
-// Require the necessary discord.js classes
-const {
-	Client,
-	Intents
-} = require('discord.js');
-// const { token } = require('./config.json');
 const request = require('request');
 
-// Create a new client instance
-const disclient = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+/*
+██       ██████   ██████   ██████  ███████ ██████
+██      ██    ██ ██       ██       ██      ██   ██
+██      ██    ██ ██   ███ ██   ███ █████   ██████
+██      ██    ██ ██    ██ ██    ██ ██      ██   ██
+███████  ██████   ██████   ██████  ███████ ██   ██
+*/
+
+const winston = require('winston');
+
+const logger = winston.createLogger({
+	level: 'debug',
+	// defaultMeta: { service: 'user-service' },
+	transports: [
+		new winston.transports.File({
+			filename: 'error.log',
+			level: 'error',
+			format: winston.format.json()
+		}),
+		new winston.transports.File({
+			filename: 'combined.log',
+			format: winston.format.json()
+		}),
+		new winston.transports.Console({
+			format: winston.format.combine(
+				winston.format.colorize({
+					all: true
+				}),
+				winston.format.simple()
+			)
+		})
+	]
 });
 
-var app = express()
+/*
+ █████  ██████  ██████      ███████ ███████ ████████ ██    ██ ██████
+██   ██ ██   ██ ██   ██     ██      ██         ██    ██    ██ ██   ██
+███████ ██████  ██████      ███████ █████      ██    ██    ██ ██████
+██   ██ ██      ██               ██ ██         ██    ██    ██ ██
+██   ██ ██      ██          ███████ ███████    ██     ██████  ██
+*/
+
+var gameList = {}
+
+var wahaData = {}
+
+fs.readFile(__dirname + '/data/wahaData.json', 'utf8', (err, data) => {
+	wahaData = JSON.parse(data);
+});
 
 var URL = 'http://kroller.supermechacow.com/'
 var HOST = '192.168.1.103';
 var PORT = 4040;
+
+/*
+███████ ██   ██ ██████  ██████  ███████ ███████ ███████     ███████ ███████ ████████ ██    ██ ██████
+██       ██ ██  ██   ██ ██   ██ ██      ██      ██          ██      ██         ██    ██    ██ ██   ██
+█████     ███   ██████  ██████  █████   ███████ ███████     ███████ █████      ██    ██    ██ ██████
+██       ██ ██  ██      ██   ██ ██           ██      ██          ██ ██         ██    ██    ██ ██
+███████ ██   ██ ██      ██   ██ ███████ ███████ ███████     ███████ ███████    ██     ██████  ██
+*/
+
+var app = express()
 
 app.set('view engine', 'ejs');
 
@@ -47,7 +101,7 @@ const upload = multer({
 })
 
 app.get('/', (req, res) => {
-let games = 0;
+	let games = 0;
 	if (!req.query.gameid || !gameList[req.query.gameid]) {
 		req.query.gameid = crypto.randomBytes(4).toString("hex");
 		createGame(req.query.gameid, req);
@@ -61,13 +115,13 @@ let games = 0;
 	} else {
 		res.render('index', gameList[req.query.gameid]);
 	}
-	fs.readFile(__dirname + '/data/logger.json', (err, data) => {
+	fs.readFile(__dirname + '/logger.log', (err, data) => {
 		if (err) {
-			console.log(err);
+			logger.error(err);
 		} else {
 			let tempLogger = JSON.parse(data);
-			tempLogger.games+=games;
-			fs.writeFile(__dirname + '/data/logger.json', JSON.stringify(tempLogger), (err) => {});
+			tempLogger.games += games;
+			fs.writeFile(__dirname + '/logger.log', JSON.stringify(tempLogger), (err) => {});
 		}
 	});
 });
@@ -95,15 +149,15 @@ app.post('/feedback', upload.fields([]), function(req, res) {
 		gameid: req.body.gameid,
 		feedback: req.body.feedback
 	}
-	console.log(newFeedback);
+	logger.info(newFeedback);
 
-	fs.readFile(__dirname + '/data/feedback.json', (err, data) => {
+	fs.readFile(__dirname + '/feedback.log', (err, data) => {
 		if (err) {
-			console.log(err);
+			logger.error(err);
 		} else {
 			let tempFeedback = JSON.parse(data);
 			tempFeedback.feedback.push(newFeedback)
-			fs.writeFile(__dirname + '/data/feedback.json', JSON.stringify(tempFeedback), (err) => {});
+			fs.writeFile(__dirname + '/feedback.log', JSON.stringify(tempFeedback), (err) => {});
 		}
 	})
 
@@ -125,6 +179,182 @@ app.get('/api/search', function(req, res) {
 		}));
 	}
 });
+
+
+app.post('/upload', upload.fields([{
+	name: 'atkr_file',
+	maxCount: 1
+}, {
+	name: 'dfdr_file',
+	maxCount: 1
+}]), (req, res) => {
+	let games = 0;
+	let uploaded = 0;
+
+	let forceBSData = forceFromBS(req.files);
+
+	if (!req.body.gameid || !gameList[req.body.gameid]) {
+		req.body.gameid = crypto.randomBytes(4).toString("hex");
+		createGame(req.body.gameid, req);
+		games++;
+		gameList[req.body.gameid].forceData = forceBSData;
+	}
+
+	// If there was an attacker list
+	if (forceBSData.forces[0]) {
+		uploaded++;
+		if (forceBSData.forces[0][1]) gameList[req.body.gameid].outputBox += forceBSData.forces[0][1]
+		else if (forceBSData.forces[0].length)
+			gameList[req.body.gameid].forceData.forces[0] = forceBSData.forces[0];
+	}
+	if (forceBSData.forces[1]) {
+		uploaded++;
+		if (forceBSData.forces[1][1]) gameList[req.body.gameid].outputBox += forceBSData.forces[1][1]
+		else if (forceBSData.forces[1].length)
+			gameList[req.body.gameid].forceData.forces[1] = forceBSData.forces[1];
+	}
+
+	fs.readFile(__dirname + '/logger.log', (err, data) => {
+		if (err) {
+			logger.error(err);
+		} else {
+			let tempLogger = JSON.parse(data);
+			tempLogger.games += games;
+			tempLogger.uploaded += uploaded;
+			fs.writeFile(__dirname + '/logger.log', JSON.stringify(tempLogger), (err) => {});
+		}
+	});
+
+	res.redirect(url.format({
+		pathname: "/",
+		query: {
+			gameid: req.body.gameid
+		}
+	}));
+});
+
+
+app.listen(PORT, () => {
+	logger.info(`Listening on ${HOST}:${PORT}`);
+})
+
+/*
+██████  ██ ███████  ██████  ██████  ██████  ██████      ███████ ███████ ████████ ██    ██ ██████
+██   ██ ██ ██      ██      ██    ██ ██   ██ ██   ██     ██      ██         ██    ██    ██ ██   ██
+██   ██ ██ ███████ ██      ██    ██ ██████  ██   ██     ███████ █████      ██    ██    ██ ██████
+██   ██ ██      ██ ██      ██    ██ ██   ██ ██   ██          ██ ██         ██    ██    ██ ██
+██████  ██ ███████  ██████  ██████  ██   ██ ██████      ███████ ███████    ██     ██████  ██
+*/
+
+const Discord = require('discord.js');
+// Require the necessary discord.js classes
+// const { token } = require('./config.json');
+const {
+	Client,
+	Intents
+} = require('discord.js');
+
+// Create a new client instance
+const disclient = new Client({
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+});
+
+disclient.on('ready', () => {
+	logger.info(`Logged in as ${disclient.user.tag}!`);
+});
+
+disclient.on('messageCreate', message => {
+	if (message.content.startsWith('/kroller')) {
+		message.reply('uwu?');
+	}
+
+	function getRoster(newFileName, url) {
+		return new Promise((resolve, reject) => {
+			https.get(url, (res) => {
+				const writeStream = fs.createWriteStream(__dirname + `/uploads/${newFileName}`);
+				res.pipe(writeStream);
+				writeStream.on("finish", () => {
+					writeStream.close();
+
+					resolve()
+				});
+				writeStream.on("error", (err) => {
+					logger.error(err);
+				})
+			});
+		})
+	}
+
+	async function resolveRoster() {
+		let files = {}
+		if (message.attachments.size) {
+			//There's got to be a better way to match uploads to roster files
+			for (var force of message.attachments.entries()) {
+				if (force[1].name.split('.').reverse()[0] == 'rosz') {
+					let newFileName = crypto.randomBytes(8).toString("hex")
+					await getRoster(newFileName, force[1].url)
+					if (!files.atkr_file) {
+						files.atkr_file = [{
+							filename: newFileName
+						}]
+					} else if (!files.dfdr_file) {
+						files.dfdr_file = [{
+							filename: newFileName
+						}]
+					} else {
+						break;
+					}
+				}
+			}
+
+			let forceData = await forceFromBS(files);
+			gameid = crypto.randomBytes(4).toString("hex");
+
+			if (forceData[0].length) {
+				let gameData = await createGame(gameid);
+				gameList[gameid].forceData = forceData;
+				logger.debug(forceData);
+				gameList[gameid].forceData[0] = forceData[0];
+
+				let descString = 'Empty Game'
+				if (forceData[0][0]) {
+					descString = forceData[0][0].name;
+				}
+				if (forceData.dfdr_file[0]) {
+					descString += ' vs ' + forceData.dfdr_file[0].name;
+				}
+				const attachment = new Discord.MessageAttachment(__dirname + '/public/shares/' + gameid + '.png');
+				const embed = new Discord.MessageEmbed()
+					.setTitle('40kroller Game')
+					.setColor('RED')
+					.setDescription(descString)
+					.setURL(gameData.url)
+					// .setThumbnail('attachment://' + gameid + '.png')
+					.setImage('attachment://' + gameid + '.png')
+					.setTimestamp()
+				message.channel.send({
+					embeds: [embed],
+					files: [attachment]
+				});
+				// message.reply(gameData.url);
+			}
+		}
+	}
+
+	resolveRoster();
+
+});
+
+const discordtoken = require('./discordtoken');
+disclient.login(discordtoken.TOKEN);
+
+/*
+██    ██ ████████ ██ ██          ███████ ██    ██ ███    ██  ██████ ████████ ██  ██████  ███    ██ ███████
+██    ██    ██    ██ ██          ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██
+██    ██    ██    ██ ██          █████   ██    ██ ██ ██  ██ ██         ██    ██ ██    ██ ██ ██  ██ ███████
+██    ██    ██    ██ ██          ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██      ██
+ ██████     ██    ██ ███████     ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ███████
+*/
 
 function fuzzysearch(searchString, dataset, numResults) {
 	let newData = []
@@ -160,61 +390,11 @@ function fuzzysearch(searchString, dataset, numResults) {
 	return result;
 }
 
-app.post('/upload', upload.fields([{
-	name: 'atkr_file',
-	maxCount: 1
-}, {
-	name: 'dfdr_file',
-	maxCount: 1
-}]), (req, res) => {
-	let games = 0;
-	let uploaded = 0;
-
-	let forceBSData = forceFromBS(req.files);
-
-	if (!req.body.gameid || !gameList[req.body.gameid]) {
-		req.body.gameid = crypto.randomBytes(4).toString("hex");
-		createGame(req.body.gameid, req);
-		games++;
-		gameList[req.body.gameid].forceData = forceBSData;
-	}
-
-	// If there was an attacker list
-	if (forceBSData.forces[0]) {
-		uploaded++;
-		if (forceBSData.forces[0][1]) gameList[req.body.gameid].outputBox += forceBSData.forces[0][1]
-		else if (forceBSData.forces[0].length)
-		gameList[req.body.gameid].forceData.forces[0] = forceBSData.forces[0];
-	}
-	if (forceBSData.forces[1]) {
-		uploaded++;
-		if (forceBSData.forces[1][1]) gameList[req.body.gameid].outputBox += forceBSData.forces[1][1]
-		else if (forceBSData.forces[1].length)
-		gameList[req.body.gameid].forceData.forces[1] = forceBSData.forces[1];
-	}
-
-	fs.readFile(__dirname + '/data/logger.json', (err, data) => {
-		if (err) {
-			console.log(err);
-		} else {
-			let tempLogger = JSON.parse(data);
-			tempLogger.games += games;
-			tempLogger.uploaded += uploaded;
-			fs.writeFile(__dirname + '/data/logger.json', JSON.stringify(tempLogger), (err) => {});
-		}
-	});
-
-	res.redirect(url.format({
-		pathname: "/",
-		query: {
-			gameid: req.body.gameid
-		}
-	}));
-});
-
 function forceFromBS(files) {
 
-	let forceData = {forces:[]};
+	let forceData = {
+		forces: []
+	};
 	try {
 		for (forcefile in Object.entries(files)) {
 			// First index is name (0), second is filelist (1)
@@ -256,123 +436,23 @@ function forceFromBS(files) {
 		}
 	} catch (error) {
 		logError(error);
-		console.log(error);
+		logger.error(error);
 		forceData.forces[forcefile][1].message += 'Error. Could not unzip/read/parse roster file. Please consult your Tech Priest. '
 	}
 
 	return forceData;
 }
 
-app.listen(PORT, () => {
-	console.log(`Listening on ${HOST}:${PORT}`);
-})
-
-disclient.on('ready', () => {
-	console.log(`Logged in as ${disclient.user.tag}!`);
-});
-
-disclient.on('messageCreate', message => {
-	if (message.content.startsWith('/kroller')) {
-		message.reply('uwu?');
-	}
-
-	function getRoster(newFileName, url) {
-		return new Promise((resolve, reject) => {
-			https.get(url, (res) => {
-				const writeStream = fs.createWriteStream(__dirname + `/uploads/${newFileName}`);
-				res.pipe(writeStream);
-				writeStream.on("finish", () => {
-					writeStream.close();
-
-					resolve()
-				});
-				writeStream.on("error", (err) => {
-					console.log(err);
-				})
-			});
-		})
-	}
-
-	async function resolveRoster() {
-		let files = {}
-		if (message.attachments.size) {
-			//There's got to be a better way to match uploads to roster files
-			for (var force of message.attachments.entries()) {
-
-				if (force[1].name.split('.').reverse()[0] == 'rosz') {
-					let newFileName = crypto.randomBytes(8).toString("hex")
-					await getRoster(newFileName, force[1].url)
-					if (!files.atkr_file) {
-						files.atkr_file = [{
-							filename: newFileName
-						}]
-					} else if (!files.dfdr_file) {
-						files.dfdr_file = [{
-							filename: newFileName
-						}]
-					} else {
-						break;
-					}
-				}
-			}
-
-			let forceData = await forceFromBS(files);
-			gameid = crypto.randomBytes(4).toString("hex");
-
-			if (forceData[0].length) {
-				let gameData = await createGame(gameid);
-				gameList[gameid].forceData = forceData;
-				console.log(forceData);
-				gameList[gameid].forceData[0] = forceData[0];
-
-				let descString = 'Empty Game'
-				if (forceData[0][0]) {
-					descString = forceData[0][0].name;
-				}
-				if (forceData.dfdr_file[0]) {
-					descString += ' vs ' + forceData.dfdr_file[0].name;
-				}
-				const attachment = new Discord.MessageAttachment(__dirname + '/public/shares/' + gameid + '.png');
-				const embed = new Discord.MessageEmbed()
-					.setTitle('40kroller Game')
-					.setColor('RED')
-					.setDescription(descString)
-					.setURL(gameData.url)
-					// .setThumbnail('attachment://' + gameid + '.png')
-					.setImage('attachment://' + gameid + '.png')
-					.setTimestamp()
-				message.channel.send({
-					embeds: [embed],
-					files: [attachment]
-				});
-				// message.reply(gameData.url);
-			}
-		}
-	}
-
-	resolveRoster();
-
-});
-
-const discordtoken = require('./discordtoken');
-disclient.login(discordtoken.TOKEN);
-
-var gameList = {}
-
-var wahaData = {}
-
-fs.readFile(__dirname + '/data/wahaData.json', 'utf8', (err, data) => {
-	wahaData = JSON.parse(data);
-});
-
 function logError(error) {
-	fs.readFile(__dirname + '/data/logger.json', (err, data) => {
+	fs.readFile(__dirname + '/logger.log', (err, data) => {
 		if (err) {
-			console.log(err);
+			logger.error(err);
 		} else {
 			let tempLogger = JSON.parse(data);
-			tempLogger.crashes.push({text: error})
-			fs.writeFile(__dirname + '/data/logger.json', JSON.stringify(tempLogger), (err) => {});
+			tempLogger.crashes.push({
+				text: error
+			})
+			fs.writeFile(__dirname + '/logger.log', JSON.stringify(tempLogger), (err) => {});
 		}
 	});
 }
@@ -402,7 +482,7 @@ function createGame(sessionID, req) {
 				throw err
 				reject()
 			} else {
-				console.log('Started a new game: ' + sessionID);
+				logger.info('Started a new game: ' + sessionID);
 				resolve({
 					url: resString
 				})
@@ -458,6 +538,15 @@ function sortBySlot(units) {
 	}
 	return newOrder
 }
+
+
+/*
+██████   █████  ██████  ███████ ███████     ██████  ███████
+██   ██ ██   ██ ██   ██ ██      ██          ██   ██ ██
+██████  ███████ ██████  ███████ █████       ██████  ███████
+██      ██   ██ ██   ██      ██ ██          ██   ██      ██
+██      ██   ██ ██   ██ ███████ ███████     ██████  ███████
+*/
 
 function parseBS(data) {
 	let phaseList = ["Command", "Movement", "Psychic", "Shooting", "Charge", "Fight", "Morale"]
@@ -922,7 +1011,7 @@ function parseBS(data) {
 	} catch (error) {
 		logError(error);
 		// return [{}, error, JSON.stringify(data)]
-		console.log(error);
+		logger.error(error);
 		return [{}, error, data]
 	}
 }

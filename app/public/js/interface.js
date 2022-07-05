@@ -7,7 +7,7 @@ var settings = {
 	autoOpen: false
 }
 var phaseList = {
-	// Pregame: ['during deployment'],
+	Pregame: ['during deployment', 'at the start of the first battle round'],
 	Command: [`placeholder phrase`],
 	Movement: [`advance roll`, `advance`],
 	Psychic: [`psychic test`, `manifest`, `deny the witch`],
@@ -370,10 +370,10 @@ function listBuild() {
 			thisList.append(appendList);
 			// Add costs
 			appendList = document.createElement('div');
-			appendList.classList.add('statRow', 'bg2');
+			appendList.classList.add('statRow', 'noBorder');
 			for (var cost of Object.keys(force[0].costs)) {
 				appendList.innerHTML += `
-                <div class="statTag" title="P">
+                <div class="statTag" title="">
                   <label for="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}" class="bg4">${cost}</label>
                   <span class="bg7" id="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}">${force[0].costs[cost]}</span>
                 </div>
@@ -441,7 +441,6 @@ function listBuild() {
 							wahaIcon.setAttribute("data-link", unit.waha.link);
 							wahaIcon.src = 'https://wahapedia.ru/favicon.png';
 							wahaIcon.addEventListener("click", function(e) {
-								console.log(e);
 								//stackoverflow fix for onlick in an onclick
 								if (!e) var e = window.event;
 								e.cancelBubble = true;

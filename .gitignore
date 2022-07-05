@@ -1,10 +1,5 @@
 bs_*.*
-tomeapp/node_modules/*
-tomeapp/discordtoken.js
-tomeapp/public/img/svg*
-tomeapp/public/data/wahadata/*.csv
-tomeapp/public/data/wahadata/*.xlsx
-tomeapp/public/shares/*
+tomeapp/*
 exampledata/*
 tomeapp/uploads*
 app/node_modules/*
@@ -16,3 +11,4 @@ app/data/wahadata/*.xlsx
 app/shares/*
 exampledata/*
 app/uploads*
+*.log
