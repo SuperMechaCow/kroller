@@ -1,5 +1,6 @@
 ## Modules:
 - Game creation/sharing
+- Subfaction for strats
 - Discord Bot
 - Logger for debug
 - Calculator/Simulator

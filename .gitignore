@@ -9,6 +9,7 @@ exampledata/*
 tomeapp/uploads*
 app/node_modules/*
 app/discordtoken.js
+app/public/shares*
 app/public/img/factions*
 app/data/wahadata/*.csv
 app/data/wahadata/*.xlsx

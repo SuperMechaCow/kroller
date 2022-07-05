@@ -47,10 +47,11 @@ const upload = multer({
 })
 
 app.get('/', (req, res) => {
-
+let games = 0;
 	if (!req.query.gameid || !gameList[req.query.gameid]) {
 		req.query.gameid = crypto.randomBytes(4).toString("hex");
 		createGame(req.query.gameid, req);
+		games++;
 		res.redirect(url.format({
 			pathname: "/",
 			query: {
@@ -58,8 +59,17 @@ app.get('/', (req, res) => {
 			}
 		}));
 	} else {
-		res.render('index', gameList[req.query.gameid])
+		res.render('index', gameList[req.query.gameid]);
 	}
+	fs.readFile(__dirname + '/data/logger.json', (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+			let tempLogger = JSON.parse(data);
+			tempLogger.games+=games;
+			fs.writeFile(__dirname + '/data/logger.json', JSON.stringify(tempLogger), (err) => {});
+		}
+	});
 });
 
 // app.get('/abilmap', (req, res) => {
@@ -157,25 +167,42 @@ app.post('/upload', upload.fields([{
 	name: 'dfdr_file',
 	maxCount: 1
 }]), (req, res) => {
+	let games = 0;
+	let uploaded = 0;
+
 	let forceBSData = forceFromBS(req.files);
 
 	if (!req.body.gameid || !gameList[req.body.gameid]) {
 		req.body.gameid = crypto.randomBytes(4).toString("hex");
 		createGame(req.body.gameid, req);
+		games++;
 		gameList[req.body.gameid].forceData = forceBSData;
 	}
 
-
+	// If there was an attacker list
 	if (forceBSData.forces[0]) {
+		uploaded++;
 		if (forceBSData.forces[0][1]) gameList[req.body.gameid].outputBox += forceBSData.forces[0][1]
 		else if (forceBSData.forces[0].length)
 		gameList[req.body.gameid].forceData.forces[0] = forceBSData.forces[0];
 	}
 	if (forceBSData.forces[1]) {
+		uploaded++;
 		if (forceBSData.forces[1][1]) gameList[req.body.gameid].outputBox += forceBSData.forces[1][1]
 		else if (forceBSData.forces[1].length)
 		gameList[req.body.gameid].forceData.forces[1] = forceBSData.forces[1];
 	}
+
+	fs.readFile(__dirname + '/data/logger.json', (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+			let tempLogger = JSON.parse(data);
+			tempLogger.games += games;
+			tempLogger.uploaded += uploaded;
+			fs.writeFile(__dirname + '/data/logger.json', JSON.stringify(tempLogger), (err) => {});
+		}
+	});
 
 	res.redirect(url.format({
 		pathname: "/",
@@ -197,7 +224,7 @@ function forceFromBS(files) {
 				forceData.forces.push([]);
 			}
 			// Grab the actual file from the force
-			let forceName = Object.entries(files)[forcefile][0]
+			let forceName = Object.entries(files)[forcefile][0] //Is this line of code valid?
 			let filedata = Object.entries(files)[forcefile][1][0];
 			// reading archives
 			var zip = new unzip(`uploads/${filedata.filename}`);
@@ -228,8 +255,9 @@ function forceFromBS(files) {
 			});
 		}
 	} catch (error) {
+		logError(error);
 		console.log(error);
-		forceData[forceName][1].message += 'Error. Could not unzip/read/parse roster file. Please consult your Tech Priest. '
+		forceData.forces[forcefile][1].message += 'Error. Could not unzip/read/parse roster file. Please consult your Tech Priest. '
 	}
 
 	return forceData;
@@ -336,6 +364,18 @@ var wahaData = {}
 fs.readFile(__dirname + '/data/wahaData.json', 'utf8', (err, data) => {
 	wahaData = JSON.parse(data);
 });
+
+function logError(error) {
+	fs.readFile(__dirname + '/data/logger.json', (err, data) => {
+		if (err) {
+			console.log(err);
+		} else {
+			let tempLogger = JSON.parse(data);
+			tempLogger.crashes.push({text: error})
+			fs.writeFile(__dirname + '/data/logger.json', JSON.stringify(tempLogger), (err) => {});
+		}
+	});
+}
 
 function createGame(sessionID, req) {
 	return new Promise((resolve, reject) => {
@@ -880,6 +920,7 @@ function parseBS(data) {
 		return [force, '', data]
 
 	} catch (error) {
+		logError(error);
 		// return [{}, error, JSON.stringify(data)]
 		console.log(error);
 		return [{}, error, data]

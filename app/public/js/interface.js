@@ -3,7 +3,11 @@ var ioList = {};
 var currentPhase = '';
 var tickles = 0;
 var gameType = 'matched'
+var settings = {
+	autoOpen: false
+}
 var phaseList = {
+	// Pregame: ['during deployment'],
 	Command: [`placeholder phrase`],
 	Movement: [`advance roll`, `advance`],
 	Psychic: [`psychic test`, `manifest`, `deny the witch`],
@@ -244,6 +248,10 @@ function findUseTags() {
 		for (var abil of foundAbils) {
 			abil.classList.add('useTag')
 			unit.classList.add('useTag')
+			if (settings.autoOpen) {
+				abil.classList.add('isOpen')
+				abil.nextSibling.classList.add('isOpen')
+			}
 		}
 	}
 }
@@ -462,13 +470,13 @@ function listBuild() {
 						modelStatRow.classList.add('statRow', 'noBorder');
 						for (var stat of Object.keys(model.statlines)) {
 							let modelStatTag = document.createElement('div');
-							modelStatTag.classList.add('statTag');
+							modelStatTag.classList.add('statTag', 'naked');
 							let modelStatLbl = document.createElement('label');
-							modelStatLbl.classList.add('bg3', 'mini');
+							modelStatLbl.classList.add('bg3', 'mini', 'naked');
 							modelStatLbl.innerHTML += stat;
 							modelStatTag.append(modelStatLbl);
 							let modelStatVl = document.createElement('span');
-							modelStatVl.classList.add('bg5', 'mini');
+							modelStatVl.classList.add('bg5', 'mini', 'naked');
 							modelStatVl.innerHTML += model.statlines[stat]
 							modelStatTag.append(modelStatVl);
 							modelStatRow.append(modelStatTag);
@@ -507,12 +515,12 @@ function listBuild() {
 									abilTag.append(abilVl);
 								} else if (stat != 'amount') {
 									let statTag = document.createElement('div');
-									statTag.classList.add('statTag');
+									statTag.classList.add('statTag', 'naked');
 									let statLbl = document.createElement('label');
-									statLbl.classList.add('bg3', 'flat');
+									statLbl.classList.add('bg3', 'flat', 'naked');
 									statLbl.innerHTML += stat;
 									let statVl = document.createElement('span');
-									statVl.classList.add('bg7', 'flat');
+									statVl.classList.add('bg7', 'flat', 'naked');
 									statVl.innerHTML += weapon[stat];
 									statTag.append(statLbl);
 									statTag.append(statVl);
@@ -571,7 +579,7 @@ function listBuild() {
             <span class="bg7 textSmall">${spell.range}</span>
             </div>
             </div>
-            <div class="textSmall">${spell.details.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
+            <div class="textSmall cLeft">${spell.details.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
 
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(spell.details, phase)) newSpell.classList.add(phase);
@@ -592,7 +600,7 @@ function listBuild() {
 						unitContent.append(newRule)
 						let newRuleContent = document.createElement('div');
 						newRuleContent.classList.add('accordion-content', 'hide', 'bg6');
-						newRuleContent.innerHTML += `<div class="textSmall">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
+						newRuleContent.innerHTML += `<div class="textSmall cLeft">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(rule.desc, phase)) newRule.classList.add(phase);
 						}
@@ -617,7 +625,7 @@ function listBuild() {
 						newStratagemContent.classList.add('accordion-content', 'hide', 'bg6');
 						newStratagemContent.innerHTML += `
 						<p class="textSmall">${stratagem.type}</p>
-            <p class="textSmall">${stratagem.description}</p>
+            <p class="textSmall cLeft">${stratagem.description}</p>
           `
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(stratagem.description, phase)) newStratagem.classList.add(phase);

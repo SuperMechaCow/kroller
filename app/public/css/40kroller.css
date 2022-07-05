@@ -76,11 +76,11 @@ h3 {
 }
 
 a {
-  color: #cccccc;
+  color: #FFFFFF;
 }
 
 a:hover {
-  color: #FFFFFF;
+  color: #cccccc;
 }
 
 .textTiny {
@@ -97,6 +97,10 @@ a:hover {
 
 .cCenter {
   text-align: center;
+}
+
+.cLeft {
+  text-align: left;
 }
 
 .oR {
@@ -378,6 +382,19 @@ a:hover {
 
 .statTag .wide {
   display: block;
+}
+
+ .statTag.naked {
+   border-width: 0px;
+   margin: 0px;
+   border-radius: 0px;
+ }
+
+.statTag .naked{
+  border-width: 0px;
+  margin: 0px;
+  padding: 0px 2px 0px 2px;
+  border-radius: 0px;
 }
 
 .openNav {
