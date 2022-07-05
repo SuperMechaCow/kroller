@@ -1,18 +1,20 @@
 ## Modules:
+- Permanent data storage
+- fix waha link builder with regex groups
+- privacy policy
+~ Logger for debug
+- Expand API lookup
+- data collection
 - Game creation/sharing
 - Subfaction for strats
-- fix waha link builder with regex groups
 - discord trying to render image attachments
 - Discord Bot
-- Logger for debug
 - Calculator/Simulator
 - Load calculator from list view
 ~ Game tracker
 - Daily download/cleaning
-- Permanent data storage with accounts?
-- data collection
-- Expand API lookup
 ~ Wahapedia Codex scraper
+- accounts?
 - GW Image Scraper
 - Ability Map
 - 2.5D simulator game

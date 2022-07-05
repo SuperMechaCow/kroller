@@ -27,6 +27,8 @@ const qrcode = require('qrcode');
 const crypto = require('crypto');
 const Fuse = require('fuse.js');
 const request = require('request');
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./data/database.db');
 
 /*
 ██       ██████   ██████   ██████  ███████ ██████
@@ -179,6 +181,17 @@ app.get('/api/search', function(req, res) {
 		}));
 	}
 });
+
+
+
+/*
+███████ ██    ██ ████████ ██    ██ ██████  ███████ ██    ██  ██████  ██    ██ ██
+██      ██    ██    ██    ██    ██ ██   ██ ██       ██  ██  ██    ██ ██    ██ ██
+█████   ██    ██    ██    ██    ██ ██████  █████     ████   ██    ██ ██    ██ ██
+██      ██    ██    ██    ██    ██ ██   ██ ██         ██    ██    ██ ██    ██
+██       ██████     ██     ██████  ██   ██ ███████    ██     ██████   ██████  ██
+*/
+// You were fixing the upload process and cleanign up the forces object/ messages
 
 
 app.post('/upload', upload.fields([{
