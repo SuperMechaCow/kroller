@@ -80,7 +80,7 @@ fs.readFile(__dirname + '/data/wahaData.json', 'utf8', (err, data) => {
 	wahaData = JSON.parse(data);
 });
 
-var URL = 'http://kroller.supermechacow.com/'
+var URL = 'http://40kroller.animetidd.is/'
 var HOST = '192.168.1.103';
 var PORT = 4040;
 
@@ -102,59 +102,35 @@ const upload = multer({
 	dest: 'uploads/'
 })
 
-app.get('/', (req, res) => {
-	let games = 0;
-	if (!req.query.gameid || !gameList[req.query.gameid]) {
-		req.query.gameid = crypto.randomBytes(4).toString("hex");
-		createGame(req.query.gameid, req);
-		games++;
+/*
+app.get('/abilmap', (req, res) => {
+
+	if (!req.query.gameCode || !gameList[req.query.gameCode]) {
+		req.query.gameCode = crypto.randomBytes(4).toString("hex");
+		createGame(req.query.gameCode, req);
 		res.redirect(url.format({
 			pathname: "/",
 			query: {
-				gameid: req.query.gameid
+				gameCode: req.query.gameCode
 			}
 		}));
 	} else {
-		res.render('index', gameList[req.query.gameid]);
-	}
-	fs.readFile(__dirname + '/logger.log', (err, data) => {
-		if (err) {
-			logger.error(err);
-		} else {
-			let tempLogger = JSON.parse(data);
-			tempLogger.games += games;
-			fs.writeFile(__dirname + '/logger.log', JSON.stringify(tempLogger), (err) => {});
-		}
-	});
-});
 
-// app.get('/abilmap', (req, res) => {
-//
-// 	if (!req.query.gameid || !gameList[req.query.gameid]) {
-// 		req.query.gameid = crypto.randomBytes(4).toString("hex");
-// 		createGame(req.query.gameid, req);
-// 		res.redirect(url.format({
-// 			pathname: "/",
-// 			query: {
-// 				gameid: req.query.gameid
-// 			}
-// 		}));
-// 	} else {
-//
-// 		res.render('abilmap', gameList[req.query.gameid])
-// 	}
-// });
+		res.render('abilmap', gameList[req.query.gameCode])
+	}
+});
+*/
 
 app.post('/feedback', upload.fields([]), function(req, res) {
 	let newFeedback = {
 		ip: req.connection.remoteAddress,
-		gameid: req.body.gameid,
+		gameCode: req.body.gameCode,
 		feedback: req.body.feedback
 	}
 	logger.info(newFeedback);
-
 	fs.readFile(__dirname + '/feedback.log', (err, data) => {
 		if (err) {
+			console.log(err);
 			logger.error(err);
 		} else {
 			let tempFeedback = JSON.parse(data);
@@ -162,11 +138,10 @@ app.post('/feedback', upload.fields([]), function(req, res) {
 			fs.writeFile(__dirname + '/feedback.log', JSON.stringify(tempFeedback), (err) => {});
 		}
 	})
-
 	res.redirect(url.format({
 		pathname: "/",
 		query: {
-			gameid: req.body.gameid
+			gameCode: req.body.gameCode
 		}
 	}));
 });
@@ -182,17 +157,121 @@ app.get('/api/search', function(req, res) {
 	}
 });
 
-
-
-/*
-███████ ██    ██ ████████ ██    ██ ██████  ███████ ██    ██  ██████  ██    ██ ██
-██      ██    ██    ██    ██    ██ ██   ██ ██       ██  ██  ██    ██ ██    ██ ██
-█████   ██    ██    ██    ██    ██ ██████  █████     ████   ██    ██ ██    ██ ██
-██      ██    ██    ██    ██    ██ ██   ██ ██         ██    ██    ██ ██    ██
-██       ██████     ██     ██████  ██   ██ ███████    ██     ██████   ██████  ██
-*/
-// You were fixing the upload process and cleanign up the forces object/ messages
-
+app.get('/', async (req, res) => {
+	try {
+		// YOU WILL ONLY SEE '/' WITHOUT A QUERY IF YOU GET AN ERROR MESSAGE. Otherwise it will redirect to a game
+		// Did they provide a battle code?
+		if (req.query.gameCode) {
+			//Check to see if the battle already exists
+			db.get(`SELECT * FROM games WHERE gameCode=?`, req.query.gameCode, (err, game) => {
+				// If there was a database error
+				if (err) {
+					console.log(err);
+					logger.error(err)
+					res.status(500).render('index', {
+						gameCode: null,
+						forceData: [],
+						outputPretty: '<p class="oR cCenter">There was an error querying the database to find that game.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+						output: 'There was an error querying the database to find that game. This infraction has been recorded. Consult the Tech Priest.'
+					});
+				}
+				// Otherwise...
+				else {
+					// If it found a game
+					if (game) {
+						// This is where you would check to see if there are forces
+						let newGame = new Game();
+						newGame.gameCode = req.query.gameCode;
+						// You need to query for both force codes
+						db.all(`SELECT * FROM forces WHERE forceCode=? OR forceCode=?`, game.atkrCode, game.dfdrCode, (err, forces) => {
+							if (err) {
+								console.log(err);
+								logger(err);
+								res.status(500).render('index', {
+									gameCode: null,
+									forceData: [],
+									outputPretty: '<p class="oR cCenter">There was an error in the database when retrieving existing forces.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+									output: 'There was an error in creating a new battle in the database. This infraction has been recorded. Consult the Tech Priest.'
+								});
+							} else {
+								// Put them in the correct order
+								if (forces.length == 1) {
+									if (forces[0].forceCode == game.dfdrCode) {
+										forces.splice(0, 0, {
+											forceFile: null
+										});
+									} else forces.splice(1, 0, {
+										forceFile: null
+									});
+								}
+								else if (forces.length == 2) {
+									if (forces[0].forceCode == game.dfdrCode) {
+										forces.splice(1, 0, forces.shift());
+									}
+								}
+								else {
+									forces = [{
+										forceFile: null
+									}, {
+										forceFile: null
+									}]
+								}
+								// then you need to load the files for each
+								let newForces = {};
+								if (forces[0].forceFile) newForces.atkr_file = [{fieldname: 'atkr_file', filename: forces[0].forceFile}];
+								if (forces[1].forceFile) newForces.dfdr_file = [{
+									fieldname: 'atkr_file',
+									filename: forces[1].forceFile
+								}];
+								// and send them both to forceFromBS using it's argument object pattern
+								let forceBSData = forcesFromBS(newForces);
+								// then add the returned forces to newGame
+								newGame.forceData = forceBSData;
+								res.status(200).render('index', newGame);
+							}
+						});
+					}
+					//If it couldn't find the game, redirect to '/' to create a new one
+					else {
+						logger.warn(`Game at ${req.query.gameCode} was not found.`);
+						res.redirect('/');
+					}
+				}
+			});
+		}
+		// If no battle code was provided
+		else {
+			let newGame = await createGame(req.query.gameCode, req);
+			// If it couldn't create a new game
+			if (newGame.error) {
+				logger.error(newGame.error)
+				res.status(500).render('index', {
+					gameCode: null,
+					forceData: [],
+					outputPretty: '<p class="oR cCenter">There was an error in creating a new battle in the database.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+					output: 'There was an error in creating a new battle in the database. This infraction has been recorded. Consult the Tech Priest.'
+				});
+			}
+			// If it made a new game, send them to it
+			else {
+				res.redirect(url.format({
+					pathname: "/",
+					query: {
+						gameCode: newGame.gameCode
+					}
+				}));
+			}
+		}
+	} catch (error) {
+		logger.error(prepError(error));
+		res.status(500).render('index', {
+			gameCode: null,
+			forceData: [],
+			outputPretty: '<p class="oR cCenter">There was an error retrieving that game.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+			output: 'There was an error retrieving that game. This infraction has been recorded. Consult the Tech Priest.'
+		});
+	}
+});
 
 app.post('/upload', upload.fields([{
 	name: 'atkr_file',
@@ -200,52 +279,82 @@ app.post('/upload', upload.fields([{
 }, {
 	name: 'dfdr_file',
 	maxCount: 1
-}]), (req, res) => {
-	let games = 0;
-	let uploaded = 0;
-
-	let forceBSData = forceFromBS(req.files);
-
-	if (!req.body.gameid || !gameList[req.body.gameid]) {
-		req.body.gameid = crypto.randomBytes(4).toString("hex");
-		createGame(req.body.gameid, req);
-		games++;
-		gameList[req.body.gameid].forceData = forceBSData;
+}]), async (req, res) => {
+	try {
+		let forceBSData = forcesFromBS(req.files);
+		//If no errors, start by creating an empty game
+		let newGame = new Game();
+		// If no gameCode was provided, create a new battle to replace the empty game
+		if (!req.body.gameCode) newGame = await createGame(req.body.gameCode, req);
+		// Otherwise, use the provided gameCode
+		else newGame.gameCode = req.body.gameCode;
+		// The get the correct game
+		db.get(`SELECT * FROM games WHERE gameCode=?`, newGame.gameCode, (err, game) => {
+			// If there was a database error
+			if (err) {
+				console.log(err);
+				logger.error(err)
+				res.status(500).render('index', {
+					gameCode: null,
+					forceData: [],
+					outputPretty: '<p class="oR cCenter">There was an error querying the database to find that battle during upload.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+					output: 'There was an error querying the database to find that battle during upload. This infraction has been recorded. Consult the Tech Priest.'
+				});
+			}
+			// If it found a game
+			else if (game) {
+				let newCodes = {
+					atkrCode: ((game.atkrCode) ? game.atkrCode : null),
+					dfdrCode: ((game.atkrCode) ? game.dfdrCode : null)
+				}
+				for (var i in forceBSData) {
+					if (forceBSData[i].filename) {
+						let forceCode = crypto.randomBytes(4).toString("hex");
+						db.run(`INSERT INTO forces (forceCode, forceFile, forceName, timesLoaded, dateCreated, dateLoaded) VALUES (?, ?, ?, 1, ?, ?)`,
+							forceCode, forceBSData[i].filename, forceBSData[i].force.name, new Date().getTime(), new Date().getTime(), (err) => {
+								if (err) {
+									console.log(err);
+									logger.error(err);
+								}
+							});
+						if (i == 1) newCodes.dfdrCode = forceCode;
+						else newCodes.atkrCode = forceCode;
+					}
+				}
+				db.run(`UPDATE games SET atkrCode=?, dfdrCode=? WHERE gameCode=?`, newCodes.atkrCode, newCodes.dfdrCode, game.gameCode, (err) => {
+					if (err) {
+						console.log(err);
+						logger.error(err);
+					}
+				});
+				res.redirect(url.format({
+					pathname: "/",
+					query: {
+						gameCode: newGame.gameCode
+					}
+				}));
+			}
+			//If it couldn't find the game, start a new one with this force
+			else {
+				logger.error(`Game at ${req.query.gameCode} was not found.`);
+				res.status(500).render('index', {
+					gameCode: null,
+					forceData: [],
+					outputPretty: '<p class="oR cCenter">There was an error finding the battle for this upload. <a href="/">Try creating a new game</a>.</p><p class="cCenter">This infraction has been recorded. If the problem persists, consult the Tech Priest.</p>',
+					output: 'There was an error finding the battle for this upload. Try creating a new game</a>. This infraction has been recorded. If the problem persists, consult the Tech Priest.'
+				}); //res.render
+			}
+		}); //db.get
+	} catch (error) {
+		logger.error(prepError(error));
+		res.status(500).render('index', {
+			gameCode: null,
+			forceData: [],
+			outputPretty: '<p class="oR cCenter">There was an error uploading the Battlescribe roster files.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+			output: 'There was an error uploading the Battlescribe roster files. This infraction has been recorded. Consult the Tech Priest.'
+		});
 	}
-
-	// If there was an attacker list
-	if (forceBSData.forces[0]) {
-		uploaded++;
-		if (forceBSData.forces[0][1]) gameList[req.body.gameid].outputBox += forceBSData.forces[0][1]
-		else if (forceBSData.forces[0].length)
-			gameList[req.body.gameid].forceData.forces[0] = forceBSData.forces[0];
-	}
-	if (forceBSData.forces[1]) {
-		uploaded++;
-		if (forceBSData.forces[1][1]) gameList[req.body.gameid].outputBox += forceBSData.forces[1][1]
-		else if (forceBSData.forces[1].length)
-			gameList[req.body.gameid].forceData.forces[1] = forceBSData.forces[1];
-	}
-
-	fs.readFile(__dirname + '/logger.log', (err, data) => {
-		if (err) {
-			logger.error(err);
-		} else {
-			let tempLogger = JSON.parse(data);
-			tempLogger.games += games;
-			tempLogger.uploaded += uploaded;
-			fs.writeFile(__dirname + '/logger.log', JSON.stringify(tempLogger), (err) => {});
-		}
-	});
-
-	res.redirect(url.format({
-		pathname: "/",
-		query: {
-			gameid: req.body.gameid
-		}
-	}));
 });
-
 
 app.listen(PORT, () => {
 	logger.info(`Listening on ${HOST}:${PORT}`);
@@ -258,7 +367,7 @@ app.listen(PORT, () => {
 ██   ██ ██      ██ ██      ██    ██ ██   ██ ██   ██          ██ ██         ██    ██    ██ ██
 ██████  ██ ███████  ██████  ██████  ██   ██ ██████      ███████ ███████    ██     ██████  ██
 */
-
+/*
 const Discord = require('discord.js');
 // Require the necessary discord.js classes
 // const { token } = require('./config.json');
@@ -320,14 +429,14 @@ disclient.on('messageCreate', message => {
 				}
 			}
 
-			let forceData = await forceFromBS(files);
-			gameid = crypto.randomBytes(4).toString("hex");
+			let forceData = await forcesFromBS(files);
+			gameCode = crypto.randomBytes(4).toString("hex");
 
 			if (forceData[0].length) {
-				let gameData = await createGame(gameid);
-				gameList[gameid].forceData = forceData;
+				let gameData = await createGame(gameCode);
+				gameList[gameCode].forceData = forceData;
 				logger.debug(forceData);
-				gameList[gameid].forceData[0] = forceData[0];
+				gameList[gameCode].forceData[0] = forceData[0];
 
 				let descString = 'Empty Game'
 				if (forceData[0][0]) {
@@ -336,14 +445,14 @@ disclient.on('messageCreate', message => {
 				if (forceData.dfdr_file[0]) {
 					descString += ' vs ' + forceData.dfdr_file[0].name;
 				}
-				const attachment = new Discord.MessageAttachment(__dirname + '/public/shares/' + gameid + '.png');
+				const attachment = new Discord.MessageAttachment(__dirname + '/public/shares/' + gameCode + '.png');
 				const embed = new Discord.MessageEmbed()
 					.setTitle('40kroller Game')
 					.setColor('RED')
 					.setDescription(descString)
 					.setURL(gameData.url)
-					// .setThumbnail('attachment://' + gameid + '.png')
-					.setImage('attachment://' + gameid + '.png')
+					// .setThumbnail('attachment://' + gameCode + '.png')
+					.setImage('attachment://' + gameCode + '.png')
 					.setTimestamp()
 				message.channel.send({
 					embeds: [embed],
@@ -359,8 +468,9 @@ disclient.on('messageCreate', message => {
 });
 
 const discordtoken = require('./discordtoken');
-disclient.login(discordtoken.TOKEN);
 
+disclient.login(discordtoken.TOKEN);
+*/
 /*
 ██    ██ ████████ ██ ██          ███████ ██    ██ ███    ██  ██████ ████████ ██  ██████  ███    ██ ███████
 ██    ██    ██    ██ ██          ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██
@@ -368,6 +478,21 @@ disclient.login(discordtoken.TOKEN);
 ██    ██    ██    ██ ██          ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██      ██
  ██████     ██    ██ ███████     ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ███████
 */
+
+class Game {
+	constructor() {
+		this.gameCode = null;
+		this.forceData = [];
+		this.outputPretty = '';
+		this.output = '';
+		this.url = '';
+	}
+	setOutput(string) {
+		this.outputPretty = string;
+		this.output = string;
+		//Remove HTML from output
+	}
+}
 
 function fuzzysearch(searchString, dataset, numResults) {
 	let newData = []
@@ -401,107 +526,6 @@ function fuzzysearch(searchString, dataset, numResults) {
 		result.push(allResult[i])
 	}
 	return result;
-}
-
-function forceFromBS(files) {
-
-	let forceData = {
-		forces: []
-	};
-	try {
-		for (forcefile in Object.entries(files)) {
-			// First index is name (0), second is filelist (1)
-			// the fileslist is another list of files (we have only 1)
-			// If only a deffender file was uploaded, make the attacker blank and increase index
-			if (Object.entries(files)[forcefile][0] == 'dfdr_file' && !forceData.forces.length) {
-				forceData.forces.push([]);
-			}
-			// Grab the actual file from the force
-			let forceName = Object.entries(files)[forcefile][0] //Is this line of code valid?
-			let filedata = Object.entries(files)[forcefile][1][0];
-			// reading archives
-			var zip = new unzip(`uploads/${filedata.filename}`);
-			var zipEntries = zip.getEntries(); // an array of ZipEntry records
-			// Loop through each file in the zip
-			zipEntries.forEach(function(zipEntry) {
-				// If you find a roster file (the first one. I hope there aren't more)
-				if (zipEntry.entryName.split('.')[1] == 'ros') {
-					// Try to convert from xml to json
-					xml2js.parseString(zipEntry.getData().toString("utf8"), (err, result) => {
-						if (err) {
-							throw err;
-						}
-						forceData.forces.push(parseBS(result));
-						//Returns parsed force (0), error object (1), and original data (2)
-						//If there is an error object
-						if (forceData.forces[forcefile][1]) {
-							forceData.forces[forcefile][1].message = 'Oopsies poopsie! There was an error! Could not create a roster from that roster file. The most common cause of this is uploading a roster file made on a mobile app. This is a problem I am working on.<br><br>' + forceData[forceName][1].message
-						}
-						//Immediately delete the file after parsing
-						fs.unlink(`uploads/${filedata.filename}`, (err) => {
-							if (err) {
-								throw err;
-							}
-						});
-					});
-				}
-			});
-		}
-	} catch (error) {
-		logError(error);
-		logger.error(error);
-		forceData.forces[forcefile][1].message += 'Error. Could not unzip/read/parse roster file. Please consult your Tech Priest. '
-	}
-
-	return forceData;
-}
-
-function logError(error) {
-	fs.readFile(__dirname + '/logger.log', (err, data) => {
-		if (err) {
-			logger.error(err);
-		} else {
-			let tempLogger = JSON.parse(data);
-			tempLogger.crashes.push({
-				text: error
-			})
-			fs.writeFile(__dirname + '/logger.log', JSON.stringify(tempLogger), (err) => {});
-		}
-	});
-}
-
-function createGame(sessionID, req) {
-	return new Promise((resolve, reject) => {
-		gameList[sessionID] = {
-			gameid: sessionID,
-			outputBox: '',
-			forceData: {
-				forces: []
-			}
-		}
-		let resString = '';
-		if (req) {
-			resString = req.protocol + '://' + req.get('host') + req.originalUrl;
-		} else {
-			resString = URL + '?gameid=' + sessionID;
-		}
-		qrcode.toFile('public/shares/' + sessionID + '.png', resString, {
-			color: {
-				dark: '#000000', // Blue dots
-				light: '#ffcc99' // Transparent background
-			}
-		}, function(err) {
-			if (err) {
-				throw err
-				reject()
-			} else {
-				logger.info('Started a new game: ' + sessionID);
-				resolve({
-					url: resString
-				})
-			}
-		});
-	})
 }
 
 function matchModel(obj1, obj2) {
@@ -552,6 +576,9 @@ function sortBySlot(units) {
 	return newOrder
 }
 
+function prepError(err) {
+	return `${new Date()}\n${err.stack}`
+}
 
 /*
 ██████   █████  ██████  ███████ ███████     ██████  ███████
@@ -560,6 +587,101 @@ function sortBySlot(units) {
 ██      ██   ██ ██   ██      ██ ██          ██   ██      ██
 ██      ██   ██ ██   ██ ███████ ███████     ██████  ███████
 */
+
+async function createGame(req) {
+	return new Promise((resolve, reject) => {
+		let newGame = new Game();
+		newGame.gameCode = crypto.randomBytes(4).toString("hex");
+		newGame.url = '';
+		// If a web request was given
+		if (req) {
+			newGame.url = req.protocol + '://' + req.get('host') + req.originalUrl;
+		}
+		// Otherwise you're probably making this from another source
+		else {
+			newGame.url = URL + '?gameCode=' + newGame.gameCode;
+		}
+		//Start waiting on the QR code to be made
+		qrcode.toFile('public/shares/' + newGame.gameCode + '.png', newGame.url, {
+				color: {
+					dark: '#000000', // Blue dots
+					light: '#ffcc99' // Transparent background
+				}
+			},
+			// Callback for when it is done:
+			function(err) {
+				if (err) {
+					logger.error(err)
+					reject({
+						error: err
+					})
+				} else {
+					//Database stuff!
+					db.run(`INSERT INTO games (gameCode, dateCreated) VALUES (?, ?)`, newGame.gameCode, new Date().getTime(), (err) => {
+						if (err) {
+							console.log(err);
+							logger.error(err)
+							reject({
+								error: err
+							})
+						} else {
+							logger.info('Started a new game: ' + newGame.gameCode);
+							resolve(newGame)
+						}
+					})
+				}
+			});
+	})
+}
+
+function forcesFromBS(providedFiles) {
+	let forceData = [];
+	try {
+		for (var i in Object.entries(providedFiles)) {
+			// First index is name (0), second is filelist (1)
+			// the fileslist is another list of files (we have only 1)
+			// If only a deffender file was uploaded, make the attacker blank and increase index
+			if (Object.entries(providedFiles)[i][0] == 'dfdr_file' && !forceData.length) {
+				forceData.push([]);
+			}
+			// Grab the actual file from the force
+			let forceName = Object.entries(providedFiles)[i][0] //Is this line of code valid?
+			let filedata = Object.entries(providedFiles)[i][1][0];
+			// reading archives
+			var zip = new unzip(`uploads/${filedata.filename}`);
+			var zipEntries = zip.getEntries(); // an array of ZipEntry records
+			// Loop through each file in the zip
+			zipEntries.forEach(function(zipEntry) {
+				// If you find a roster file (the first one. I hope there aren't more)
+				if (zipEntry.entryName.split('.')[1] == 'ros') {
+					// Try to convert from xml to json
+					xml2js.parseString(zipEntry.getData().toString("utf8"), (err, result) => {
+						if (err) {
+							console.log(err);
+							logger.error(err)
+						} else {
+							let tempParse = parseBS(result);
+							tempParse.filename = filedata.filename;
+							forceData.push(tempParse);
+							//Immediately delete the file after parsing
+							// fs.unlink(`uploads/${filedata.filename}`, (err) => {
+							// 	if (err) logger.error(err)
+							// });
+						}
+					});
+				}
+			});
+		}
+	} catch (error) {
+		logger.error(prepError(error));
+		return {
+			error: error,
+			outputPretty: '<p class="">There was an error when attempting to unzip and read the roster files.</p>',
+			output: 'There was an error when attempting to unzip and read the roster files.'
+		}
+	}
+	return forceData;
+}
 
 function parseBS(data) {
 	let phaseList = ["Command", "Movement", "Psychic", "Shooting", "Charge", "Fight", "Morale"]
@@ -1019,12 +1141,22 @@ function parseBS(data) {
 			force.detachments.push(newDetachment)
 		}
 		// return [force, '', JSON.stringify(data)]
-		return [force, '', data]
+		return {
+			force: force,
+			error: '',
+			outputPretty: '',
+			output: '',
+			bsdata: data
+		}
 
 	} catch (error) {
-		logError(error);
-		// return [{}, error, JSON.stringify(data)]
-		logger.error(error);
-		return [{}, error, data]
+		logger.error(prepError(error));
+		return {
+			force: force,
+			error: error,
+			outputPretty: '<p oR="oR cCenter">There was an error in parsing the Battlescribe roster.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+			output: 'There was an error in parsing the Battlescribe roster. This infraction has been recorded. Consult the Tech Priest.',
+			bsdata: data
+		}
 	}
 }

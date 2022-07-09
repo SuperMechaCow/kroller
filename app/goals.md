@@ -1,5 +1,6 @@
 ## Modules:
 - Permanent data storage
+-
 - fix waha link builder with regex groups
 - privacy policy
 ~ Logger for debug
@@ -22,7 +23,7 @@
 - Battlescribe read direct or search on wahapedia
 * List viewer
 * Fuzzy Search
-* Wahapedia download/ingestor
+~ Wahapedia download/ingestor (automated)
 * Responsive Stylesheet
 * Touch controls
 * UI without jquery

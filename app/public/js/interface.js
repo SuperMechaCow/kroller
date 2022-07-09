@@ -3,6 +3,7 @@ var ioList = {};
 var currentPhase = '';
 var tickles = 0;
 var gameType = 'matched'
+var dice = ['🎲', '⚀', '⚁', '⚂', '⚃', '⚄','⚅']
 var settings = {
 	autoOpen: false
 }
@@ -124,6 +125,13 @@ function swiperDrag(e) {
 ██ ██  ██ ██    ██    ██      ██   ██ ██      ██   ██ ██      ██
 ██ ██   ████    ██    ███████ ██   ██ ██      ██   ██  ██████ ███████
 */
+
+function output(message) {
+	if (!ioList.output.classList.contains('isOpen')) {
+		toggleAccordion(ioList.output)
+	}
+	ioList.output.innerHTML = message;
+}
 
 function buildAccordions() {
 	var titles = document.getElementsByClassName('accordion-header');
@@ -357,25 +365,26 @@ function init() {
 
 function listBuild() {
 	let appendList;
-	for (var force of forceData.forces) {
+	for (var force of forceData) {
 		console.log(force);
-		if (force) {
+		if (force.force) {
 			// Get and erase the list for this force
-			let thisListIndex = forceData.forces.indexOf(force);
+			let thisListIndex = forceData.indexOf(force);
+			force = force.force;
 			let thisList = document.getElementsByClassName('listView')[thisListIndex];
 			thisList.innerHTML = '';
 			// Add force name
 			appendList = document.createElement('h1');
-			appendList.innerText = force[0].name;
+			appendList.innerText = force.name;
 			thisList.append(appendList);
 			// Add costs
 			appendList = document.createElement('div');
 			appendList.classList.add('statRow', 'noBorder');
-			for (var cost of Object.keys(force[0].costs)) {
+			for (var cost of Object.keys(force.costs)) {
 				appendList.innerHTML += `
                 <div class="statTag" title="">
                   <label for="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}" class="bg4">${cost}</label>
-                  <span class="bg7" id="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}">${force[0].costs[cost]}</span>
+                  <span class="bg7" id="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}">${force.costs[cost]}</span>
                 </div>
                 `
 			}
@@ -388,7 +397,7 @@ function listBuild() {
 			██████  ███████    ██    ██   ██  ██████ ██   ██ ██      ██ ███████ ██   ████    ██
 			*/
 
-			for (var detachment of force[0].detachments) {
+			for (var detachment of force.detachments) {
 				// Add detachment name
 				appendList = document.createElement('h3');
 				appendList.innerText = ((detachment.customName) ? detachment.customName : detachment.name);
@@ -416,7 +425,9 @@ function listBuild() {
           `;
 					}
 					// Unit name
-					unitHeader.innerHTML += ((unit.customName) ? unit.customName : unit.name);
+					let tempName = ((unit.customName) ? unit.customName : unit.name)
+					if (tempName.length >= 22) tempName = tempName.substring(0, 22) + " ...";
+					unitHeader.innerHTML += tempName;
 					/*
 					// Pic Search
 					let picSearch = document.createElement('img')
@@ -463,7 +474,9 @@ function listBuild() {
 					for (var model of unit.models) {
 						let appendModel = document.createElement('div');
 						appendModel.classList.add('accordion-header', 'bg1', 'banner');
-						appendModel.innerHTML += ((model.customName) ? model.customName : model.name);
+						let tempName = ((model.customName) ? model.customName : model.name)
+						if (tempName.length >= 22) tempName = tempName.substring(0, 22) + "...";
+						appendModel.innerHTML += tempName;
 						// Statline in header
 						let modelStatRow = document.createElement('div');
 						modelStatRow.classList.add('statRow', 'noBorder');
@@ -482,7 +495,7 @@ function listBuild() {
 						}
 						appendModel.append(modelStatRow);
 						let modelContent = document.createElement('div');
-						modelContent.classList.add('accordion-content', 'bg2');
+						modelContent.classList.add('accordion-content', 'bg2', 'cCenter');
 						/*
 						██     ██ ███████  █████  ██████   ██████  ███    ██ ███████
 						██     ██ ██      ██   ██ ██   ██ ██    ██ ████   ██ ██
@@ -505,10 +518,10 @@ function listBuild() {
 									if (weapon.amount) nameDiv.innerHTML += ` x ${weapon.amount}`;
 								} else if (stat == 'Abilities') {
 									let abilLbl = document.createElement('label');
-									abilLbl.classList.add('bg3', 'wide', 'flat');
+									abilLbl.classList.add('bg3', 'wide', 'flat', 'grow');
 									abilLbl.innerHTML += stat;
 									let abilVl = document.createElement('span');
-									abilVl.classList.add('bg7', 'wide', 'flat');
+									abilVl.classList.add('bg7', 'wide', 'flat', 'grow');
 									abilVl.innerHTML += weapon[stat];
 									abilTag.append(abilLbl);
 									abilTag.append(abilVl);
@@ -516,10 +529,10 @@ function listBuild() {
 									let statTag = document.createElement('div');
 									statTag.classList.add('statTag', 'naked');
 									let statLbl = document.createElement('label');
-									statLbl.classList.add('bg3', 'flat', 'naked');
+									statLbl.classList.add('bg3', 'flat', 'naked', 'grow');
 									statLbl.innerHTML += stat;
 									let statVl = document.createElement('span');
-									statVl.classList.add('bg7', 'flat', 'naked');
+									statVl.classList.add('bg7', 'flat', 'naked', 'grow');
 									statVl.innerHTML += weapon[stat];
 									statTag.append(statLbl);
 									statTag.append(statVl);
@@ -625,7 +638,7 @@ function listBuild() {
 						newStratagemContent.innerHTML += `
 						<p class="textSmall">${stratagem.type}</p>
             <p class="textSmall cLeft">${stratagem.description}</p>
-          `
+          	`
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(stratagem.description, phase)) newStratagem.classList.add(phase);
 						}
@@ -636,6 +649,20 @@ function listBuild() {
 					thisList.append(unitContent);
 				}
 			}
+			thisList.innerHTML += `
+			<hr>
+			<div class="accordion-header bg0 banner">Import New</div>
+			<div class="accordion-content bg5 feedbackwrapper">
+			<form action="/upload" enctype="multipart/form-data" method="post">
+			<label for="atkr_file">Attacker File</label>
+			<input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
+			<label for="dfdr_file">Defender File</label>
+			<input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
+			<input type="hidden" name="gameCode" id="gameCode" value="${gameCode}">
+			<input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
+			<!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
+			</form>
+			</div>`;
 		}
 	}
 }

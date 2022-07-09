@@ -55,13 +55,13 @@ async function resolveRoster() {
     }
 
     let forceData = await forceFromBS(files);
-    gameid = crypto.randomBytes(4).toString("hex");
+    gameCode = crypto.randomBytes(4).toString("hex");
 
     if (forceData.atkr_file.length) {
-      let gameData = await createGame(gameid);
-      gameList[gameid].forceData = forceData;
+      let gameData = await createGame(gameCode);
+      gameList[gameCode].forceData = forceData;
       console.log(forceData);
-      gameList[gameid].forceData.atkr_file = forceData.atkr_file;
+      gameList[gameCode].forceData.atkr_file = forceData.atkr_file;
 
       let descString = 'Empty Game'
       if (forceData.atkr_file[0]) {
@@ -70,14 +70,14 @@ async function resolveRoster() {
       if (forceData.dfdr_file[0]) {
         descString += ' vs ' + forceData.dfdr_file[0].name;
       }
-      const attachment = new Discord.MessageAttachment(__dirname + '/public/shares/' + gameid + '.png');
+      const attachment = new Discord.MessageAttachment(__dirname + '/public/shares/' + gameCode + '.png');
       const embed = new Discord.MessageEmbed()
         .setTitle('40kroller Game')
         .setColor('RED')
         .setDescription(descString)
         .setURL(gameData.url)
-        // .setThumbnail('attachment://' + gameid + '.png')
-        .setImage('attachment://' + gameid + '.png')
+        // .setThumbnail('attachment://' + gameCode + '.png')
+        .setImage('attachment://' + gameCode + '.png')
         .setTimestamp()
       message.channel.send({
         embeds: [embed],

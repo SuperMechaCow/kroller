@@ -200,13 +200,17 @@ li {
 }
 
 #qrshare {
-  display: none;
   margin: auto;
 }
 
 .outputIcon {
   width: 64px;
   display: inline;
+}
+
+.importForm {
+  position: absolute;
+  top: 25%;
 }
 
 /*
@@ -407,7 +411,6 @@ li {
 }
 
 .openNav {
-  visibility: hidden;
   position: absolute;
   top: 10px;
   font-size: 30px;
@@ -417,12 +420,10 @@ li {
 
 #toggleatkr {
   left: 10px;
-  /* visibility: hidden; */
 }
 
 #toggledfdr {
   right: 10px;
-  /* visibility: hidden; */
 }
 
 #weaponsBox {
@@ -520,11 +521,13 @@ li {
 #atkrList {
   transform: translateX(0%);
   left: 0;
+  background-image: linear-gradient(to right, #332211, #000000);
 }
 
 #dfdrList {
   transform: translateX(0%);
   right: 0;
+  background-image: linear-gradient(to left, #332211, #000000);
 }
 
 .listView {
@@ -537,15 +540,15 @@ li {
 
 .listView.isOpen {
   display: inline;
-  width: 300px;
-  /* width: 400px; */
+  /* width: 300px; */
+  width: 400px;
   padding: 5px;
 }
 
 .listView.isActive {
   display: inline;
-  width: 300px;
-  /* width: 400px; */
+  /* width: 300px; */
+  width: 400px;
 }
 
 .listView .roleImg {
@@ -560,7 +563,15 @@ li {
   float: right;
 }
 
-/* @media only screen and (max-width: 1345px) {
+.grow {
+  font-size: 1em;
+}
+
+@media only screen and (max-width: 1345px) {
+  .grow {
+    font-size: 0.8em;
+  }
+
   .listView.isOpen {
     width: 300px;
   }
@@ -568,7 +579,7 @@ li {
   .listView.isActive {
     width: 300px;
   }
-} */
+}
 /*
 ████████  █████  ██████  ██      ███████ ████████
    ██    ██   ██ ██   ██ ██      ██         ██

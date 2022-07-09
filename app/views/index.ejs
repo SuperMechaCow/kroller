@@ -7,6 +7,7 @@
   <!-- <link rel="apple-touch-icon" href="img/icons/target.png"> -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- <script src="js/testdata.js" charset="utf-8"></script> -->
   <script src="js/interface.js" charset="utf-8"></script>
   <title>40kroller</title>
   <link rel="stylesheet" href="css/40kroller.css">
@@ -14,12 +15,23 @@
 
 <body onload="init()">
   <div id="atkrList" class="listView bg1 cCenter">
+    <div class="form-group bg5 block cCenter importForm">
+      <form action="/upload" enctype="multipart/form-data" method="post">
+        <label for="atkr_file">Attacker File</label>
+        <input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
+        <label for="dfdr_file">Defender File</label>
+        <input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
+        <input type="hidden" name="gameCode" id="gameCode" value='<%- gameCode %>'>
+        <input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
+        <!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
+      </form>
+    </div>
   </div>
   <div id="centerBlock">
     <span id="toggleatkr" class="openNav" onclick="toggleNav(this)">&#9776;</span>
     <span id="toggledfdr" class="openNav" onclick="toggleNav(this)">&#9776;</span>
     <h1 id="banner" title="This is the name of this webapp." align="center" onclick="tickle()">40kroller</h1>
-    <h4 id="subbanner" align="center">Warhammer 40k Game Tracker</h4>
+    <h4 id="subbanner" align="center">Warhammer 40k Battle Tracker</h4>
     <div id="content">
       <!--
       ████████ ██████   █████   ██████ ██   ██ ███████ ██████
@@ -305,7 +317,10 @@
        ██████   ██████     ██    ██       ██████     ██
       -->
       <div class="accordion-header bg0 banner isOpen">Output</div>
-      <div id="output" class="accordion-content isOpen">
+      <div id="output" class="accordion-content isOpen io">
+        <% if (outputPretty) { %>
+        <%- outputPretty %>
+        <% } else { %>
         <p>
           <span class='oB' title=''>40kroller</span> is a tiny, lightweight list viewer, game tracker, and calculator.
         </p>
@@ -329,54 +344,61 @@
           <a href="https://discord.gg/UmC5VwZNZt"><img class="outputIcon" src="img/icons/discord.png" alt=""></a>
         </p>
         <p class="cCenter">Feel free to host, contribute, and share!</p>
+        <% } %>
       </div>
       <!--
-      ██ ███    ███ ██████   ██████  ██████  ████████
-      ██ ████  ████ ██   ██ ██    ██ ██   ██    ██
-      ██ ██ ████ ██ ██████  ██    ██ ██████     ██
-      ██ ██  ██  ██ ██      ██    ██ ██   ██    ██
-      ██ ██      ██ ██       ██████  ██   ██    ██
+      ███████ ██   ██  █████  ██████  ███████
+      ██      ██   ██ ██   ██ ██   ██ ██
+      ███████ ███████ ███████ ██████  █████
+           ██ ██   ██ ██   ██ ██   ██ ██
+      ███████ ██   ██ ██   ██ ██   ██ ███████
       -->
-      <div class="accordion-header bg0 banner">Import - Share</div>
-      <div class="accordion-content bg4">
-        <div class="container">
-          <form action="/upload" enctype="multipart/form-data" method="post">
-            <div class="form-group bg5 block cCenter">
-              <label for="atkr_file">Attacker File</label>
-              <input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
-              <label for="dfdr_file">Defender File</label>
-              <input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
-              <input type="hidden" name="gameid" id="gameid" value='<%- gameid %>'>
-              <input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
-              <!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
-            </div>
+      <div class="accordion-header bg0 banner">Share</div>
+      <div class="accordion-content bg4 cCenter">
+        <% if (gameCode) { %>
+        <h2 class="cCenter">Game Code:</h2>
+        <h1 class="cCenter bg1">
+          <%- gameCode %>
+        </h1>
+        <img id="qrshare" src="shares/<%- gameCode %>.png" alt="Have your friend scan this QR code to join your game session">
+        <% } %>
+        <div class="bg5 block cCenter">
+          <button type="button" onclick="navigator.clipboard.writeText('http://40kroller.animetidd.is/>gameCode=<%- gameCode %>'); output('Code copied!')" title="">Copy Link</button>
+          <button type="button" onclick="navigator.clipboard.writeText('<%- gameCode %>'); output('Code copied!')" title="">Copy Code</button>
+          <button type="button" onclick="navigator.clipboard.writeText(ioList.output.innerText)" title="">Copy Output</button>
+        </div>
+        <div class="accordion-header bg1 banner">Feedback</div>
+        <div class="accordion-content bg5 feedbackwrapper">
+          <form action="/feedback" method="post" enctype="multipart/form-data">
+            <textarea name="feedback" id="feedback" rows="8" cols="30" placeholder="You only need to submit your feedback once. Yes, I know it doesn't give any confirmation that I got it, but I did. I am working on this."></textarea>
+            <input type="hidden" name="gameCode" id="gameCode" value='<%- gameCode %>'>
+            <input type="submit" value="Submit">
           </form>
-          <img id="qrshare" src="" alt="Have your friend scan this QR code to join your game session">
-          <div class="bg5 block cCenter">
-            <button type="button" name="button" onclick="dumpit();" title="Export Markdown to show all of your friends on discord and reddit :)">Copy Output Markdown</button>
-          </div>
-          <div class="accordion-header bg1 banner">Feedback</div>
-          <div class="accordion-content bg5 feedbackwrapper">
-            <form action="/feedback" method="post" enctype="multipart/form-data">
-              <textarea name="feedback" id="feedback" rows="8" cols="30" placeholder="You only need to submit your feedback once. Yes, I know it doesn't give any confirmation that I got it, but I did. I am working on this."></textarea>
-              <input type="hidden" name="gameid" id="gameid" value='<%- gameid %>'>
-              <input type="submit" value="Submit">
-            </form>
-          </div>
         </div>
       </div>
     </div>
   </div>
+  </div>
   <div id="dfdrList" class="listView bg1 cCenter">
+    <div class="form-group bg5 block cCenter importForm">
+      <form action="/upload" enctype="multipart/form-data" method="post">
+        <label for="atkr_file">Attacker File</label>
+        <input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
+        <label for="dfdr_file">Defender File</label>
+        <input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
+        <input type="hidden" name="gameCode" id="gameCode" value="<%- gameCode %>">
+        <input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
+        <!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
+      </form>
+    </div>
   </div>
 </body>
 <script type="text/javascript">
   forceData = <%- JSON.stringify(forceData) %>;
+  <% if (gameCode) { %>
+    gameCode = '<%- gameCode %>';
+  <% } %>
   console.log(forceData);
-  if (forceData.forces[0]) document.getElementById('toggleatkr').style = "visibility: visible;";
-  if (forceData.forces[1]) document.getElementById('toggledfdr').style = "visibility: visible;";
-  document.getElementById('qrshare').src = 'shares/<%- gameid %>.png'
-  document.getElementById('qrshare').style.display = 'block'
 </script>
 
 </html>
