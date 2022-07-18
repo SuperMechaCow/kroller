@@ -3,13 +3,13 @@ var ioList = {};
 var currentPhase = '';
 var tickles = 0;
 var gameType = 'matched'
-var dice = ['🎲', '⚀', '⚁', '⚂', '⚃', '⚄','⚅']
+var dice = ['🎲', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
 var settings = {
 	autoOpen: false
 }
 var phaseList = {
-	Pregame: ['during deployment', 'at the start of the first battle round'],
-	Command: [`placeholder phrase`],
+	Pregame: ['during deployment', 'at the start of the first battle round', 'Declare Reserves and Transports'],
+	Command: [],
 	Movement: [`advance roll`, `advance`],
 	Psychic: [`psychic test`, `manifest`, `deny the witch`],
 	Shooting: [`an attack`, `a ranged attack`, 'shooting'],
@@ -26,7 +26,7 @@ var unitRoles = [
 	'heavysupport',
 	'hq',
 	'lordofwar',
-	'troops',
+	'troops'
 ]
 
 /*
@@ -138,6 +138,7 @@ function buildAccordions() {
 	// Set up accordions
 	for (var title of titles) {
 		title.onclick = function() {
+			this.classList.remove('newTag')
 			toggleAccordion(this);
 		}
 	}
@@ -193,6 +194,18 @@ function toggleAccordion(el) {
 		}
 		el.classList.add('isOpen');
 		el.nextElementSibling.classList.add('isOpen');
+	}
+}
+
+function wahaLinks() {
+	for (var wahaIcon of document.getElementsByClassName('wahaLinkImg')) {
+		wahaIcon.addEventListener("click", function(e) {
+			//stackoverflow fix for onlick in an onclick
+			if (!e) var e = window.event;
+			e.cancelBubble = true;
+			if (e.stopPropagation) e.stopPropagation();
+			window.open(e.path[0].getAttribute("data-link"), '_blank');
+		});
 	}
 }
 
@@ -296,9 +309,12 @@ function init() {
 	// Needs to run first if it wants to be included in pollIO() or accordions
 	listBuild();
 
-	buildAccordions()
+	buildAccordions();
 
-	pollIO()
+	// Add links to wahaIcons
+	wahaLinks();
+
+	pollIO();
 
 	// Set up vp trackers
 	for (var tracker of document.getElementsByClassName('vptracker')) {
@@ -377,6 +393,7 @@ function listBuild() {
 			appendList = document.createElement('h1');
 			appendList.innerText = force.name;
 			thisList.append(appendList);
+			if (force.customNotes) thisList.innerHTML += `<h3 class='textSmall'>${force.customNotes.replace(/\n/g, "<br />")}</p>`
 			// Add costs
 			appendList = document.createElement('div');
 			appendList.classList.add('statRow', 'noBorder');
@@ -404,7 +421,8 @@ function listBuild() {
 				thisList.append(appendList);
 				// Add detachment faction
 				appendList = document.createElement('h3');
-				appendList.innerText = detachment.faction;
+				if (detachment.factionLink) appendList.innerHTML = `<a href="${detachment.factionLink}" target="_blank">${detachment.faction}</a>`;
+				else appendList.innerText = detachment.faction;
 				thisList.append(appendList);
 				// Start listing units
 				/*
@@ -424,24 +442,17 @@ function listBuild() {
           <img src="img/roles/${unit.slot.replaceAll(' ', '').toLowerCase()}.png" class="roleImg">
           `;
 					}
+					if (unit.warlord) unitHeader.innerHTML += `<img src="img/icons/warlord.png" class="roleImg">`;
 					// Unit name
 					let tempName = ((unit.customName) ? unit.customName : unit.name)
-					if (tempName.length >= 22) tempName = tempName.substring(0, 22) + " ...";
+					if (tempName.length >= 22) tempName = tempName.substring(0, 20) + " ...";
 					unitHeader.innerHTML += tempName;
-					/*
 					// Pic Search
+					/*
 					let picSearch = document.createElement('img')
 					picSearch.classList.add('wahaLinkImg')
 					picSearch.setAttribute("data-link", `https://www.google.com/search?tbm=isch&q=Warhammer%2040000%20${unit.name}%20miniature`);
 					picSearch.src = 'img/icons/picSearch3.png';
-					picSearch.addEventListener("click", function(e) {
-					  console.log(e);
-					  //stackoverflow fix for onlick in an onclick
-					  if (!e) var e = window.event;
-					  e.cancelBubble = true;
-					  if (e.stopPropagation) e.stopPropagation();
-					  window.open(e.path[0].getAttribute("data-link"), '_blank');
-					});
 					unitHeader.appendChild(picSearch);
 					*/
 					// Wahapedia link
@@ -451,18 +462,14 @@ function listBuild() {
 							wahaIcon.classList.add('wahaLinkImg')
 							wahaIcon.setAttribute("data-link", unit.waha.link);
 							wahaIcon.src = 'https://wahapedia.ru/favicon.png';
-							wahaIcon.addEventListener("click", function(e) {
-								//stackoverflow fix for onlick in an onclick
-								if (!e) var e = window.event;
-								e.cancelBubble = true;
-								if (e.stopPropagation) e.stopPropagation();
-								window.open(e.path[0].getAttribute("data-link"), '_blank');
-							});
 							unitHeader.appendChild(wahaIcon);
 						}
 					}
+					// GW Search Link
+					//https://www.games-workshop.com/en-US/searchResults?_dyncharset=UTF-8&_dynSessConf=-5255390880923486912&qty=&sorting=&view=&Ntt=${unit.name}
 					let unitContent = document.createElement('div');
-					unitContent.classList.add('accordion-content', 'bg4');
+					unitContent.classList.add('accordion-content', 'bg4', 'unitBox');
+					if (unit.customNotes) unitContent.innerHTML += `<p class='textSmall unitNotes'>${unit.customNotes}</p>`
 					/*
 					███    ███  ██████  ██████  ███████ ██      ███████
 					████  ████ ██    ██ ██   ██ ██      ██      ██
@@ -474,9 +481,10 @@ function listBuild() {
 					for (var model of unit.models) {
 						let appendModel = document.createElement('div');
 						appendModel.classList.add('accordion-header', 'bg1', 'banner');
-						let tempName = ((model.customName) ? model.customName : model.name)
+						let tempName = ((model.customName) ? model.customName : model.name);
 						if (tempName.length >= 22) tempName = tempName.substring(0, 22) + "...";
 						appendModel.innerHTML += tempName;
+						if (model.customNotes) appendModel.innerHTML += `<p class='textSmall'>${model.customNotes[0]}</p>`;
 						// Statline in header
 						let modelStatRow = document.createElement('div');
 						modelStatRow.classList.add('statRow', 'noBorder');
@@ -512,20 +520,22 @@ function listBuild() {
 							nameDiv.classList.add('tag', 'wide', 'bg3');
 							let abilTag = document.createElement('div');
 							abilTag.classList.add('statTag')
+							nameDiv.innerHTML += ((weapon.customName) ? weapon.customName : weapon.name);
+							if (weapon.amount) nameDiv.innerHTML += ` x ${weapon.amount}`;
+							weaponDiv.append(nameDiv);
+							if (weapon.customNotes) weaponDiv.innerHTML += `<p class='textSmall'>${weapon.customNotes}</p>`
 							for (var stat of Object.keys(weapon)) {
-								if (stat == 'name') {
-									nameDiv.innerHTML += weapon[stat];
-									if (weapon.amount) nameDiv.innerHTML += ` x ${weapon.amount}`;
-								} else if (stat == 'Abilities') {
-									let abilLbl = document.createElement('label');
-									abilLbl.classList.add('bg3', 'wide', 'flat', 'grow');
-									abilLbl.innerHTML += stat;
-									let abilVl = document.createElement('span');
-									abilVl.classList.add('bg7', 'wide', 'flat', 'grow');
-									abilVl.innerHTML += weapon[stat];
-									abilTag.append(abilLbl);
-									abilTag.append(abilVl);
-								} else if (stat != 'amount') {
+								if (stat == 'Abilities') {
+									// THIS USED TO MAKE A BOX BUT THE UI GOT MESSY
+									// let abilLbl = document.createElement('label');
+									// abilLbl.classList.add('bg3', 'wide', 'flat', 'grow');
+									// abilLbl.innerHTML += stat;
+									// let abilVl = document.createElement('span');
+									// abilVl.classList.add('bg7', 'wide', 'flat', 'grow');
+									// abilVl.innerHTML += weapon[stat];
+									// abilTag.append(abilLbl);
+									// abilTag.append(abilVl);
+								} else if (!['amount', 'name', 'customName', 'customNotes'].includes(stat)) {
 									let statTag = document.createElement('div');
 									statTag.classList.add('statTag', 'naked');
 									let statLbl = document.createElement('label');
@@ -539,11 +549,11 @@ function listBuild() {
 									statRow.append(statTag);
 								}
 							}
-							weaponDiv.append(nameDiv);
 							weaponDiv.append(statRow);
 							if (weapon["Abilities"] != '-')
-								weaponDiv.append(abilTag);
-
+								// THIS WAS FOR THE UI BOX ABOVE
+								// weaponDiv.append(abilTag);
+								weaponDiv.innerHTML += `<p class='textSmall'>${weapon["Abilities"]}</p>`
 							modelContent.append(weaponDiv);
 						}
 						unitContent.append(appendModel);
@@ -576,10 +586,11 @@ function listBuild() {
 					for (var spell of unit.spells) {
 						let newSpell = document.createElement('div');
 						newSpell.classList.add('accordion-header', 'tag', 'mini', 'spellTag', 'clickable');
-						newSpell.innerHTML += spell.name;
+						newSpell.innerHTML += ((spell.customName) ? spell.customName : spell.name)
 						unitContent.append(newSpell)
 						let newSpellContent = document.createElement('div');
-						newSpellContent.classList.add('accordion-content', 'hide', 'bg6');
+						newSpellContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
+						if (spell.customNotes) newSpellContent.innerHTML += `<p class='textSmall'>${spell.customNotes}</p>`
 						newSpellContent.innerHTML += `
             <div class="statRow noBorder">
             <div class="statTag">
@@ -608,10 +619,10 @@ function listBuild() {
 					for (var rule of unit.rules) {
 						let newRule = document.createElement('div');
 						newRule.classList.add('accordion-header', 'tag', 'mini', 'ruleTag', 'clickable');
-						newRule.innerHTML += rule.name;
+						newRule.innerHTML += ((rule.customName) ? rule.customName : rule.name)
 						unitContent.append(newRule)
 						let newRuleContent = document.createElement('div');
-						newRuleContent.classList.add('accordion-content', 'hide', 'bg6');
+						newRuleContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
 						newRuleContent.innerHTML += `<div class="textSmall cLeft">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(rule.desc, phase)) newRule.classList.add(phase);
@@ -631,12 +642,12 @@ function listBuild() {
 						let fileName = '';
 						if ("0123456789".includes(stratagem.cp_cost)) fileName = stratagem.cp_cost;
 						else fileName = 'null';
-						newStratagem.innerHTML += `<img src="img/icons/cp${fileName}.png" style="margin: 0px; padding: 0px; width: 12px; height: 12;"> ${stratagem.name}`;
+						newStratagem.innerHTML += `<img src="img/icons/cp${fileName}.png" style="margin: 0px; padding: 0px; width: 12px; height: 12px;"> ${stratagem.name}`;
 						unitContent.append(newStratagem)
 						let newStratagemContent = document.createElement('div');
-						newStratagemContent.classList.add('accordion-content', 'hide', 'bg6');
+						newStratagemContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
 						newStratagemContent.innerHTML += `
-						<p class="textSmall">${stratagem.type}</p>
+						<p class="textSmall">${stratagem.subfaction} - ${stratagem.type}</p>
             <p class="textSmall cLeft">${stratagem.description}</p>
           	`
 						for (phase of Object.keys(phaseList)) {

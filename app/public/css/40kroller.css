@@ -2,7 +2,7 @@
 @font-face {
   font-family: 'Jura';
   font-style: normal;
-  font-weight: 400;
+  /* font-weight: 800; */
   src: url('../fonts/jura-v19-latin-regular.eot');
   /* IE9 Compat Modes */
   src: local(''),
@@ -20,9 +20,10 @@
 
 * {
   font-family: 'Jura';
-  font-weight: bold;
+  font-weight: 400;
   scrollbar-width: thin;
   scrollbar-color: #999999 #000000;
+  user-select: none;
 }
 
 /* Works on Chrome, Edge, and Safari */
@@ -53,10 +54,13 @@ body {
   display: flex;
 }
 
+b, strong {
+  font-weight: 1000;
+}
+
 h1, h2, h3, h4, hr {
   /* text-align: center; */
   color: #ffffff;
-  user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
 }
@@ -154,6 +158,14 @@ li {
   background-color: #ffcc99;
 }
 
+.hlSome {
+  user-select: auto;
+}
+
+.hlAll {
+  user-select: all;
+}
+
 /*
 ██       █████  ██    ██  ██████  ██    ██ ████████
 ██      ██   ██  ██  ██  ██    ██ ██    ██    ██
@@ -161,7 +173,6 @@ li {
 ██      ██   ██    ██    ██    ██ ██    ██    ██
 ███████ ██   ██    ██     ██████   ██████     ██
 */
-
 .coverUp {
   display: block;
   border-radius: 10px;
@@ -242,6 +253,7 @@ li {
   display: inline-block;
   margin: 5px 0px 5px 0px;
   transition: border-radius 0.25s;
+  font-weight: 700;
 }
 
 .accordion-header.banner {
@@ -254,7 +266,7 @@ li {
 }
 
 .accordion-header .statTag {
-  font-weight: bold;
+  font-weight: 1000;
   color: #000000;
 }
 
@@ -295,12 +307,17 @@ li {
   padding: 2px;
   margin: 1px;
   color: #000000;
-  font-weight: bold;
+  font-weight: 1000;
   border-style: solid;
   border-width: 1px;
   border-radius: 5px 5px 5px 5px;
   border-color: black;
   margin: 5px 0px 5px 0px;
+}
+
+.accordion-content.unitBox img {
+ max-width: 250px;
+ margin: auto;
 }
 
 #feedback {
@@ -367,7 +384,7 @@ li {
   height: 14px;
   padding: 1px;
   /* font-size: 1em; */
-  font-weight: bold;
+  font-weight: 1000;
   border-style: solid;
   border-width: 1px;
   border-radius: 5px 5px 5px 5px;
@@ -378,7 +395,7 @@ li {
   padding: 1px;
   font-size: 0.8em;
   min-height: 14px;
-  font-weight: bold;
+  font-weight: 1000;
 }
 
 .statTag label {
@@ -397,13 +414,13 @@ li {
   display: block;
 }
 
- .statTag.naked {
-   border-width: 0px;
-   margin: 0px;
-   border-radius: 0px;
- }
+.statTag.naked {
+  border-width: 0px;
+  margin: 0px;
+  border-radius: 0px;
+}
 
-.statTag .naked{
+.statTag .naked {
   border-width: 0px;
   margin: 0px;
   padding: 0px 2px 0px 2px;
@@ -442,7 +459,7 @@ li {
   padding: 2px;
   margin: 1px;
   color: #000000;
-  font-weight: bold;
+  font-weight: 1000;
   min-width: 22px;
   transition: 0.5s;
   border-style: solid;
@@ -511,6 +528,10 @@ li {
   box-shadow: 0px 0px 2px 1px #f00;
 }
 
+.newTag {
+  box-shadow: 0px 0px 3px 2px #2adcf7;
+}
+
 /*
 ██████  ███████ ███████ ██   ██ ████████  ██████  ██████
 ██   ██ ██      ██      ██  ██     ██    ██    ██ ██   ██
@@ -561,6 +582,8 @@ li {
   height: 19px;
   width: 19px;
   float: right;
+  margin-left: 10px;
+  /* margin-right: 5px; */
 }
 
 .grow {
@@ -580,6 +603,7 @@ li {
     width: 300px;
   }
 }
+
 /*
 ████████  █████  ██████  ██      ███████ ████████
    ██    ██   ██ ██   ██ ██      ██         ██

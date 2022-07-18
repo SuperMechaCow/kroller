@@ -357,7 +357,7 @@
       <div class="accordion-content bg4 cCenter">
         <% if (gameCode) { %>
         <h2 class="cCenter">Game Code:</h2>
-        <h1 class="cCenter bg1">
+        <h1 class="cCenter bg1 hlAll">
           <%- gameCode %>
         </h1>
         <img id="qrshare" src="shares/<%- gameCode %>.png" alt="Have your friend scan this QR code to join your game session">
@@ -388,7 +388,6 @@
         <input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
         <input type="hidden" name="gameCode" id="gameCode" value="<%- gameCode %>">
         <input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
-        <!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
       </form>
     </div>
   </div>

@@ -33,7 +33,7 @@ async function grabSheet(sheet) {
 		console.log(urlPrefix + sheet + urlSuffix);
 		https.get(urlPrefix + sheet + urlSuffix, (res) => {
 
-			const path = `../public/data/${sheet}${urlSuffix}`;
+			const path = `../data/${sheet}${urlSuffix}`;
 			const filePath = fs.createWriteStream(path);
 			res.pipe(filePath);
 			filePath.on('finish', () => {
@@ -48,7 +48,7 @@ async function grabSheet(sheet) {
 async function grabAll() {
 	for (var sheet of urls) {
 		await grabSheet(sheet);
-		var csvFilePath = `../public/data/${sheet}.csv`;
+		var csvFilePath = `../data/${sheet}.csv`;
 		wahaData[sheet] = await csv({
 			delimiter: '|'
 		}).fromFile(csvFilePath);
@@ -60,7 +60,7 @@ async function grabAll() {
 	//REPLACE ALL russian booleans with true/false here
 	//ADD A "type" TO EACH ITEM FOR SEARCHING LATER (unit/model/ability/etc.)
 	//REMOVE "field#" columns
-	fs.writeFile(`../public/data/wahaData.json`, wahaData, (err) => {
+	fs.writeFile(`../data/wahaData.json`, wahaData, (err) => {
 		if (err) {
 			console.log(err);
 		} else {
@@ -70,11 +70,11 @@ async function grabAll() {
 }
 
 async function readFromExisting() {
-	fs.readdir(__dirname + '/../public/data/', async (err, files) => {
+	fs.readdir(__dirname + '/../data/', async (err, files) => {
 		if (err) console.log(err)
 		for (var file of files) {
 			if (file.split('.')[1] == 'csv') {
-				var csvFilePath = __dirname + `/public/data/${file}`;
+				var csvFilePath = __dirname + `/data/${file}`;
 				// Async / await usage
 				wahaData[file.split('.')[0]] = await csv({
 					delimiter: '|'
@@ -86,7 +86,7 @@ async function readFromExisting() {
 		//REPLACE ALL russian booleans with true/false here
 		//ADD A "type" TO EACH ITEM FOR SEARCHING LATER (unit/model/ability/etc.)
 		//REMOVE "field#" columns
-		fs.writeFile(__dirname + `/public/data/wahaData.json`, wahaData, (err) => {
+		fs.writeFile(__dirname + `/data/wahaData.json`, wahaData, (err) => {
 			if (err) {
 				console.log(err);
 			}
@@ -101,7 +101,7 @@ async function grabPage(faction) {
 	return new Promise((resolve, reject) => {
 		console.log(`Getting ${faction.link}`);
 		https.get(faction.link + '/', (res) => {
-			const path = `../public/data/scraped/${faction.name.replaceAll(' ', '-').toLowerCase()}.html`;
+			const path = `../data/scraped/${faction.name.replaceAll(' ', '-').toLowerCase()}.html`;
 			const filePath = fs.createWriteStream(path);
 			res.pipe(filePath);
 			filePath.on('finish', () => {
@@ -119,7 +119,7 @@ async function scraper(readData) {
 	}
 }
 
-fs.readFile(__dirname + '/../public/data/wahaData.json', 'utf8', (err, data) => {
+fs.readFile(__dirname + '/../data/wahaData.json', 'utf8', (err, data) => {
 	if (err) {
 		console.log(err);
 	} else {

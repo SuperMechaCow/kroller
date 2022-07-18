@@ -27,6 +27,11 @@ const qrcode = require('qrcode');
 const crypto = require('crypto');
 const Fuse = require('fuse.js');
 const request = require('request');
+var md = require('markdown-it')('commonmark', {
+	linkify: true,
+	breaks: true,
+	typographer: true
+});
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/database.db');
 
@@ -203,13 +208,11 @@ app.get('/', async (req, res) => {
 									} else forces.splice(1, 0, {
 										forceFile: null
 									});
-								}
-								else if (forces.length == 2) {
+								} else if (forces.length == 2) {
 									if (forces[0].forceCode == game.dfdrCode) {
 										forces.splice(1, 0, forces.shift());
 									}
-								}
-								else {
+								} else {
 									forces = [{
 										forceFile: null
 									}, {
@@ -218,15 +221,26 @@ app.get('/', async (req, res) => {
 								}
 								// then you need to load the files for each
 								let newForces = {};
-								if (forces[0].forceFile) newForces.atkr_file = [{fieldname: 'atkr_file', filename: forces[0].forceFile}];
+								if (forces[0].forceFile) newForces.atkr_file = [{
+									fieldname: 'atkr_file',
+									filename: forces[0].forceFile
+								}];
 								if (forces[1].forceFile) newForces.dfdr_file = [{
 									fieldname: 'atkr_file',
 									filename: forces[1].forceFile
 								}];
 								// and send them both to forceFromBS using it's argument object pattern
 								let forceBSData = forcesFromBS(newForces);
-								// then add the returned forces to newGame
-								newGame.forceData = forceBSData;
+								// if there was a problem
+								if (forceBSData.error) {
+									newGame.error = forceBSData.error;
+									newGame.outputPretty = forceBSData.outputPretty;
+									newGame.output = forceBSData.output;
+								}
+								// or add the returned forces to newGame
+								else {
+									newGame.forceData = forceBSData;
+								}
 								res.status(200).render('index', newGame);
 							}
 						});
@@ -367,7 +381,7 @@ app.listen(PORT, () => {
 ██   ██ ██      ██ ██      ██    ██ ██   ██ ██   ██          ██ ██         ██    ██    ██ ██
 ██████  ██ ███████  ██████  ██████  ██   ██ ██████      ███████ ███████    ██     ██████  ██
 */
-/*
+
 const Discord = require('discord.js');
 // Require the necessary discord.js classes
 // const { token } = require('./config.json');
@@ -385,92 +399,108 @@ disclient.on('ready', () => {
 	logger.info(`Logged in as ${disclient.user.tag}!`);
 });
 
-disclient.on('messageCreate', message => {
-	if (message.content.startsWith('/kroller')) {
-		message.reply('uwu?');
-	}
-
-	function getRoster(newFileName, url) {
-		return new Promise((resolve, reject) => {
-			https.get(url, (res) => {
-				const writeStream = fs.createWriteStream(__dirname + `/uploads/${newFileName}`);
-				res.pipe(writeStream);
-				writeStream.on("finish", () => {
-					writeStream.close();
-
-					resolve()
-				});
-				writeStream.on("error", (err) => {
-					logger.error(err);
-				})
+function getRoster(newFileName, url) {
+	return new Promise((resolve, reject) => {
+		https.get(url, (res) => {
+			const writeStream = fs.createWriteStream(__dirname + `/uploads/${newFileName}`);
+			res.pipe(writeStream);
+			writeStream.on("finish", () => {
+				writeStream.close();
+				resolve()
 			});
-		})
-	}
+			writeStream.on("error", (err) => {
+				logger.error(err);
+			})
+		});
+	})
+}
 
-	async function resolveRoster() {
-		let files = {}
-		if (message.attachments.size) {
-			//There's got to be a better way to match uploads to roster files
-			for (var force of message.attachments.entries()) {
-				if (force[1].name.split('.').reverse()[0] == 'rosz') {
-					let newFileName = crypto.randomBytes(8).toString("hex")
-					await getRoster(newFileName, force[1].url)
-					if (!files.atkr_file) {
-						files.atkr_file = [{
-							filename: newFileName
-						}]
-					} else if (!files.dfdr_file) {
-						files.dfdr_file = [{
-							filename: newFileName
-						}]
-					} else {
-						break;
-					}
+async function resolveRoster() {
+	let files = {}
+	if (message.attachments.size) {
+		//There's got to be a better way to match uploads to roster files
+		for (var force of message.attachments.entries()) {
+			if (force[1].name.split('.').reverse()[0] == 'rosz') {
+				let newFileName = crypto.randomBytes(8).toString("hex")
+				await getRoster(newFileName, force[1].url)
+				if (!files.atkr_file) {
+					files.atkr_file = [{
+						filename: newFileName
+					}]
+				} else if (!files.dfdr_file) {
+					files.dfdr_file = [{
+						filename: newFileName
+					}]
+				} else {
+					break;
 				}
-			}
-
-			let forceData = await forcesFromBS(files);
-			gameCode = crypto.randomBytes(4).toString("hex");
-
-			if (forceData[0].length) {
-				let gameData = await createGame(gameCode);
-				gameList[gameCode].forceData = forceData;
-				logger.debug(forceData);
-				gameList[gameCode].forceData[0] = forceData[0];
-
-				let descString = 'Empty Game'
-				if (forceData[0][0]) {
-					descString = forceData[0][0].name;
-				}
-				if (forceData.dfdr_file[0]) {
-					descString += ' vs ' + forceData.dfdr_file[0].name;
-				}
-				const attachment = new Discord.MessageAttachment(__dirname + '/public/shares/' + gameCode + '.png');
-				const embed = new Discord.MessageEmbed()
-					.setTitle('40kroller Game')
-					.setColor('RED')
-					.setDescription(descString)
-					.setURL(gameData.url)
-					// .setThumbnail('attachment://' + gameCode + '.png')
-					.setImage('attachment://' + gameCode + '.png')
-					.setTimestamp()
-				message.channel.send({
-					embeds: [embed],
-					files: [attachment]
-				});
-				// message.reply(gameData.url);
 			}
 		}
-	}
 
-	resolveRoster();
+		let forceData = await forcesFromBS(files);
+		console.log(forceData);
+		if (forceData.length) {
+			let gameData = await createGame();
+			console.log(gameData);
+			let descString = 'Empty Game'
+			if (forceData[0][0]) {
+				descString = forceData[0][0].name;
+			}
+			if (forceData.dfdr_file[0]) {
+				descString += ' vs ' + forceData.dfdr_file[0].name;
+			}
+			const attachment = new Discord.MessageAttachment(__dirname + '/public/shares/' + gameCode + '.png');
+			const embed = new Discord.MessageEmbed()
+				.setTitle('40kroller Game')
+				.setColor('RED')
+				.setDescription(descString)
+				.setURL(gameData.url)
+				// .setThumbnail('attachment://' + gameCode + '.png')
+				.setImage('attachment://' + gameCode + '.png')
+				.setTimestamp()
+			message.channel.send({
+				embeds: [embed],
+				files: [attachment]
+			});
+		}
+	}
+}
+
+disclient.on('messageCreate', message => {
+	if (message.content.startsWith('!!')) {
+		let command = message.content.split('!!')[1]
+		let args = command.split(' ')
+		switch (args[0]) {
+			case 'ping':
+				message.reply(`I'm alive!`)
+				break;
+			case 'unit':
+				let searchResults = fuzzysearch(command, wahaData.Datasheets, 5);
+				let descString = `Searching for: ${command.replace(args[0] + ' ', '')}`;
+				for (var result of searchResults) {
+					descString += `\n[${result.item.name}](${result.item.link})`
+				}
+				const embed = new Discord.MessageEmbed()
+					.setTitle('40kroller Fuzzy Search')
+					.setColor('RED')
+					.setDescription(descString)
+				message.channel.send({
+					embeds: [embed]
+				});
+				break;
+			default:
+
+				break;
+		}
+	} else {
+		//	resolveRoster();
+	}
 
 });
 
 const discordtoken = require('./discordtoken');
 
 disclient.login(discordtoken.TOKEN);
-*/
 /*
 ██    ██ ████████ ██ ██          ███████ ██    ██ ███    ██  ██████ ████████ ██  ██████  ███    ██ ███████
 ██    ██    ██    ██ ██          ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██
@@ -676,7 +706,7 @@ function forcesFromBS(providedFiles) {
 		logger.error(prepError(error));
 		return {
 			error: error,
-			outputPretty: '<p class="">There was an error when attempting to unzip and read the roster files.</p>',
+			outputPretty: '<p class="oR cCenter">There was an error when attempting to unzip and read the roster files.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
 			output: 'There was an error when attempting to unzip and read the roster files.'
 		}
 	}
@@ -698,7 +728,7 @@ function parseBS(data) {
 			force.customName = data.roster.$.customName
 		}
 		if (data.roster.customNotes) {
-			force.customNotes = data.roster.customNotes[0]
+			force.customNotes = md.renderInline(data.roster.customNotes[0]);
 		}
 
 		//Grab all of the army costs
@@ -716,13 +746,14 @@ function parseBS(data) {
 			let faction = detachment.$.catalogueName;
 			//Imperium usually have two faction keywords
 			if (detachment.$.catalogueName.split(' - ').length > 1) faction = detachment.$.catalogueName.split(' - ')[1];
-
 			//Start building the detachment object
 			let newDetachment = {
 				name: detachment.$.name,
 				faction: faction,
 				units: []
 			}
+			let factionLink = wahaData.Factions.find(fct => fct.name == faction)
+			if (factionLink) newDetachment.factionLink = factionLink.link;
 
 			// Try to grab waha faction
 			let wahaFaction = wahaData.Factions.find(wahaFact => wahaFact.name == faction)
@@ -733,7 +764,7 @@ function parseBS(data) {
 				newDetachment.customName = detachment.$.customName;
 			}
 			if (detachment.customNotes) {
-				newDetachment.customNotes = detachment.customNotes[0];
+				newDetachment.customNotes = md.renderInline(detachment.customNotes[0]);
 			}
 
 			//If it's not a list, put it in one so it can be looped through
@@ -761,14 +792,69 @@ function parseBS(data) {
 						newUnit.customName = unit.$.customName
 					}
 					if (unit.customNotes) {
-						newUnit.customNotes = unit.customNotes
+						newUnit.customNotes = md.renderInline(unit.customNotes[0]);
 					}
 
-					//Find the datasheet in the wahaData
-					let datasheet = wahaData.Datasheets.find(datasheet => datasheet.name == unit.$.name)
-					if (datasheet) newUnit.waha = datasheet;
-					// else newUnit.waha = 'Not Found';
+					//
+					//  Start collecting keywords
+					//
 
+					//Try to pull from waha first
+					if (newUnit.waha) {
+						let unitKeys = wahaData.Datasheets_keywords.filter(function(key) {
+							return key.datasheet_id == newUnit.waha.id;
+						});
+						for (var key of unitKeys) {
+							if (key.is_faction_keyword == 'true') newUnit.faction.push(key.keyword);
+							else newUnit.keywords.push(key.keyword.toLowerCase());
+						}
+						newUnit.slot = newUnit.waha.role;
+					}
+					//Otherwise, pull from battlescribe
+					else {
+						if (unit.categories) {
+							if (!Array.isArray(unit.categories[0].category)) unit.categories[0].category = [unit.categories[0].category]
+							for (category of unit.categories[0].category) {
+								if (category.$.primary == "true") {
+									newUnit.slot = category.$.name
+								} else {
+									//BS factions format: "Faction: <faction name>".
+									//Try to Split by ": ", and if the first word is "Faction"
+									if (category.$.name.split(": ")[0] == "Faction") {
+										//Dump the "Faction" and keep the "<faction name>"
+										newUnit.faction = category.$.name.split(":")[1].trim()
+									} else {
+										//Otherwise, dump the keyword straight to the list
+										newUnit.keywords.push(category.$.name.toLowerCase())
+									}
+								}
+							}
+						}
+					}
+
+					// Find the datasheet in the wahaData
+					let datasheet;
+					// Some units (especially daemons and CSM marines) are in multiple factions
+					// Find all possible datasheets
+					let datasheetList = wahaData.Datasheets.filter(datasheet => datasheet.name == unit.$.name)
+					// If there was more than one possible datasheet
+					if (datasheetList.length > 1) {
+						// Check the datasheet keywords for each possible datasheet
+						for (var checkDatasheet of datasheetList) {
+							// See if it has a matching kayword AND datasheet id
+							let foundDS = wahaData.Datasheets_keywords.find(ds => ds.datasheet_id == checkDatasheet.id && ds.keyword == newUnit.faction);
+							// If you found a match, make that the datasheet and stop checking
+							if (foundDS) {
+								datasheet = checkDatasheet;
+								break;
+							}
+						}
+					}
+					//If there was only one datasheet found, that must be the correct one
+					else {
+						datasheet = datasheetList[0]
+					}
+					if (datasheet) newUnit.waha = datasheet;
 					//Start collecting rules
 					//This is the most obvious place to put all of the rules for the entire unit,
 					//but there are two other places below
@@ -784,6 +870,13 @@ function parseBS(data) {
 								subkeys: rule.description[0].match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
 								targets: rule.description[0].match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
 								phases: []
+							}
+							//Grab customName
+							if (rule.$.customName) {
+								newRule.customName = rule.$.customName
+							}
+							if (rule.customNotes) {
+								newRule.customNotes = md.renderInline(rule.customNotes[0]);
 							}
 							//Look for specific mentions of a phase
 							for (phase of phaseList) {
@@ -807,6 +900,13 @@ function parseBS(data) {
 										subkeys: chara._.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
 										targets: chara._.match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
 										phases: []
+									}
+									//Grab customName
+									if (profile.$.customName) {
+										newRule.customName = profile.$.customName
+									}
+									if (profile.customNotes) {
+										newRule.customNotes = md.renderInline(profile.customNotes[0]);
 									}
 									for (phase of phaseList) {
 										if (newRule.desc.includes((phase + "phase"))) newRule.phases.push(phase)
@@ -837,6 +937,7 @@ function parseBS(data) {
 					let unclaimedWeapons = []
 					for (selection of selectionData) {
 						if (!selection) break;
+						if (selection.$.name == "Warlord") newUnit.warlord = true;
 						let newModel = {
 							name: '',
 							faction: '',
@@ -861,13 +962,24 @@ function parseBS(data) {
 						for (profile of profileParse) {
 							if (!profile) break;
 
+
+							/*
+							██   ██ ███████ ██    ██     ██████  ██ ██████      ██    ██  ██████  ██    ██     ██   ██ ███    ██  ██████  ██     ██ ██████  ██
+							██   ██ ██       ██  ██      ██   ██ ██ ██   ██      ██  ██  ██    ██ ██    ██     ██  ██  ████   ██ ██    ██ ██     ██      ██ ██
+							███████ █████     ████       ██   ██ ██ ██   ██       ████   ██    ██ ██    ██     █████   ██ ██  ██ ██    ██ ██  █  ██   ▄███  ██
+							██   ██ ██         ██        ██   ██ ██ ██   ██        ██    ██    ██ ██    ██     ██  ██  ██  ██ ██ ██    ██ ██ ███ ██   ▀▀
+							██   ██ ███████    ██        ██████  ██ ██████         ██     ██████   ██████      ██   ██ ██   ████  ██████   ███ ███    ██    ██
+							*/
+							// This doesn't look for models, just statlines in the unit.
+							// This means no custom names or notes for models
+
 							if (profile.$.typeName == "Unit") {
 								newModel.name = profile.$.name
 								if (profile.$.customName) {
 									newModel.customName = profile.$.customName
 								}
 								if (profile.$.customNotes) {
-									newModel.customNotes = profile.$.customNotes
+									newModel.customNotes = md.renderInline(profile.$.customNotes[0]);
 								}
 								let charaParse = profile.characteristics[0].characteristic
 								newModel.statlines = {}
@@ -894,6 +1006,13 @@ function parseBS(data) {
 										subkeys: chara._.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
 										targets: chara._.match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
 										phases: []
+									}
+									//Grab customName
+									if (profile.$.customName) {
+										newRule.customName = profile.$.customName
+									}
+									if (profile.customNotes) {
+										newRule.customNotes = md.renderInline(profile.customNotes[0]);
 									}
 									for (phase of phaseList) {
 										if (newRule.desc.includes((phase + "phase"))) newRule.phases.push(phase)
@@ -946,7 +1065,7 @@ function parseBS(data) {
 											newWeapon.customName = weapon.$.customName
 										}
 										if (weapon.customNotes) {
-											newWeapon.customName = weapon.customNotes[0]
+											newWeapon.customNotes = md.renderInline(weapon.customNotes[0]);
 										}
 										// newWeapon.amount = weapon.number
 										for (chara of charaParse) {
@@ -979,7 +1098,7 @@ function parseBS(data) {
 						}
 
 						//
-						//  Start collecting weapons
+						//  Start collecting spells
 						//
 						let spellGrab = []
 						if (selection.selections) {
@@ -1011,8 +1130,14 @@ function parseBS(data) {
 									let charaParse = spellProf.characteristics[0].characteristic
 									if (spellProf.$.typeName == "Psychic Power") {
 										newSpell.name = spellProf.$.name;
-
-										let spellChara = spellProf.characteristics[0].characteristic
+										//Grab customName
+										if (spell.$.customName) {
+											newSpell.customName = spell.$.customName;
+										}
+										if (spell.customNotes) {
+											newSpell.customNotes = md.renderInline(spell.customNotes[0]);
+										}
+										let spellChara = spellProf.characteristics[0].characteristic;
 
 										for (chara of spellChara) {
 											newSpell[chara.$.name.toLowerCase().replace(/\s/g, '')] = chara._;
@@ -1046,65 +1171,22 @@ function parseBS(data) {
 					}
 
 					//
-					//  Start collecting keywords
-					//
-
-					//Try to pull from waha first
-					if (newUnit.waha) {
-						let unitKeys = wahaData.Datasheets_keywords.filter(function(key) {
-							return key.datasheet_id == newUnit.waha.id;
-						});
-						for (var key of unitKeys) {
-							if (key.is_faction_keyword == 'true') newUnit.faction.push(key.keyword);
-							else newUnit.keywords.push(key.keyword.toLowerCase());
-						}
-						newUnit.slot = newUnit.waha.role;
-					}
-					//Otherwise, pull from battlescribe
-					else {
-						if (unit.categories) {
-							if (!Array.isArray(unit.categories[0].category)) unit.categories[0].category = [unit.categories[0].category]
-							for (category of unit.categories[0].category) {
-								if (category.$.primary == "true") {
-									newUnit.slot = category.$.name
-								} else {
-									//BS factions format: "Faction: <faction name>".
-									//Try to Split by ": ", and if the first word is "Faction"
-									if (category.$.name.split(": ")[0] == "Faction") {
-										//Dump the "Faction" and keep the "<faction name>"
-										newUnit.faction = category.$.name.split(":")[1].trim()
-									} else {
-										//Otherwise, dump the keyword straight to the list
-										newUnit.keywords.push(category.$.name.toLowerCase())
-									}
-								}
-							}
-						}
-					}
-
-					//
 					//Stratagems
 					//
 
 					if (newUnit.waha) {
 						// Find all strat ID's on the datasheet
-						let stratIDfind = wahaData.Datasheets_stratagems.filter(function(strat) {
-							return strat.datasheet_id == newUnit.waha.id;
-						});
+						let stratIDfind = wahaData.Datasheets_stratagems.filter(strat => strat.datasheet_id == newUnit.waha.id);
 						for (var stratID of stratIDfind) {
 							//Find all data by strat ID
-							let stratDatafind = wahaData.Stratagems.filter(function(strat) {
-								return strat.id == stratID.stratagem_id;
-							});
+							let stratDatafind = wahaData.Stratagems.filter(strat => strat.id == stratID.stratagem_id);
 							for (var stratData of stratDatafind) {
 								let strat = stratData;
 								stratData.keys = [];
 								stratData.activate = [];
 								stratData.descText = stratData.description.replaceAll("<[^>]*>", "");
 								//Find all phases of stratagems
-								let stratPhasefind = wahaData.StratagemPhases.filter(function(strat) {
-									return strat.stratagem_id == stratData.id;
-								});
+								let stratPhasefind = wahaData.StratagemPhases.filter(strat => strat.stratagem_id == stratData.id);
 								for (var stratPhase of stratPhasefind) {
 									stratData.activate.push(stratPhase.phase);
 								}
@@ -1121,6 +1203,11 @@ function parseBS(data) {
 								}
 								for (var key of stratData.description.matchAll(/<span [^>]+>([^<]+)<\/span>/g)) {
 									if (!stratData.keys.includes(key[1])) stratData.keys.push(key[1].toLowerCase());
+								}
+								let typeData = stratData.type.split(' – ')
+								if (typeData.length > 1) {
+									stratData.subfaction = typeData[0]
+									stratData.type = typeData[1].replace(' Stratagem', '');
 								}
 								newUnit.stratagems.push(stratData)
 							}
@@ -1140,7 +1227,6 @@ function parseBS(data) {
 			newDetachment.units = sortBySlot(newDetachment.units)
 			force.detachments.push(newDetachment)
 		}
-		// return [force, '', JSON.stringify(data)]
 		return {
 			force: force,
 			error: '',
@@ -1154,7 +1240,7 @@ function parseBS(data) {
 		return {
 			force: force,
 			error: error,
-			outputPretty: '<p oR="oR cCenter">There was an error in parsing the Battlescribe roster.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+			outputPretty: '<p class="oR cCenter">There was an error in parsing the Battlescribe roster.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
 			output: 'There was an error in parsing the Battlescribe roster. This infraction has been recorded. Consult the Tech Priest.',
 			bsdata: data
 		}
