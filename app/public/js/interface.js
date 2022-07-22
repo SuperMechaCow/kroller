@@ -127,10 +127,15 @@ function swiperDrag(e) {
 */
 
 function output(message) {
-	if (!ioList.output.classList.contains('isOpen')) {
-		toggleAccordion(ioList.output)
+	for (var header of document.getElementsByClassName('accordion-header')) {
+		// If it's open, close it
+		if (header.classList.contains('isOpen'))
+			toggleAccordion(header)
+		// If it's the Output header, open it back up
+		if (header.innerText == 'Output')
+			toggleAccordion(header)
+		ioList.output.innerHTML = message;
 	}
-	ioList.output.innerHTML = message;
 }
 
 function buildAccordions() {
@@ -198,7 +203,7 @@ function toggleAccordion(el) {
 }
 
 function wahaLinks() {
-	for (var wahaIcon of document.getElementsByClassName('wahaLinkImg')) {
+	for (var wahaIcon of document.getElementsByClassName('linkImg')) {
 		wahaIcon.addEventListener("click", function(e) {
 			//stackoverflow fix for onlick in an onclick
 			if (!e) var e = window.event;
@@ -239,6 +244,12 @@ function updateTrackers() {
 			ttltracker.innerText = Number(ttltracker.innerText) + Number(tracker.value);
 		}
 	}
+	if (gameCode) {
+		socket.emit('updateScoreboard', {
+			gameCode: gameCode,
+			score: 0
+		});
+	}
 }
 
 function makeUseTag(text, phase) {
@@ -263,15 +274,24 @@ function findUseTags() {
 		unit.classList.remove('useTag')
 		let allAbils = unit.nextSibling.getElementsByClassName('tag');
 		for (var abil of allAbils) {
-			abil.classList.remove('useTag')
+			abil.classList.remove('useTag');
+			// Grab all subfaction/variant stratagems if there is no phase selected
+			if (abil.getAttribute('data-subfaction') && !currentPhase) {
+				abil.classList.add('useTag');
+				if (settings.autoOpen) {
+					abil.classList.add('isOpen');
+					abil.nextSibling.classList.add('isOpen');
+				}
+			}
 		}
+		// Grab all stratagems that have been marked for this phase
 		let foundAbils = unit.nextSibling.getElementsByClassName(currentPhase);
 		for (var abil of foundAbils) {
-			abil.classList.add('useTag')
-			unit.classList.add('useTag')
+			abil.classList.add('useTag');
+			unit.classList.add('useTag');
 			if (settings.autoOpen) {
-				abil.classList.add('isOpen')
-				abil.nextSibling.classList.add('isOpen')
+				abil.classList.add('isOpen');
+				abil.nextSibling.classList.add('isOpen');
 			}
 		}
 	}
@@ -295,6 +315,18 @@ function tickle() {
 		document.getElementById('subbanner').innerText = 'ウォーハンマー40k試合電卓';
 	}
 }
+
+/*
+███████  ██████   ██████ ██   ██ ███████ ████████ ███████
+██      ██    ██ ██      ██  ██  ██         ██    ██
+███████ ██    ██ ██      █████   █████      ██    ███████
+     ██ ██    ██ ██      ██  ██  ██         ██         ██
+███████  ██████   ██████ ██   ██ ███████    ██    ███████
+*/
+
+// socket.on('message', message => {
+// 	console.log(message);
+// })
 
 /*
 ██ ███    ██ ██ ████████ ██  █████  ██      ██ ███████ ███████
@@ -322,6 +354,8 @@ function init() {
 			updateTrackers();
 		}
 	}
+
+	findUseTags();
 
 	// Initialize spinners
 	for (spinner of document.getElementsByClassName('spinner')) {
@@ -415,15 +449,38 @@ function listBuild() {
 			*/
 
 			for (var detachment of force.detachments) {
+				let newBox = document.createElement('div');
+				newBox.classList.add('factionBox');
+
+				// Add detachment faction image
+				appendList = document.createElement('img');
+				appendList.classList.add('factionIcon');
+				if (detachment.factionIcon)
+					appendList.src = detachment.factionIcon;
+				// If it couldn't load the image
+				newBox.append(appendList);
 				// Add detachment name
 				appendList = document.createElement('h3');
 				appendList.innerText = ((detachment.customName) ? detachment.customName : detachment.name);
-				thisList.append(appendList);
+				newBox.append(appendList);
 				// Add detachment faction
 				appendList = document.createElement('h3');
-				if (detachment.factionLink) appendList.innerHTML = `<a href="${detachment.factionLink}" target="_blank">${detachment.faction}</a>`;
+				if (detachment.factionLink) appendList.innerHTML += `<a href="${detachment.factionLink}" target="_blank">${detachment.faction}</a>`;
 				else appendList.innerText = detachment.faction;
-				thisList.append(appendList);
+				newBox.append(appendList);
+				// Add detachment subfaction
+				if (detachment.subfaction) {
+					appendList = document.createElement('h3');
+					appendList.innerHTML += `${detachment.subfaction}`;
+					newBox.append(appendList);
+				}
+				// Add detachment variant
+				if (detachment.variant) {
+					appendList = document.createElement('h3');
+					appendList.innerHTML += `${detachment.variant}`;
+					newBox.append(appendList);
+				}
+				thisList.append(newBox);
 				// Start listing units
 				/*
 				██    ██ ███    ██ ██ ████████
@@ -439,34 +496,15 @@ function listBuild() {
 					// Role icon on left side
 					if (unitRoles.includes(unit.slot.replaceAll(' ', '').toLowerCase())) {
 						unitHeader.innerHTML += `
-          <img src="img/roles/${unit.slot.replaceAll(' ', '').toLowerCase()}.png" class="roleImg">
-          `;
+						<img src="img/roles/${unit.slot.replaceAll(' ', '').toLowerCase()}.png" class="roleImg">
+						`;
 					}
-					if (unit.warlord) unitHeader.innerHTML += `<img src="img/icons/warlord.png" class="roleImg">`;
 					// Unit name
 					let tempName = ((unit.customName) ? unit.customName : unit.name)
 					if (tempName.length >= 22) tempName = tempName.substring(0, 20) + " ...";
 					unitHeader.innerHTML += tempName;
-					// Pic Search
-					/*
-					let picSearch = document.createElement('img')
-					picSearch.classList.add('wahaLinkImg')
-					picSearch.setAttribute("data-link", `https://www.google.com/search?tbm=isch&q=Warhammer%2040000%20${unit.name}%20miniature`);
-					picSearch.src = 'img/icons/picSearch3.png';
-					unitHeader.appendChild(picSearch);
-					*/
-					// Wahapedia link
-					if (unit.waha) {
-						if (unit.waha.link) {
-							let wahaIcon = document.createElement('img')
-							wahaIcon.classList.add('wahaLinkImg')
-							wahaIcon.setAttribute("data-link", unit.waha.link);
-							wahaIcon.src = 'https://wahapedia.ru/favicon.png';
-							unitHeader.appendChild(wahaIcon);
-						}
-					}
-					// GW Search Link
-					//https://www.games-workshop.com/en-US/searchResults?_dyncharset=UTF-8&_dynSessConf=-5255390880923486912&qty=&sorting=&view=&Ntt=${unit.name}
+					// Warlord icon on left side
+					if (unit.warlord) unitHeader.innerHTML += `<img src="img/icons/warlord.png" class="warlordImg">`;
 					let unitContent = document.createElement('div');
 					unitContent.classList.add('accordion-content', 'bg4', 'unitBox');
 					if (unit.customNotes) unitContent.innerHTML += `<p class='textSmall unitNotes'>${unit.customNotes}</p>`
@@ -571,6 +609,10 @@ function listBuild() {
 					for (var keyword of unit.keywords) {
 						let newKeyword = document.createElement('div');
 						newKeyword.classList.add('tag', 'mini', 'bg7');
+						if (keyword == 'core') {
+							newKeyword.classList.remove('bg7');
+							newKeyword.classList.add('bg3');
+						}
 						newKeyword.innerHTML += keyword;
 						unitContent.append(newKeyword)
 					}
@@ -592,18 +634,17 @@ function listBuild() {
 						newSpellContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
 						if (spell.customNotes) newSpellContent.innerHTML += `<p class='textSmall'>${spell.customNotes}</p>`
 						newSpellContent.innerHTML += `
-            <div class="statRow noBorder">
-            <div class="statTag">
-            <label class="bg3 textSmall">Warp Charge</label>
-            <span class="bg7 textSmall">${spell.warpcharge}</span>
-            </div>
-            <div class="statTag">
-            <label class="bg3 textSmall">Range</label>
-            <span class="bg7 textSmall">${spell.range}</span>
-            </div>
-            </div>
-            <div class="textSmall cLeft">${spell.details.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
-
+							<div class="statRow noBorder">
+							<div class="statTag">
+							<label class="bg3 textSmall">Warp Charge</label>
+							<span class="bg7 textSmall">${spell.warpcharge}</span>
+							</div>
+							<div class="statTag">
+							<label class="bg3 textSmall">Range</label>
+							<span class="bg7 textSmall">${spell.range}</span>
+							</div>
+							</div>
+							<div class="textSmall cLeft">${spell.details.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(spell.details, phase)) newSpell.classList.add(phase);
 						}
@@ -623,7 +664,42 @@ function listBuild() {
 						unitContent.append(newRule)
 						let newRuleContent = document.createElement('div');
 						newRuleContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
-						newRuleContent.innerHTML += `<div class="textSmall cLeft">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
+						if (rule.name == 'Explodes') {
+							newRule.classList.add('permaUse');
+							newRuleContent.innerHTML += `
+							<div class="textSmall cLeft">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>
+							<div class="statRow noBorder">
+							<div class="statTag">
+							<label class="bg3 textSmall">Roll</label>
+							<span class="bg7 textSmall">${rule.roll}</span>
+							</div>
+							<div class="statTag">
+							<label class="bg3 textSmall">Distance</label>
+							<span class="bg7 textSmall">${rule.distance}</span>
+							</div>
+							<div class="statTag">
+							<label class="bg3 textSmall">Damage</label>
+							<span class="bg7 textSmall">${rule.damage}</span>
+							</div>
+							</div>`
+						} else if (rule.name == 'Psyker') {
+							newRule.classList.remove('ruleTag');
+							newRule.classList.add('spellTag');
+							newRuleContent.innerHTML += `
+								<div class="statRow noBorder">
+								<div class="statTag">
+								<label class="bg3 textSmall">Cast</label>
+								<span class="bg7 textSmall">${rule.cast}</span>
+								</div>
+								<div class="statTag">
+								<label class="bg3 textSmall">Deny</label>
+								<span class="bg7 textSmall">${rule.deny}</span>
+								</div>
+								</div>
+								<div class="textSmall cCenter">${rule.desc}</div>`
+						} else {
+							newRuleContent.innerHTML += `<div class="textSmall cLeft">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
+						}
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(rule.desc, phase)) newRule.classList.add(phase);
 						}
@@ -637,25 +713,60 @@ function listBuild() {
 					███████    ██    ██   ██ ██   ██    ██    ██   ██  ██████  ███████ ██      ██ ███████
 					*/
 					for (var stratagem of unit.stratagems) {
-						let newStratagem = document.createElement('div');
-						newStratagem.classList.add('accordion-header', 'tag', 'mini', 'stratTag', 'clickable');
-						let fileName = '';
-						if ("0123456789".includes(stratagem.cp_cost)) fileName = stratagem.cp_cost;
-						else fileName = 'null';
-						newStratagem.innerHTML += `<img src="img/icons/cp${fileName}.png" style="margin: 0px; padding: 0px; width: 12px; height: 12px;"> ${stratagem.name}`;
-						unitContent.append(newStratagem)
-						let newStratagemContent = document.createElement('div');
-						newStratagemContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
-						newStratagemContent.innerHTML += `
-						<p class="textSmall">${stratagem.subfaction} - ${stratagem.type}</p>
-            <p class="textSmall cLeft">${stratagem.description}</p>
-          	`
-						for (phase of Object.keys(phaseList)) {
-							if (makeUseTag(stratagem.description, phase)) newStratagem.classList.add(phase);
+						if (detachment.subfaction.length == 0 || detachment.subfaction == stratagem.subfaction || detachment.faction == stratagem.subfaction || detachment.variant == stratagem.subfaction) {
+							let newStratagem = document.createElement('div');
+							if (detachment.faction != stratagem.subfaction)
+								if (detachment.subfaction)
+									newStratagem.setAttribute(`data-subfaction`, detachment.subfaction);
+							newStratagem.classList.add('accordion-header', 'tag', 'mini', 'stratTag', 'clickable');
+							let fileName = '';
+							if ("0123456789".includes(stratagem.cp_cost)) fileName = stratagem.cp_cost;
+							else fileName = 'null';
+							newStratagem.innerHTML += `<img src="img/icons/cp${fileName}.png" style="margin: 0px; padding: 0px; width: 12px; height: 12px;"> ${stratagem.name}`;
+							unitContent.append(newStratagem);
+							let newStratagemContent = document.createElement('div');
+							newStratagemContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
+							newStratagemContent.innerHTML += `
+								<p class="textSmall">${stratagem.subfaction} - ${stratagem.type}</p>
+		            <p class="textSmall cLeft">${stratagem.description}</p>
+		          	`;
+							for (phase of Object.keys(phaseList)) {
+								if (makeUseTag(stratagem.description, phase)) newStratagem.classList.add(phase);
+							}
+							unitContent.append(newStratagemContent)
 						}
-						unitContent.append(newStratagemContent)
 					}
-
+					let searchBox = document.createElement('div')
+					// Wahapedia link
+					if (unit.waha) {
+						if (unit.waha.link) {
+							let wahaIcon = document.createElement('img')
+							wahaIcon.classList.add('linkImg');
+							wahaIcon.setAttribute("data-link", unit.waha.link);
+							wahaIcon.src = 'https://wahapedia.ru/favicon.png';
+							searchBox.appendChild(wahaIcon);
+						}
+					}
+					// Pic Search
+					let picSearch = document.createElement('img')
+					picSearch.classList.add('linkImg');
+					picSearch.setAttribute("data-link", `https://www.google.com/search?tbm=isch&q=Warhammer%2040000%20${unit.name}%20miniature`);
+					picSearch.src = 'img/icons/picsearch.png';
+					searchBox.appendChild(picSearch);
+					// GW Search
+					let gwsearch = document.createElement('img')
+					gwsearch.classList.add('linkImg');
+					gwsearch.setAttribute("data-link", `https://www.games-workshop.com/en-US/searchResults?_dyncharset=UTF-8&_dynSessConf=-5255390880923486912&qty=&sorting=&view=&Ntt=${unit.name}`);
+					gwsearch.src = 'img/icons/gw.ico';
+					searchBox.appendChild(gwsearch);
+					// eBay search
+					let ebaySearch = document.createElement('img')
+					ebaySearch.classList.add('linkImg');
+					ebaySearch.setAttribute("data-link", `https://www.ebay.com/sch/i.html?_nkw=40k+${unit.name}`);
+					ebaySearch.src = 'img/icons/ebay.ico';
+					searchBox.appendChild(ebaySearch);
+					// Put it all in the list
+					unitContent.appendChild(searchBox);
 					thisList.append(unitHeader);
 					thisList.append(unitContent);
 				}

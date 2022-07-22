@@ -34,6 +34,10 @@ var md = require('markdown-it')('commonmark', {
 });
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/database.db');
+const http = require('http');
+var app = express()
+const server = http.createServer(app);
+const io = require('socket.io')(server);
 
 /*
 ██       ██████   ██████   ██████  ███████ ██████
@@ -89,15 +93,6 @@ var URL = 'http://40kroller.animetidd.is/'
 var HOST = '192.168.1.103';
 var PORT = 4040;
 
-/*
-███████ ██   ██ ██████  ██████  ███████ ███████ ███████     ███████ ███████ ████████ ██    ██ ██████
-██       ██ ██  ██   ██ ██   ██ ██      ██      ██          ██      ██         ██    ██    ██ ██   ██
-█████     ███   ██████  ██████  █████   ███████ ███████     ███████ █████      ██    ██    ██ ██████
-██       ██ ██  ██      ██   ██ ██           ██      ██          ██ ██         ██    ██    ██ ██
-███████ ██   ██ ██      ██   ██ ███████ ███████ ███████     ███████ ███████    ██     ██████  ██
-*/
-
-var app = express()
 
 app.set('view engine', 'ejs');
 
@@ -370,8 +365,31 @@ app.post('/upload', upload.fields([{
 	}
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
 	logger.info(`Listening on ${HOST}:${PORT}`);
+})
+
+/*
+███████  ██████   ██████ ██   ██ ███████ ████████ ██  ██████
+██      ██    ██ ██      ██  ██  ██         ██    ██ ██    ██
+███████ ██    ██ ██      █████   █████      ██    ██ ██    ██
+     ██ ██    ██ ██      ██  ██  ██         ██    ██ ██    ██
+███████  ██████   ██████ ██   ██ ███████    ██    ██  ██████
+*/
+
+io.on('connection', (socket) => {
+	console.log('User connected: ' + socket.id);
+	socket.on('connectGame', message => {
+		console.log(message);
+		socket.gameCode = message.gameCode;
+		socket.join(message.gameCode);
+	});
+	socket.on('updateScoreboard', message => {
+		console.log(message);
+	});
+	socket.on('disconnect', function() {
+		console.log('user disconnected');
+	});
 })
 
 /*
@@ -501,6 +519,7 @@ disclient.on('messageCreate', message => {
 const discordtoken = require('./discordtoken');
 
 disclient.login(discordtoken.TOKEN);
+
 /*
 ██    ██ ████████ ██ ██          ███████ ██    ██ ███    ██  ██████ ████████ ██  ██████  ███    ██ ███████
 ██    ██    ██    ██ ██          ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██
@@ -750,9 +769,14 @@ function parseBS(data) {
 			let newDetachment = {
 				name: detachment.$.name,
 				faction: faction,
+				subfaction: '',
+				variant: '',
+				factionIcon: '',
 				units: []
 			}
-			let factionLink = wahaData.Factions.find(fct => fct.name == faction)
+			//Some factions have multiple names
+			if (faction == 'Adeptus Astartes') faction = 'Space Marines';
+			let factionLink = wahaData.Factions.find(fct => fct.name == faction);
 			if (factionLink) newDetachment.factionLink = factionLink.link;
 
 			// Try to grab waha faction
@@ -768,11 +792,31 @@ function parseBS(data) {
 			}
 
 			//If it's not a list, put it in one so it can be looped through
-			let unitData = detachment.selections[0].selection
+			let unitData = detachment.selections[0].selection;
 			//Loop through every unit in the list
 			for (unit of unitData) {
+				// Try to find subfactions and variants
+				if (unit.$.type == 'upgrade') {
+					if (unit.selections) // Searching for upgrade names is not consistent. Search by selection name
+						if (unit.selections[0].selection) // Will always have at least one selection
+							for (var select of unit.selections[0].selection) // Look through all of the selections
+								if (wahaData.Subfactions.find(subfaction => subfaction.name == select.$.name)) // If a subfaction name exists that matches this selection name
+									newDetachment.subfaction = select.$.name; // Then you've found the subfaction
+								else if (wahaData.Subfactions.find(subfaction => subfaction.name == select.$.name.split(': ')[1])) // Sometimes formatted as "Subfaction Type: Subfaction Name"
+						newDetachment.subfaction = select.$.name.split(': ')[1];
+					if (unit.$.name.split(' - ')[0] == 'Army of Renown') // Check for army variants
+						newDetachment.variant = unit.$.name.split(' - ')[1];
+					// Get icon link by faction
+					if (newDetachment.faction)
+						if (fs.existsSync(`${__dirname}/public/img/factions/${newDetachment.faction.replaceAll(' ', '').replaceAll('\'', '_').toLowerCase()}.svg`))
+							newDetachment.factionIcon = `img/factions/${newDetachment.faction.replaceAll(' ', '').replaceAll('\'', '_').toLowerCase()}.svg`;
+					// Then try to overwrite with subfaction
+					if (newDetachment.subfaction)
+						if (fs.existsSync(`${__dirname}/public/img/factions/${newDetachment.subfaction.replaceAll(' ', '').replaceAll('\'', '_').toLowerCase()}.svg`))
+							newDetachment.factionIcon = `img/factions/${newDetachment.subfaction.replaceAll(' ', '').replaceAll('\'', '_').toLowerCase()}.svg`;
+				}
 				//Single model units are listed as a model rather than a unit
-				if (unit.$.type == 'model' || unit.$.type == 'unit') {
+				else if (unit.$.type == 'model' || unit.$.type == 'unit') {
 					//Create a new blank unit
 					let newUnit = {
 						name: '',
@@ -913,6 +957,57 @@ function parseBS(data) {
 									}
 									newUnit.rules.push(newRule)
 								}
+							} else if (profile.$.typeName == "Psyker") {
+								let newRule = {
+									name: 'Psyker',
+									desc: '',
+									subkeys: [],
+									targets: [],
+									phases: ['psychic']
+								}
+								newRule.psyker = {};
+								for (var chara of profile.characteristics[0].characteristic) {
+									switch (chara.$.name) {
+										case 'Cast':
+											newRule.cast = chara._
+											break;
+										case 'Deny':
+											newRule.deny = chara._
+											break;
+										case 'Powers Known':
+											newRule.desc = chara._
+											break;
+										case 'Other':
+											newRule.other = chara._
+											break;
+										default:
+									}
+								}
+								newUnit.rules.push(newRule)
+							} else if (profile.$.typeName == "Explosion") {
+								let newRule = {
+									name: 'Explodes',
+									desc: 'When this model is destroyed, roll a D6. If it beats the Roll or is a 6, everything within Distance takes Mortal Wounds equal to the Damage.',
+									subkeys: [],
+									targets: [],
+									phases: []
+								}
+								for (var chara of profile.characteristics[0].characteristic) {
+									switch (chara.$.name) {
+										case 'Dice Roll':
+											newRule.roll = chara._
+											break;
+										case 'Distance':
+											newRule.distance = chara._
+											break;
+										case 'Mortal Wounds':
+											newRule.damage = chara._
+											break;
+										default:
+											break;
+									}
+								}
+								newUnit.rules.push(newRule)
 							}
 						}
 					}

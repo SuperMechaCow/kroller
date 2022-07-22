@@ -1,13 +1,27 @@
 ## Bugs:
-- Not parsing Plagueburst crawlers
-- make game code highlightable
+- T'au not found in factionLinks
+- Not parsing Plagueburst crawlers (listed as upgrade and not unit)
 - copy link/code/output
 - Error in accordion when copying from button
 - waha links not clickable
 - fix waha link builder with regex groups
+- <brotherhood></brotherhood> in Greyknights
+- Greyknights doesn't show built-in spell
+- black templars subfaction not found
 
 ## To Do:
-- Subfaction for strats
+- websockets or syncing
+- Add admin lock
+- reset game/scoreboard
+- auto open settings
+- tech priest control panel
+- stream overlay view
+- detachment/army rules (Angels of Death, Sacred Rites, etc.)
+- Chaplain/Priest spells
+- Doctrine/Rites/C'tan powers listing
+- What can be highlighted or copied?
+- Show all existing games and rosters
+- wound tracker/combine bracketing profiles
 - combine duplicate weapons (blighthaulers)
 - Custom model names
 - privacy policy
@@ -18,18 +32,21 @@
 - Calculator/Simulator
 - Load calculator from list view (fix model and weapon amounts first)
 - Daily download/cleaning
-- accounts?
+- accounts? / discord login
 - OPR list viewer
 - GW Image Scraper
 - Ability Map
 - 2.5D simulator game
 - Battlescribe ingestor (with classes/constructors)
 - Battlescribe read direct or search on wahapedia
+~ Add more subfactions to factions icons
 ~ Game tracker (needs scorebaord and syncing)
 ~ MARKDOWN IN CUSTOM NOTES (only does basic markdown?!)
 ~ Wahapedia Codex scraper
 ~ Wahapedia download/ingestor (automated)
 ~ Logger for debug (Doesn't show complete sql errors)
+* Find core, explodes and spells cast
+* Subfaction for strats
 * Game creation/sharing
 * Permanent data storage
 * List viewer

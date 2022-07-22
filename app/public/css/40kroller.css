@@ -317,7 +317,6 @@ li {
 
 .accordion-content.unitBox img {
  max-width: 250px;
- margin: auto;
 }
 
 #feedback {
@@ -508,6 +507,10 @@ li {
   background-color: #993333;
 }
 
+.ruleTag.permaUse {
+  background-color: #993333;
+}
+
 .spellTag.useTag {
   background-color: #333399;
 }
@@ -578,7 +581,7 @@ li {
   float: left;
 }
 
-.listView .wahaLinkImg {
+.listView .warlordImg {
   height: 19px;
   width: 19px;
   float: right;
@@ -586,8 +589,30 @@ li {
   /* margin-right: 5px; */
 }
 
+.listView .linkImg {
+  float: none;
+  display: inline-block;
+  margin: 2px 5px 2px 5px;
+  height: 25px;
+  width: 25px;
+  cursor: pointer;
+}
+
 .grow {
   font-size: 1em;
+}
+
+.factionBox {
+  overflow: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.factionIcon {
+  height: 80px;
+  float: left;
+  -webkit-filter:invert(100%);
+  filter: invert(100%);
 }
 
 @media only screen and (max-width: 1345px) {
@@ -653,19 +678,24 @@ li {
 ██      ██   ██  ██████  ██   ████ ███████        ██    ██   ██ ███████ ███████
 */
 @media only screen and (max-width: 635px) {
+  .listView {
+    transition: none;
+  }
   #content {
     min-width: 300px;
     max-width: 300px;
   }
 
   #atkrList {
-    transform: translateX(-50%);
+    transform: translateX(-52%);
     left: 50%;
+    /* background-image: none; */
   }
 
   #dfdrList {
-    transform: translateX(50%);
+    transform: translateX(48%);
     right: 50%;
+    /* background-image: none; */
   }
 
   .listView.isOpen {
@@ -681,5 +711,33 @@ li {
     position: fixed;
     z-index: 1;
     top: 0;
+  }
+}
+
+/*
+████████  ██████  ██    ██  ██████ ██   ██      ██████  ███    ██ ██   ██    ██
+   ██    ██    ██ ██    ██ ██      ██   ██     ██    ██ ████   ██ ██    ██  ██
+   ██    ██    ██ ██    ██ ██      ███████     ██    ██ ██ ██  ██ ██     ████
+   ██    ██    ██ ██    ██ ██      ██   ██     ██    ██ ██  ██ ██ ██      ██
+   ██     ██████   ██████   ██████ ██   ██      ██████  ██   ████ ███████ ██
+*/
+
+@media only screen and (hover: none) {
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media only screen and (hover: none) and (max-width: 635px) {
+  #atkrList {
+    transform: translateX(-50%);
+  }
+
+  #dfdrList {
+    transform: translateX(50%);
   }
 }

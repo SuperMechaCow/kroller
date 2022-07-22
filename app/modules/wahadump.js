@@ -74,7 +74,7 @@ async function readFromExisting() {
 		if (err) console.log(err)
 		for (var file of files) {
 			if (file.split('.')[1] == 'csv') {
-				var csvFilePath = __dirname + `/data/${file}`;
+				var csvFilePath = __dirname + `/../data/${file}`;
 				// Async / await usage
 				wahaData[file.split('.')[0]] = await csv({
 					delimiter: '|'
@@ -86,7 +86,7 @@ async function readFromExisting() {
 		//REPLACE ALL russian booleans with true/false here
 		//ADD A "type" TO EACH ITEM FOR SEARCHING LATER (unit/model/ability/etc.)
 		//REMOVE "field#" columns
-		fs.writeFile(__dirname + `/data/wahaData.json`, wahaData, (err) => {
+		fs.writeFile(__dirname + `/../data/wahaData.json`, JSON.stringify(wahaData), (err) => {
 			if (err) {
 				console.log(err);
 			}
