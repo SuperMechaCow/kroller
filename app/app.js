@@ -146,16 +146,6 @@ app.post('/feedback', upload.fields([]), function(req, res) {
 	}));
 });
 
-app.get('/api/search', function(req, res) {
-	if (req.query.string) {
-		let result = fuzzysearch(req.query.string, wahaData, 5);
-		res.json(result);
-	} else {
-		res.send(JSON.stringify({
-			error: "You must include a 'string' query parameter with the value of your search."
-		}));
-	}
-});
 
 app.get('/', async (req, res) => {
 	try {
@@ -163,7 +153,7 @@ app.get('/', async (req, res) => {
 		// Did they provide a battle code?
 		if (req.query.gameCode) {
 			//Check to see if the battle already exists
-			db.get(`SELECT * FROM games WHERE gameCode=?`, req.query.gameCode, (err, game) => {
+			db.get(`SELECT games.*, scoreboard.* FROM games LEFT JOIN scoreboard ON games.gameCode = scoreboard.gameCode WHERE games.gameCode=?`, req.query.gameCode, (err, game) => {
 				// If there was a database error
 				if (err) {
 					console.log(err);
@@ -182,6 +172,17 @@ app.get('/', async (req, res) => {
 						// This is where you would check to see if there are forces
 						let newGame = new Game();
 						newGame.gameCode = req.query.gameCode;
+						// build the scoreboard
+						let score = {
+							atkr: {},
+							dfdr: {}
+						}
+						for (var stat of Object.keys(game)) {
+							if (stat.split('_')[0] == 'atkr' || stat.split('_')[0] == 'dfdr') {
+								score[stat.split('_')[0]][stat.split('_')[1]] = game[stat];
+							}
+						}
+						newGame.scoreboard = JSON.stringify(score);
 						// You need to query for both force codes
 						db.all(`SELECT * FROM forces WHERE forceCode=? OR forceCode=?`, game.atkrCode, game.dfdrCode, (err, forces) => {
 							if (err) {
@@ -370,6 +371,134 @@ server.listen(PORT, () => {
 })
 
 /*
+ █████  ██████  ██
+██   ██ ██   ██ ██
+███████ ██████  ██
+██   ██ ██      ██
+██   ██ ██      ██
+*/
+
+// Do a fuzzy search
+app.get('/api/search', function(req, res) {
+	if (req.query.string) {
+		let result = fuzzysearch(req.query.string, wahaData, 5);
+		res.json(result);
+	} else {
+		res.send(JSON.stringify({
+			error: "You must include a 'string' query parameter with the value of your search."
+		}));
+	}
+});
+
+// Get game status by JSON
+app.get('/api/status', function(req, res) {
+	if (req.query.gameCode) {
+		//Check to see if the battle already exists
+		db.get(`SELECT games.*, scoreboard.* FROM games LEFT JOIN scoreboard ON games.gameCode = scoreboard.gameCode WHERE games.gameCode=?`, req.query.gameCode, (err, game) => {
+			// If there was a database error
+			if (err) {
+				console.log(err);
+				logger.error(err)
+				res.status(500).json({
+					gameCode: null,
+					forceData: [],
+					outputPretty: '<p class="oR cCenter">There was an error querying the database to find that game.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+					output: 'There was an error querying the database to find that game. This infraction has been recorded. Consult the Tech Priest.'
+				});
+			}
+			// Otherwise...
+			else {
+				// If it found a game
+				if (game) {
+					// This is where you would check to see if there are forces
+					let newGame = new Game();
+					newGame.gameCode = req.query.gameCode;
+					// build the scoreboard
+					let score = {
+						atkr: {},
+						dfdr: {}
+					}
+					for (var stat of Object.keys(game)) {
+						if (stat.split('_')[0] == 'atkr' || stat.split('_')[0] == 'dfdr') {
+							score[stat.split('_')[0]][stat.split('_')[1]] = game[stat];
+						}
+					}
+					newGame.scoreboard = JSON.stringify(score);
+					// You need to query for both force codes
+					db.all(`SELECT * FROM forces WHERE forceCode=? OR forceCode=?`, game.atkrCode, game.dfdrCode, (err, forces) => {
+						if (err) {
+							console.log(err);
+							logger(err);
+							res.status(500).json({
+								gameCode: null,
+								forceData: [],
+								outputPretty: '<p class="oR cCenter">There was an error in the database when retrieving existing forces.</p><p class="cCenter">This infraction has been recorded. Consult the Tech Priest.</p>',
+								output: 'There was an error in creating a new battle in the database. This infraction has been recorded. Consult the Tech Priest.'
+							});
+						} else {
+							// Put them in the correct order
+							if (forces.length == 1) {
+								if (forces[0].forceCode == game.dfdrCode) {
+									forces.splice(0, 0, {
+										forceFile: null
+									});
+								} else forces.splice(1, 0, {
+									forceFile: null
+								});
+							} else if (forces.length == 2) {
+								if (forces[0].forceCode == game.dfdrCode) {
+									forces.splice(1, 0, forces.shift());
+								}
+							} else {
+								forces = [{
+									forceFile: null
+								}, {
+									forceFile: null
+								}]
+							}
+							// then you need to load the files for each
+							let newForces = {};
+							if (forces[0].forceFile) newForces.atkr_file = [{
+								fieldname: 'atkr_file',
+								filename: forces[0].forceFile
+							}];
+							if (forces[1].forceFile) newForces.dfdr_file = [{
+								fieldname: 'atkr_file',
+								filename: forces[1].forceFile
+							}];
+							// and send them both to forceFromBS using it's argument object pattern
+							let forceBSData = forcesFromBS(newForces);
+							// if there was a problem
+							if (forceBSData.error) {
+								newGame.error = forceBSData.error;
+								newGame.outputPretty = forceBSData.outputPretty;
+								newGame.output = forceBSData.output;
+							}
+							// or add the returned forces to newGame
+							else {
+								newGame.forceData = forceBSData;
+							}
+							res.status(200).json(newGame);
+						}
+					});
+				}
+				//If it couldn't find the game, redirect to '/' to create a new one
+				else {
+					logger.warn(`Game at ${req.query.gameCode} was not found.`);
+					res.json({
+						error: `Game at ${req.query.gameCode} was not found.`
+					});
+				}
+			}
+		});
+	} else {
+		res.json({
+			error: "You must include a 'gameCode' query parameter with a valid gameCode"
+		});
+	}
+});
+
+/*
 ███████  ██████   ██████ ██   ██ ███████ ████████ ██  ██████
 ██      ██    ██ ██      ██  ██  ██         ██    ██ ██    ██
 ███████ ██    ██ ██      █████   █████      ██    ██ ██    ██
@@ -380,17 +509,36 @@ server.listen(PORT, () => {
 io.on('connection', (socket) => {
 	console.log('User connected: ' + socket.id);
 	socket.on('connectGame', message => {
-		console.log(message);
 		socket.gameCode = message.gameCode;
 		socket.join(message.gameCode);
 	});
 	socket.on('updateScoreboard', message => {
-		console.log(message);
+		if (message.gameCode && message.score) {
+			let scores = []
+			for (var player of Object.keys(message.score)) {
+				for (var score of Object.keys(message.score[player])) {
+					scores.push(message.score[player][score])
+				}
+			}
+			db.run(`UPDATE scoreboard SET
+				atkr_cp = ?, atkr_pvp = ?, atkr_s1vp = ?, atkr_s2vp = ?, atkr_s3vp = ?, atkr_ttl = ?, dfdr_cp = ?, dfdr_pvp = ?, dfdr_s1vp = ?, dfdr_s2vp = ?, dfdr_s3vp = ?, dfdr_ttl = ? WHERE gameCode = ?`,
+				message.score.atkr.cp, message.score.atkr.pvp, message.score.atkr.s1vp, message.score.atkr.s2vp, message.score.atkr.s3vp, message.score.atkr.ttl, message.score.dfdr.cp, message.score.dfdr.pvp, message.score.dfdr.s1vp, message.score.dfdr.s2vp, message.score.dfdr.s3vp, message.score.dfdr.ttl,
+				message.gameCode);
+		}
+		socket.to(message.gameCode).emit('score', message.score);
 	});
 	socket.on('disconnect', function() {
-		console.log('user disconnected');
+		console.log('User disconnected: ' + socket.id);
 	});
 })
+
+io.of("/").adapter.on("create-room", (room) => {
+	console.log(`room ${room} was created`);
+});
+
+io.of("/").adapter.on("join-room", (room, id) => {
+	console.log(`socket ${id} has joined room ${room}`);
+});
 
 /*
 ██████  ██ ███████  ██████  ██████  ██████  ██████      ███████ ███████ ████████ ██    ██ ██████
@@ -532,6 +680,7 @@ class Game {
 	constructor() {
 		this.gameCode = null;
 		this.forceData = [];
+		this.scoreboard = {};
 		this.outputPretty = '';
 		this.output = '';
 		this.url = '';
@@ -674,10 +823,20 @@ async function createGame(req) {
 								error: err
 							})
 						} else {
-							logger.info('Started a new game: ' + newGame.gameCode);
-							resolve(newGame)
+							db.run(`INSERT INTO scoreboard (gameCode) VALUES (?)`, newGame.gameCode, (err) => {
+								if (err) {
+									console.log(err);
+									logger.error(err)
+									reject({
+										error: err
+									})
+								} else {
+									logger.info('Started a new game: ' + newGame.gameCode);
+									resolve(newGame)
+								}
+							});
 						}
-					})
+					});
 				}
 			});
 	})

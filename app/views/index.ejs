@@ -58,10 +58,10 @@
           </div>
         </div>
         <h2 class="cCenter" title="">Attacker Score</h2>
-        <div class="statRow bg5 vpbox">
+        <div id="atkr_score" class="statRow bg5 vpbox">
           <div class="statTag" title="">
             <label for="atkr_cp" class="bg2">CP</label>
-            <input id="atkr_cp" name="atkr_cp" class="spinner io bg7" type="number" size=2 value=0>
+            <input id="atkr_cp" name="atkr_cp" class="spinner io bg7" type="number" size=2 value="-1">
           </div>
           <div class="statTag" title="Primary Victory Points">
             <label for="atkr_pvp" class="bg4">P.VP</label>
@@ -85,10 +85,10 @@
           </div>
         </div>
         <h2 class="cCenter" title="">Defender Score</h2>
-        <div class="statRow bg5 vpbox">
+        <div id="dfdr_score" class="statRow bg5 vpbox">
           <div class="statTag" title="">
             <label for="dfdr_cp" class="bg2">CP</label>
-            <input id="dfdr_cp" name="dfdr_cp" class="spinner io bg7" type="number" size=2 value=0>
+            <input id="dfdr_cp" name="dfdr_cp" class="spinner io bg7" type="number" size=2 value="-1">
           </div>
           <div class="statTag" title="Primary Victory Points">
             <label for="dfdr_pvp" class="bg4">P.VP</label>
@@ -426,12 +426,31 @@
 </body>
 <script type="text/javascript">
   forceData = <%- JSON.stringify(forceData) %>;
+  /*
+  ██       ██████   █████  ██████       ██████ ██████      ███████ ██████   ██████  ███    ███     ███████  ██████  ██████   ██████ ███████
+  ██      ██    ██ ██   ██ ██   ██     ██      ██   ██     ██      ██   ██ ██    ██ ████  ████     ██      ██    ██ ██   ██ ██      ██
+  ██      ██    ██ ███████ ██   ██     ██      ██████      █████   ██████  ██    ██ ██ ████ ██     █████   ██    ██ ██████  ██      █████
+  ██      ██    ██ ██   ██ ██   ██     ██      ██          ██      ██   ██ ██    ██ ██  ██  ██     ██      ██    ██ ██   ██ ██      ██
+  ███████  ██████  ██   ██ ██████       ██████ ██          ██      ██   ██  ██████  ██      ██     ██       ██████  ██   ██  ██████ ███████
+  */
+  // if force cp and tracker cp is -1
+  // for (var i in forceData) {
+  //   if (force.force.costs) {
+  //     if (document.getElementById('')) {
+  //
+  //     }
+  //   }
+  // }
   <% if (gameCode) { %>
-  const socket = io();
   gameCode = '<%- gameCode %>';
+  console.log(gameCode);
   socket.emit('connectGame', {
     gameCode: gameCode
   });
+  <% } %>
+  <% if (scoreboard) { %>
+    console.log(<%- scoreboard %>);
+    getTrackers(<%- scoreboard %>);
   <% } %>
   console.log(forceData);
 </script>

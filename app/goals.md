@@ -1,15 +1,18 @@
 ## Bugs:
+- don't update tracker on swipe or spin
 - T'au not found in factionLinks
 - Not parsing Plagueburst crawlers (listed as upgrade and not unit)
-- copy link/code/output
 - Error in accordion when copying from button
 - waha links not clickable
 - fix waha link builder with regex groups
 - <brotherhood></brotherhood> in Greyknights
 - Greyknights doesn't show built-in spell
 - black templars subfaction not found
+* copy link/code/output
 
 ## To Do:
+- competitive game clock
+- combine spinner and swiper
 - websockets or syncing
 - Add admin lock
 - reset game/scoreboard

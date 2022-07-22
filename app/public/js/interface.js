@@ -40,19 +40,22 @@ var unitRoles = [
 
 var dragTarget;
 var startValue;
+var endValue;
 var startPos;
 var spinSpeed = 0.05;
 var swipeStartPos;
 var swiping;
 
 function spinnerDown(e) {
+	endValue = 0;
 	dragTarget = e.currentTarget
 	startValue = Number(dragTarget.value)
 	startPos = Number(e.clientY || e.targetTouches[0].pageY)
 }
 
 function spinnerUp(e) {
-	updateTrackers();
+	// This must be set here and on the onchange of the individual tracker
+	setTrackers(true);
 	dragTarget = null;
 }
 
@@ -60,10 +63,9 @@ function spinnerDrag(e) {
 	if (dragTarget) {
 		let drag = e.clientY || e.targetTouches[0].pageY;
 		dragTarget.value = startValue - Math.floor((drag - startPos) * spinSpeed);
+		endValue = dragTarget.value;
 	}
 }
-
-
 
 function swiperDown(e) {
 	if (!dragTarget) {
@@ -236,20 +238,39 @@ function pollIO() {
 	}
 }
 
-function updateTrackers() {
+function setTrackers(emit) {
+	let score = {};
 	for (tracker_player of document.getElementsByClassName('vpbox')) {
 		let ttltracker = tracker_player.getElementsByClassName('vptotal')[0]
 		ttltracker.innerText = '';
 		for (tracker of tracker_player.getElementsByClassName('vptracker')) {
 			ttltracker.innerText = Number(ttltracker.innerText) + Number(tracker.value);
+			if (!score[tracker.id.split('_')[0]]) {
+				score[tracker.id.split('_')[0]] = {}
+			}
+			score[tracker.id.split('_')[0]][tracker.id.split('_')[1]] = Number(tracker.value);
+		}
+		score[tracker_player.id.split('_')[0]].ttl = Number(ttltracker.innerText);
+		score[tracker_player.id.split('_')[0]].cp = Number(document.getElementById(tracker_player.id.split('_')[0] + '_cp').value);
+	}
+	if (emit) {
+		if (gameCode) {
+			socket.emit('updateScoreboard', {
+				gameCode: gameCode,
+				score: score
+			});
 		}
 	}
-	if (gameCode) {
-		socket.emit('updateScoreboard', {
-			gameCode: gameCode,
-			score: 0
-		});
+}
+
+function getTrackers(score) {
+	for (tracker_player of document.getElementsByClassName('vpbox')) {
+		document.getElementById(tracker_player.id.split('_')[0] + '_cp').value = Number(score[tracker_player.id.split('_')[0]].cp);
+		for (tracker of tracker_player.getElementsByClassName('vptracker')) {
+			tracker.value = Number(score[tracker.id.split('_')[0]][tracker.id.split('_')[1]]);
+		}
 	}
+	setTrackers();
 }
 
 function makeUseTag(text, phase) {
@@ -323,10 +344,11 @@ function tickle() {
      ██ ██    ██ ██      ██  ██  ██         ██         ██
 ███████  ██████   ██████ ██   ██ ███████    ██    ███████
 */
+const socket = io();
 
-// socket.on('message', message => {
-// 	console.log(message);
-// })
+socket.on('score', message => {
+	getTrackers(message);
+});
 
 /*
 ██ ███    ██ ██ ████████ ██  █████  ██      ██ ███████ ███████
@@ -351,7 +373,8 @@ function init() {
 	// Set up vp trackers
 	for (var tracker of document.getElementsByClassName('vptracker')) {
 		tracker.onchange = function() {
-			updateTrackers();
+			// This must be set here and on the spinnerUp() function
+			setTrackers(true);
 		}
 	}
 
