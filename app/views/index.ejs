@@ -16,6 +16,7 @@
 
 <body onload="init()">
   <div id="atkrList" class="listView bg1 cCenter">
+    <% if (locals.gameCode) { %>
     <div class="form-group bg5 block cCenter importForm">
       <form action="/upload" enctype="multipart/form-data" method="post">
         <label for="atkr_file">Attacker File</label>
@@ -27,6 +28,7 @@
         <!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
       </form>
     </div>
+    <% } %>
   </div>
   <div id="centerBlock">
     <span id="toggleatkr" class="openNav" onclick="toggleNav(this)">&#9776;</span>
@@ -319,7 +321,7 @@
       -->
       <div class="accordion-header bg0 banner isOpen">Output</div>
       <div id="output" class="accordion-content isOpen io">
-        <% if (outputPretty) { %>
+        <% if (locals.outputPretty) { %>
         <%- outputPretty %>
         <% } else { %>
         <p>
@@ -339,12 +341,9 @@
           <!-- <li>Be sure to use <span class='oG' title='You can right-click or use the three dots to create custome notes and names for anything in Battlescribe.'>custom notes</span> in your BattleScribe roster!</li> -->
         </ul>
         <hr>
-        <b>Update July 18th, 2022:</b>
+        <b>Update July 24th, 2022:</b>
         <ul>
-          <li>Can now detect your <span class='oB' title='This is per detachment.'>faction</span> and <span class='oB' title='This is per detachment.'>subfaction</span> <i>most of the time</i>.</li>
-          <li>Will attempt to filter out <span class='oG' title='Stratagems are scanned from Wahapedia and matched to your unit if found.'>Stratagems</span> and abilities that are not in your <span class='oB' title='This is per detachment.'>subfaction</span>.</li>
-          <li><span class='oR' title='Feedback is the second most effective way of getting your issue fixed. The first is joining the Discord channel and complaining.'>Please leave feedback</span> in the Share tab if these updates do not work for
-            your force list or device.</li>
+          <li><span class='oR' title='Feedback is the second most effective way of getting your issue fixed. The first is joining the Discord channel and complaining.'>Please leave feedback</span> in the Share tab if something is not working for you! You can now also upload the problem roster file as well.</li>
         </ul>
         <hr>
         <p class="cCenter">
@@ -371,10 +370,7 @@
       <!--
       <div class="accordion-header bg0 banner">Setup</div>
       <div class="accordion-content bg4">
-        if attacker, defender, or scoreboard loaded, add "reset forces" and "reset scoreboard" buttons
-        confirm with link in output
-        auto-open settings
-        add admin lock
+
       </div>
     -->
 
@@ -385,33 +381,41 @@
            ██ ██   ██ ██   ██ ██   ██ ██
       ███████ ██   ██ ██   ██ ██   ██ ███████
       -->
+      <% if (locals.gameCode) { %>
       <div class="accordion-header bg0 banner">Share</div>
       <div class="accordion-content bg4 cCenter">
-        <% if (gameCode) { %>
         <h2 class="cCenter">Game Code:</h2>
         <h1 class="cCenter bg1 hlAll">
           <%- gameCode %>
         </h1>
         <img id="qrshare" src="shares/<%- gameCode %>.png" alt="Have your friend scan this QR code to join your game session">
-        <% } %>
         <div class="bg5 block cCenter">
           <button type="button" onclick="navigator.clipboard.writeText('http://40kroller.animetidd.is/>gameCode=<%- gameCode %>'); output('Code copied!')" title="">Copy Link</button>
           <button type="button" onclick="navigator.clipboard.writeText('<%- gameCode %>'); output('Code copied!')" title="">Copy Code</button>
           <button type="button" onclick="navigator.clipboard.writeText(ioList.output.innerText)" title="">Copy Output</button>
+        </div>
+        <h2 class="cCenter">Go to Game:</h2>
+        <div class="bg5 block cCenter">
+          <input type="text" name="gotoCode" id="gotoCode" value="" placeholder="Friend's gameCode">
+          <button type="button" onclick="window.location='/?gameCode='+document.getElementById('gotoCode').value;" title="">Go</button>
         </div>
         <div class="accordion-header bg1 banner">Feedback</div>
         <div class="accordion-content bg5 feedbackwrapper">
           <form action="/feedback" method="post" enctype="multipart/form-data">
             <textarea name="feedback" id="feedback" rows="8" cols="30" placeholder="You only need to submit your feedback once. Yes, I know it doesn't give any confirmation that I got it, but I did. I am working on this."></textarea>
             <input type="hidden" name="gameCode" id="gameCode" value='<%- gameCode %>'>
+            <label for="atkr_file">Attach Broken Roster List:</label>
+            <input type="file" class="fileSpot fileWidget bg7" name="broken_file" id="broken_file" accept="rosz"><br>
             <input type="submit" value="Submit">
           </form>
         </div>
       </div>
+      <% } %>
     </div>
   </div>
   </div>
   <div id="dfdrList" class="listView bg1 cCenter">
+    <% if (locals.gameCode) { %>
     <div class="form-group bg5 block cCenter importForm">
       <form action="/upload" enctype="multipart/form-data" method="post">
         <label for="atkr_file">Attacker File</label>
@@ -422,37 +426,25 @@
         <input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
       </form>
     </div>
+    <% } %>
   </div>
 </body>
 <script type="text/javascript">
-  forceData = <%- JSON.stringify(forceData) %>;
-  /*
-  ██       ██████   █████  ██████       ██████ ██████      ███████ ██████   ██████  ███    ███     ███████  ██████  ██████   ██████ ███████
-  ██      ██    ██ ██   ██ ██   ██     ██      ██   ██     ██      ██   ██ ██    ██ ████  ████     ██      ██    ██ ██   ██ ██      ██
-  ██      ██    ██ ███████ ██   ██     ██      ██████      █████   ██████  ██    ██ ██ ████ ██     █████   ██    ██ ██████  ██      █████
-  ██      ██    ██ ██   ██ ██   ██     ██      ██          ██      ██   ██ ██    ██ ██  ██  ██     ██      ██    ██ ██   ██ ██      ██
-  ███████  ██████  ██   ██ ██████       ██████ ██          ██      ██   ██  ██████  ██      ██     ██       ██████  ██   ██  ██████ ███████
-  */
-  // if force cp and tracker cp is -1
-  // for (var i in forceData) {
-  //   if (force.force.costs) {
-  //     if (document.getElementById('')) {
-  //
-  //     }
-  //   }
-  // }
-  <% if (gameCode) { %>
+  <% if (locals.gameCode) { %>
   gameCode = '<%- gameCode %>';
   console.log(gameCode);
   socket.emit('connectGame', {
     gameCode: gameCode
   });
   <% } %>
-  <% if (scoreboard) { %>
-    console.log(<%- scoreboard %>);
-    getTrackers(<%- scoreboard %>);
+  <% if (locals.forceData) { %>
+    forceData = <%- JSON.stringify(forceData) %>;
+    console.log(forceData);
+    <% } %>
+  <% if (locals.scoreboard) { %>
+  console.log(<%- scoreboard %>);
+  getTrackers(<%- scoreboard %>);
   <% } %>
-  console.log(forceData);
 </script>
 
 </html>

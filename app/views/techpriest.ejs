@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <link rel="apple-touch-icon" href="img/icons/target.png"> -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- <script src="js/testdata.js" charset="utf-8"></script> -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/interface.js" charset="utf-8"></script>
+  <title>40kroller</title>
+  <link rel="stylesheet" href="css/40kroller.css">
+</head>
+
+<body onload="init('techpriest')">
+  <div id="atkrList" class="listView bg1 cCenter">
+    <h1 class="cCenter">Logs</h1>
+    <% for (var lg of logs) { %>
+      <% if (!lg.timestamp) { lg.timestamp = 'No Date';} %>
+    <div class="accordion-header bg0 banner">
+      <% if (lg.level == 'info') { %>
+      <span class="oG">
+        <%- lg.timestamp %></span>
+      <% } else if (lg.level == 'warn' || lg.level == 'error') { %>
+      <span class="oR">
+        <%- lg.timestamp %></span>
+      <% } else if (lg.level == 'debug') { %>
+      <span class="oB">
+        <%- lg.timestamp %></span>
+      <% } else { %>
+      <%- lg.timestamp %>
+      <% } %>
+    </div>
+    <div class="accordion-content bg1">
+      <div class="statRow noBorder">
+        <div class="statTag" title="">
+          <label for="" class="bg4">Level</label>
+          <span class="bg7" id="">
+            <%- lg.level %></span>
+        </div>
+      </div>
+
+      <div class="statRow noBorder">
+        <div class="statTag" title="">
+          <label for="" class="bg4">Message</label>
+          <span class="bg7" id="">
+            <%- lg.message %></span>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <div id="centerBlock">
+    <span id="toggleatkr" class="openNav" onclick="toggleNav(this)">&#9776;</span>
+    <span id="toggledfdr" class="openNav" onclick="toggleNav(this)">&#9776;</span>
+    <h1 id="banner" title="This is the name of this webapp." align="center" onclick="tickle()">40kroller</h1>
+    <h4 id="subbanner" align="center">Techpriest Panel</h4>
+
+    <div id="content">
+      <div class="accordion-header bg0 banner isOpen">Feedback</div>
+      <div class="accordion-content bg1 isOpen">
+        <% for (var fb of feedback) { %>
+        <div class="accordion-header bg0 banner"><%- new Date(Number(fb.date)) %></div>
+        <div class="accordion-content bg5">
+          <div class="statRow noBorder">
+            <div class="statTag" title="">
+              <label for="" class="bg4">gameCode</label>
+              <span class="bg7" id="">
+                <%- fb.gameCode %></span>
+            </div>
+            <div class="statTag" title="">
+              <label for="" class="bg4">IP</label>
+              <span class="bg7" id="">
+                <%- fb.ip %></span>
+            </div>
+          </div>
+
+          <div class="statRow noBorder">
+            <div class="statTag" title="">
+              <label for="" class="bg4">Feedback</label>
+              <span class="bg7" id="">
+                <%- fb.feedback %></span>
+            </div>
+          </div>
+          <div class="cCenter">
+            <a href="/uploads/<%- fb.brokenFile %>">Download
+              <%- fb.brokenFile %></a>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+  <div id="dfdrList" class="listView bg1 cCenter">
+  </div>
+</body>
+<script type="text/javascript">
+  console.log(<%- JSON.stringify(feedback) %>);
+</script>
+
+</html>

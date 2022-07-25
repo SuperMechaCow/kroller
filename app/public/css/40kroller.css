@@ -428,6 +428,7 @@ li {
 
 .openNav {
   position: absolute;
+  /* position: fixed; */
   top: 10px;
   font-size: 30px;
   cursor: pointer;

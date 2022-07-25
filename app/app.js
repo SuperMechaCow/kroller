@@ -56,17 +56,24 @@ const logger = winston.createLogger({
 		new winston.transports.File({
 			filename: 'error.log',
 			level: 'error',
-			format: winston.format.json()
+			format: winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.json()
+        )
 		}),
 		new winston.transports.File({
 			filename: 'combined.log',
-			format: winston.format.json()
+			format: winston.format.combine(
+			            winston.format.timestamp(),
+			            winston.format.json()
+			        )
 		}),
 		new winston.transports.Console({
 			format: winston.format.combine(
 				winston.format.colorize({
 					all: true
 				}),
+				winston.format.timestamp(),
 				winston.format.simple()
 			)
 		})
@@ -99,7 +106,7 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
 const upload = multer({
-	dest: 'uploads/'
+	dest: 'public/uploads/'
 })
 
 /*
@@ -120,32 +127,6 @@ app.get('/abilmap', (req, res) => {
 	}
 });
 */
-
-app.post('/feedback', upload.fields([]), function(req, res) {
-	let newFeedback = {
-		ip: req.connection.remoteAddress,
-		gameCode: req.body.gameCode,
-		feedback: req.body.feedback
-	}
-	logger.info(newFeedback);
-	fs.readFile(__dirname + '/feedback.log', (err, data) => {
-		if (err) {
-			console.log(err);
-			logger.error(err);
-		} else {
-			let tempFeedback = JSON.parse(data);
-			tempFeedback.feedback.push(newFeedback)
-			fs.writeFile(__dirname + '/feedback.log', JSON.stringify(tempFeedback), (err) => {});
-		}
-	})
-	res.redirect(url.format({
-		pathname: "/",
-		query: {
-			gameCode: req.body.gameCode
-		}
-	}));
-});
-
 
 app.get('/', async (req, res) => {
 	try {
@@ -283,6 +264,31 @@ app.get('/', async (req, res) => {
 	}
 });
 
+app.get('/techpriest', async (req, res) => {
+	db.all(`SELECT * FROM feedback`, (err, feedbacks) => {
+		if (err) {
+			console.log(err);
+			logger.error(err);
+		} else {
+			// Read log files
+			fs.readFile(__dirname + '/combined.log', (err, logs) => {
+				if (err) {
+					console.log(err);
+					logger.error(err);
+				} else {
+					let log = '[' + logs + '{}]';
+					log = JSON.parse(log.replaceAll('\n', ','));
+					let feedback = feedbacks;
+					res.status(200).render('techpriest', {
+						feedback: feedback,
+						logs: log
+					});
+				}
+			});
+		}
+	})
+});
+
 app.post('/upload', upload.fields([{
 	name: 'atkr_file',
 	maxCount: 1
@@ -364,6 +370,31 @@ app.post('/upload', upload.fields([{
 			output: 'There was an error uploading the Battlescribe roster files. This infraction has been recorded. Consult the Tech Priest.'
 		});
 	}
+});
+
+app.post('/feedback', upload.fields([{
+	name: 'broken_file',
+	maxCount: 1
+}]), function(req, res) {
+	let nFB = {
+		ip: req.connection.remoteAddress,
+		date: new Date(),
+		gameCode: req.body.gameCode,
+		feedback: req.body.feedback,
+		brokenFile: req.files.broken_file[0].filename
+	}
+	logger.debug(nFB);
+	db.run(`INSERT INTO feedback (user, date, gameCode, feedback, brokenFile) VALUES (?, ?, ?, ?, ?)`, nFB.ip, nFB.date, nFB.gameCode, nFB.feedback, nFB.brokenFile, (err) => {
+		if (err) {
+			logger.error(err)
+		}
+		res.redirect(url.format({
+			pathname: "/",
+			query: {
+				gameCode: req.body.gameCode
+			}
+		}));
+	});
 });
 
 server.listen(PORT, () => {
@@ -568,7 +599,7 @@ disclient.on('ready', () => {
 function getRoster(newFileName, url) {
 	return new Promise((resolve, reject) => {
 		https.get(url, (res) => {
-			const writeStream = fs.createWriteStream(__dirname + `/uploads/${newFileName}`);
+			const writeStream = fs.createWriteStream(__dirname + `/public/uploads/${newFileName}`);
 			res.pipe(writeStream);
 			writeStream.on("finish", () => {
 				writeStream.close();
@@ -856,7 +887,7 @@ function forcesFromBS(providedFiles) {
 			let forceName = Object.entries(providedFiles)[i][0] //Is this line of code valid?
 			let filedata = Object.entries(providedFiles)[i][1][0];
 			// reading archives
-			var zip = new unzip(`uploads/${filedata.filename}`);
+			var zip = new unzip(`public/uploads/${filedata.filename}`);
 			var zipEntries = zip.getEntries(); // an array of ZipEntry records
 			// Loop through each file in the zip
 			zipEntries.forEach(function(zipEntry) {

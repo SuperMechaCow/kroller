@@ -358,72 +358,76 @@ socket.on('score', message => {
 ██ ██   ████ ██    ██    ██ ██   ██ ███████ ██ ███████ ███████
 */
 
-function init() {
+function init(mode) {
+	if (mode == 'techpriest') {
+		buildAccordions();
+	} else {
 
-	// Needs to run first if it wants to be included in pollIO() or accordions
-	listBuild();
+		// Needs to run first if it wants to be included in pollIO() or accordions
+		listBuild();
 
-	buildAccordions();
+		buildAccordions();
 
-	// Add links to wahaIcons
-	wahaLinks();
+		// Add links to wahaIcons
+		wahaLinks();
 
-	pollIO();
+		pollIO();
 
-	// Set up vp trackers
-	for (var tracker of document.getElementsByClassName('vptracker')) {
-		tracker.onchange = function() {
-			// This must be set here and on the spinnerUp() function
-			setTrackers(true);
+		// Set up vp trackers
+		for (var tracker of document.getElementsByClassName('vptracker')) {
+			tracker.onchange = function() {
+				// This must be set here and on the spinnerUp() function
+				setTrackers(true);
+			}
 		}
+
+		findUseTags();
+
+		// Initialize spinners
+		for (spinner of document.getElementsByClassName('spinner')) {
+			spinner.addEventListener("mousedown", spinnerDown);
+			spinner.addEventListener("touchstart", spinnerDown);
+		}
+		document.body.addEventListener("mousemove", spinnerDrag);
+		document.body.addEventListener("mouseup", spinnerUp);
+		document.body.addEventListener("touchmove", spinnerDrag);
+		document.body.addEventListener("touchend", spinnerUp);
+		document.body.addEventListener("touchcancel", spinnerUp);
+		// Initialize swiper
+		document.body.addEventListener("mousedown", swiperDown);
+		document.body.addEventListener("touchstart", swiperDown);
+		document.body.addEventListener("mousemove", swiperDrag);
+		document.body.addEventListener("mouseup", swiperUp);
+		document.body.addEventListener("touchmove", swiperDrag);
+		document.body.addEventListener("touchend", swiperUp);
+		document.body.addEventListener("touchcancel", swiperUp);
+
+		for (phaseBox of document.getElementById('phaser').getElementsByClassName('phaseTag')) {
+			let thisPhase = phaseBox;
+			thisPhase.addEventListener("click", function(e) {
+				for (nestedPhase of document.getElementById('phaser').getElementsByClassName('phaseTag')) {
+					nestedPhase.classList.remove('isActive');
+				}
+				if (currentPhase == thisPhase.innerText) {
+					currentPhase = '';
+				} else {
+					currentPhase = thisPhase.innerText;
+					thisPhase.classList.add('isActive');
+				}
+				findUseTags();
+			});
+		}
+
+		// CLick on whole modifier to check the related box (hits/wounds/etc)
+		// for (mod of document.getElementsByClassName('mod')) {
+		// 	let checkBox = mod.getElementsByClassName('selectMod');
+		// 	if (checkBox[0]) {
+		// 		mod.addEventListener('click', function() {
+		// 			checkBox[0].checked = !checkBox[0].checked;
+		// 		});
+		// 	}
+		// }
 	}
-
-	findUseTags();
-
-	// Initialize spinners
-	for (spinner of document.getElementsByClassName('spinner')) {
-		spinner.addEventListener("mousedown", spinnerDown);
-		spinner.addEventListener("touchstart", spinnerDown);
-	}
-	document.body.addEventListener("mousemove", spinnerDrag);
-	document.body.addEventListener("mouseup", spinnerUp);
-	document.body.addEventListener("touchmove", spinnerDrag);
-	document.body.addEventListener("touchend", spinnerUp);
-	document.body.addEventListener("touchcancel", spinnerUp);
-	// Initialize swiper
-	document.body.addEventListener("mousedown", swiperDown);
-	document.body.addEventListener("touchstart", swiperDown);
-	document.body.addEventListener("mousemove", swiperDrag);
-	document.body.addEventListener("mouseup", swiperUp);
-	document.body.addEventListener("touchmove", swiperDrag);
-	document.body.addEventListener("touchend", swiperUp);
-	document.body.addEventListener("touchcancel", swiperUp);
-
-	for (phaseBox of document.getElementById('phaser').getElementsByClassName('phaseTag')) {
-		let thisPhase = phaseBox;
-		thisPhase.addEventListener("click", function(e) {
-			for (nestedPhase of document.getElementById('phaser').getElementsByClassName('phaseTag')) {
-				nestedPhase.classList.remove('isActive');
-			}
-			if (currentPhase == thisPhase.innerText) {
-				currentPhase = '';
-			} else {
-				currentPhase = thisPhase.innerText;
-				thisPhase.classList.add('isActive');
-			}
-			findUseTags();
-		});
-	}
-
-	// CLick on whole modifier to check the related box (hits/wounds/etc)
-	// for (mod of document.getElementsByClassName('mod')) {
-	// 	let checkBox = mod.getElementsByClassName('selectMod');
-	// 	if (checkBox[0]) {
-	// 		mod.addEventListener('click', function() {
-	// 			checkBox[0].checked = !checkBox[0].checked;
-	// 		});
-	// 	}
-	// }
 
 }
 

@@ -10,5 +10,5 @@ app/data/wahadata/*.csv
 app/data/wahadata/*.xlsx
 app/shares/*
 exampledata/*
-app/uploads*
+app/public/uploads*
 *.log
