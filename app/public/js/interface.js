@@ -2,21 +2,25 @@ var forceData;
 var ioList = {};
 var currentPhase = '';
 var tickles = 0;
-var gameType = 'matched'
-var dice = ['🎲', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
+var gameType = 'matched';
+var dice = ['🎲', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 var settings = {
-	autoOpen: false
-}
+	autoOpen: false,
+	autoClose: true,
+	stratagems: true,
+	statIcons: true,
+	slotIcons: true
+};
 var phaseList = {
-	Pregame: ['during deployment', 'at the start of the first battle round', 'Declare Reserves and Transports'],
+	Pregame: ['during deployment', 'at the start of the first battle round', 'Declare Reserves and Transports', 'before the battle'],
 	Command: [],
-	Movement: [`advance roll`, `advance`],
+	Movement: [`advance roll`, `advance`, 'fall back', 'falls back'],
 	Psychic: [`psychic test`, `manifest`, `deny the witch`],
-	Shooting: [`an attack`, `a ranged attack`, 'shooting'],
+	Shooting: [`a ranged attack`, 'shooting'],
 	Charge: [`charge roll`, `heroic intervention`, 'charge'],
-	Fight: [`an attack`, `a melee attack`, `fight`],
+	Fight: [`melee attack`],
 	Morale: [`morale test`, `leadership`, `combat attrition test`]
-}
+};
 var unitRoles = [
 	'dedicatedtransport',
 	'elites',
@@ -27,7 +31,7 @@ var unitRoles = [
 	'hq',
 	'lordofwar',
 	'troops'
-]
+];
 
 /*
 ████████  ██████  ██    ██  ██████ ██   ██      ██████  ██████  ███    ██ ████████ ██████   ██████  ██      ███████
@@ -37,12 +41,11 @@ var unitRoles = [
    ██     ██████   ██████   ██████ ██   ██      ██████  ██████  ██   ████    ██    ██   ██  ██████  ███████ ███████
 */
 
-
 var dragTarget;
 var startValue;
 var endValue;
 var startPos;
-var spinSpeed = 0.05;
+var spinSpeed = 0.025;
 var swipeStartPos;
 var swiping;
 
@@ -128,16 +131,28 @@ function swiperDrag(e) {
 ██ ██   ████    ██    ███████ ██   ██ ██      ██   ██  ██████ ███████
 */
 
-function output(message) {
+function openTab(title, all) {
 	for (var header of document.getElementsByClassName('accordion-header')) {
 		// If it's open, close it
 		if (header.classList.contains('isOpen'))
+			if (all)
+				toggleAccordion(header)
+		else
+		if (header.parentNode.id == 'content')
 			toggleAccordion(header)
-		// If it's the Output header, open it back up
-		if (header.innerText == 'Output')
+		if (window.innerWidth <= 635) {
+			closeNav(toggleatkr);
+			closeNav(toggledfdr);
+		}
+		// If it's the chosen header, open it back up
+		if (header.innerText == title)
 			toggleAccordion(header)
-		ioList.output.innerHTML = message;
 	}
+}
+
+function output(message) {
+	ioList.output.innerHTML = message;
+	openTab('Output');
 }
 
 function buildAccordions() {
@@ -167,13 +182,23 @@ function toggleNav(el) {
 		if (otarget.classList.contains('isOpen')) {
 			otarget.classList.add('isActive')
 		}
-		el.innerHTML = "&#9776;"
+		el.innerHTML = '&#9776;'
 	} else {
 		target.classList.add('isActive');
 		target.classList.add('isOpen');
 		otarget.classList.remove('isActive');
 		el.innerText = 'X';
 	}
+}
+
+function closeNav(el) {
+	if (el.id == 'toggleatkr')
+		target = document.getElementById('atkrList');
+	else
+		target = document.getElementById('dfdrList');
+	target.classList.remove('isOpen');
+	target.classList.remove('isActive');
+	el.innerHTML = '&#9776;';
 }
 
 function getSiblings(e) {
@@ -196,9 +221,10 @@ function toggleAccordion(el) {
 		}
 	} else {
 		// Close all other accodion siblings
-		for (var sibling of getSiblings(el)) {
-			sibling.classList.remove('isOpen');
-		}
+		if (settings.autoClose)
+			for (var sibling of getSiblings(el)) {
+				sibling.classList.remove('isOpen');
+			}
 		el.classList.add('isOpen');
 		el.nextElementSibling.classList.add('isOpen');
 	}
@@ -211,7 +237,67 @@ function wahaLinks() {
 			if (!e) var e = window.event;
 			e.cancelBubble = true;
 			if (e.stopPropagation) e.stopPropagation();
-			window.open(e.path[0].getAttribute("data-link"), '_blank');
+			window.open(e.composedPath()[0].getAttribute("data-link"), '_blank');
+		});
+	}
+}
+
+function weaponSelect() {
+	for (var weaponElement of document.getElementsByClassName('weapon')) {
+		let weapon = JSON.parse(weaponElement.getAttribute('data-profile'));
+		weaponElement.addEventListener("click", (e) => {
+			ioList.attackerName.innerHTML = weapon.user.name + "<br>" + weapon.name + "<br>";
+			ioList.sim_atkr_mdls.value = weapon.amount;
+			let weaponType = weapon.type.split(" ");
+			if (weaponType[0] == 'Melee') {
+				ioList.attackerName.innerHTML += `Melee`;
+				if (settings.statIcons)
+					ioList.attackerName.innerHTML += ` <img src="img/rules/weapons/types/Melee.svg" class="weaponTypeIcon">`;
+				ioList.sim_atkr_a.value = weapon.user.statlines[0].A;
+				ioList.sim_atkr_as.value = weapon.user.statlines[0].WS;
+			} else {
+				if (weaponType[0] == "Rapid") {
+					weaponType[1] = weaponType[0] + " " + weaponType[1];
+					weaponType.shift();
+				}
+				ioList.attackerName.innerHTML += `${weaponType[0]}`;
+				if (settings.statIcons)
+					ioList.attackerName.innerHTML += ` <img src="img/rules/weapons/types/${weaponType[0]}.svg" class="weaponTypeIcon">`;
+				// Returns original string, dice, 'D', faces OR flat damage, modifier
+				let weaponAtt = weaponType[1].match(/(\d)?(D)?(\d)[\+]?(\d)*/);
+				if (weaponAtt[2]) {
+					//There are dice
+					ioList.sim_hit_attacks_checked.checked = true;
+					ioList.sim_hit_attacks_faces.value = weaponAtt[3];
+					if (weaponAtt[1])
+						//There are multiple dice
+						ioList.sim_hit_attacks_dice.value = weaponAtt[1];
+					if (weaponAtt[4])
+						//There's a modifier
+						ioList.sim_hit_attacks_mod.value = weaponAtt[4];
+				} else {
+					//There are not dice
+					ioList.sim_hit_attacks_checked.checked = false;
+					ioList.sim_atkr_a.value = weaponAtt[3];
+				}
+				let weaponDam = weapon.d.match(/(\d)?(D)?(\d)[\+]?(\d)*/);
+				if (weaponDam[2]) {
+					//There are dice
+					ioList.sim_damage_random_checked.checked = true;
+					ioList.sim_damage_random_faces.value = weaponDam[3];
+					if (weaponDam[1])
+						//There are multiple dice
+						ioList.sim_damage_random_dice.value = weaponDam[1];
+					if (weaponDam[4])
+						//There's a modifier
+						ioList.sim_damage_random_mod.value = weaponDam[4];
+				} else {
+					//There are not dice
+					ioList.sim_damage_random_checked.checked = false;
+					ioList.sim_atkr_d.value = weapon.d;
+				}
+			}
+			openTab('Attack Roll');
 		});
 	}
 }
@@ -219,7 +305,6 @@ function wahaLinks() {
 function pollIO() {
 	// Get JS objects from all input/output
 	for (var el of document.getElementsByClassName('io')) {
-
 		// I wanted to make a object tree of all of the input categories
 		// if (el.id.split('_').length > 1) {
 		// 	const value = el;
@@ -233,7 +318,6 @@ function pollIO() {
 		// } else {
 		// 	ioList[el.id] = el;
 		// }
-
 		ioList[el.id] = el;
 	}
 }
@@ -277,7 +361,7 @@ function makeUseTag(text, phase) {
 	let thisPhase = currentPhase;
 	if (phase) thisPhase = phase;
 	if (thisPhase.length) {
-		if (text.includes(thisPhase + " phase")) {
+		if (text.toLowerCase().includes(thisPhase.toLowerCase() + " phase")) {
 			return true
 		}
 		for (searchPhrase of phaseList[thisPhase]) {
@@ -337,6 +421,79 @@ function tickle() {
 	}
 }
 
+function customMarkdown(notesString) {
+	let checkMatch;
+	// Accordions
+	// #[Header](Content)
+	do {
+		checkMatch = /#\[(.*?(?=\]))\]\((.*?(?=\)))\)/gs.exec(notesString);
+		if (checkMatch != null)
+			notesString = notesString.replaceAll(`#[${checkMatch[1]}](${checkMatch[2]})`, `<div class="accordion-header tag mini ruleTag clickable">${checkMatch[1]}</div><div class="accordion-content hide bg6 hlSome textSmall cCenter">${checkMatch[2]}</div>`);
+	} while (checkMatch != null);
+	// CP costs
+	// {0} - {9} or {-}
+	do {
+		checkMatch = /{(\d|-)}/g.exec(notesString);
+		if (checkMatch != null) {
+			let fileName = '';
+			if (checkMatch[1] == '-')
+				fileName = 'null';
+			else
+				fileName = checkMatch[1];
+			notesString = notesString.replaceAll(`{${checkMatch[1]}}`, `<img src="img/icons/cp${fileName}.png" style="margin: 0px; padding: 0px; width: 12px; height: 12px;">`);
+		}
+	} while (checkMatch != null);
+	// Bold
+	// **This is bold**
+	notesString = notesString.replaceAll(/\*\*([^\*\n]*)\*\*/g, `<b>$1</b>`);
+	// Italics
+	// *This is italics*
+	notesString = notesString.replaceAll(/\*([^\*\n]*)\*/g, `<i>$1</i>`);
+	// horizontal rules
+	// ---
+	notesString = notesString.replaceAll(/^(-{3})$|^-/gm, `<hr>`);
+	// Headers
+	// # Header1 - ##### Header5
+	do {
+		checkMatch = /(#+)\s(.*)(\n|$)/g.exec(notesString);
+		if (checkMatch != null)
+			if (checkMatch[1].length <= 5)
+				notesString = notesString.replaceAll(`${checkMatch[1]} ${checkMatch[2]}${checkMatch[3]}`, `<h${checkMatch[1].length}>${checkMatch[2]}</h${checkMatch[1].length}>`);
+			else
+				notesString = notesString.replaceAll(`${checkMatch[1]} ${checkMatch[2]}`, `${checkMatch[2]}`);
+	} while (checkMatch != null);
+	// img
+	// ![Alt Text](image url)
+	do {
+		checkMatch = /\!\[(.*)\]\(((http)(?:s)?(\:\/\/).*)\)/g.exec(notesString);
+		if (checkMatch != null) {
+			notesString = notesString.replaceAll(`![${checkMatch[1]}](${checkMatch[2]})`, `<img src="${checkMatch[2]}" alt="${checkMatch[1]}">`);
+		}
+	} while (checkMatch != null);
+	// link
+	// [Link Name](Link url)
+	do {
+		checkMatch = /\[(.*)\]\(((http)(?:s)?(\:\/\/).*)\)/g.exec(notesString);
+		if (checkMatch != null) {
+			checkMatch[2].slice(0, -1);
+			checkMatch[2].slice(1);
+			notesString = notesString.replaceAll(`[${checkMatch[1]}](${checkMatch[2]})`, `<a href="${checkMatch[2]}">${checkMatch[1]}</a>`);
+		}
+	} while (checkMatch != null);
+	// Dice emojis
+	do {
+		checkMatch = /\[(\d)\]/g.exec(notesString);
+		if (checkMatch != null) {
+			let diceList = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+			if ("123456".includes(checkMatch[1]))
+				notesString = notesString.replaceAll(`[${checkMatch[1]}]`, `<span style="font-size:1.4em;">${diceList[Number(checkMatch[1]) - 1]}</span>`);
+		}
+	} while (checkMatch != null);
+	// Line break
+	notesString = notesString.replaceAll(/[\r\n|\r|\n]/g, `<br>`)
+	return notesString;
+}
+
 /*
 ███████  ██████   ██████ ██   ██ ███████ ████████ ███████
 ██      ██    ██ ██      ██  ██  ██         ██    ██
@@ -371,7 +528,11 @@ function init(mode) {
 		// Add links to wahaIcons
 		wahaLinks();
 
+		// Find all of the input and output elements
 		pollIO();
+
+		// Make weapons clickable
+		weaponSelect();
 
 		// Set up vp trackers
 		for (var tracker of document.getElementsByClassName('vptracker')) {
@@ -431,6 +592,17 @@ function init(mode) {
 
 }
 
+function reload() {
+	// Needs to run first if it wants to be included in pollIO() or accordions
+	listBuild();
+	buildAccordions();
+	// Add links to wahaIcons
+	wahaLinks();
+	// Make weapons clickable
+	weaponSelect();
+	findUseTags();
+}
+
 
 /*
 ██      ██ ███████ ████████     ██████  ██    ██ ██ ██      ██████
@@ -443,7 +615,6 @@ function init(mode) {
 function listBuild() {
 	let appendList;
 	for (var force of forceData) {
-		console.log(force);
 		if (force.force) {
 			// Get and erase the list for this force
 			let thisListIndex = forceData.indexOf(force);
@@ -454,7 +625,7 @@ function listBuild() {
 			appendList = document.createElement('h1');
 			appendList.innerText = force.name;
 			thisList.append(appendList);
-			if (force.customNotes) thisList.innerHTML += `<h3 class='textSmall'>${force.customNotes.replace(/\n/g, "<br />")}</p>`
+			if (force.customNotes) thisList.innerHTML += `<h3 class='textSmall textSans'>${customMarkdown(force.customNotes)}</p>`
 			// Add costs
 			appendList = document.createElement('div');
 			appendList.classList.add('statRow', 'noBorder');
@@ -467,6 +638,7 @@ function listBuild() {
                 `
 			}
 			thisList.append(appendList);
+
 			/*
 			██████  ███████ ████████  █████   ██████ ██   ██ ███    ███ ███████ ███    ██ ████████
 			██   ██ ██         ██    ██   ██ ██      ██   ██ ████  ████ ██      ████   ██    ██
@@ -507,7 +679,23 @@ function listBuild() {
 					appendList.innerHTML += `${detachment.variant}`;
 					newBox.append(appendList);
 				}
+
 				thisList.append(newBox);
+
+				for (var rule of detachment.rules) {
+					let newrule = document.createElement('div');
+					newrule.innerText = rule.name;
+					newrule.classList.add('accordion-header', 'tag', 'mini', 'ruleTag', 'clickable');
+					thisList.append(newrule);
+					let newruleContent = document.createElement('div');
+					newruleContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome', 'textSmall', 'cLeft', 'textSans');
+					newruleContent.innerHTML += customMarkdown(rule.desc);
+					for (phase of Object.keys(phaseList)) {
+						if (makeUseTag(rule.desc, phase)) newrule.classList.add(phase);
+					}
+					thisList.append(newruleContent);
+				}
+
 				// Start listing units
 				/*
 				██    ██ ███    ██ ██ ████████
@@ -518,10 +706,18 @@ function listBuild() {
 				*/
 
 				for (var unit of detachment.units) {
+					if (!settings.slotIcons) {
+						if (detachment.units.indexOf(unit)) {
+							if (detachment.units[detachment.units.indexOf(unit) - 1].slot != unit.slot)
+								thisList.innerHTML += `<h3>${unit.slot}</h3>`
+						} else {
+							thisList.innerHTML += `<h3>${unit.slot}</h3>`
+						}
+					}
 					unitHeader = document.createElement('div');
 					unitHeader.classList.add('accordion-header', 'bg0', 'banner', 'unit');
 					// Role icon on left side
-					if (unitRoles.includes(unit.slot.replaceAll(' ', '').toLowerCase())) {
+					if (settings.slotIcons && unitRoles.includes(unit.slot.replaceAll(' ', '').toLowerCase())) {
 						unitHeader.innerHTML += `
 						<img src="img/roles/${unit.slot.replaceAll(' ', '').toLowerCase()}.png" class="roleImg">
 						`;
@@ -530,11 +726,11 @@ function listBuild() {
 					let tempName = ((unit.customName) ? unit.customName : unit.name)
 					if (tempName.length >= 22) tempName = tempName.substring(0, 20) + " ...";
 					unitHeader.innerHTML += tempName;
-					// Warlord icon on left side
-					if (unit.warlord) unitHeader.innerHTML += `<img src="img/icons/warlord.png" class="warlordImg">`;
+					// Warlord icon on right side
+					if (settings.slotIcons && unit.warlord) unitHeader.innerHTML += `<img src="img/icons/warlord.png" class="warlordImg">`;
 					let unitContent = document.createElement('div');
 					unitContent.classList.add('accordion-content', 'bg4', 'unitBox');
-					if (unit.customNotes) unitContent.innerHTML += `<p class='textSmall unitNotes'>${unit.customNotes}</p>`
+					if (unit.customNotes) unitContent.innerHTML += `<p class='textSmall unitNotes textSans'>${customMarkdown(unit.customNotes)}</p>`
 					/*
 					███    ███  ██████  ██████  ███████ ██      ███████
 					████  ████ ██    ██ ██   ██ ██      ██      ██
@@ -549,24 +745,31 @@ function listBuild() {
 						let tempName = ((model.customName) ? model.customName : model.name);
 						if (tempName.length >= 22) tempName = tempName.substring(0, 22) + "...";
 						appendModel.innerHTML += tempName;
+						if (model.amount)
+							appendModel.innerHTML += " x " + model.amount;
 						if (model.customNotes) appendModel.innerHTML += `<p class='textSmall'>${model.customNotes[0]}</p>`;
 						// Statline in header
-						let modelStatRow = document.createElement('div');
-						modelStatRow.classList.add('statRow', 'noBorder');
-						for (var stat of Object.keys(model.statlines)) {
-							let modelStatTag = document.createElement('div');
-							modelStatTag.classList.add('statTag', 'naked');
-							let modelStatLbl = document.createElement('label');
-							modelStatLbl.classList.add('bg3', 'mini', 'naked');
-							modelStatLbl.innerHTML += stat;
-							modelStatTag.append(modelStatLbl);
-							let modelStatVl = document.createElement('span');
-							modelStatVl.classList.add('bg5', 'mini', 'naked');
-							modelStatVl.innerHTML += model.statlines[stat]
-							modelStatTag.append(modelStatVl);
-							modelStatRow.append(modelStatTag);
+						for (var statline of model.statlines) {
+							let modelStatRow = document.createElement('div');
+							modelStatRow.classList.add('statRow', 'noBorder');
+							for (var stat of Object.keys(statline)) {
+								let modelStatTag = document.createElement('div');
+								modelStatTag.classList.add('statTag', 'naked');
+								let modelStatLbl = document.createElement('label');
+								modelStatLbl.classList.add('bg3', 'mini', 'naked', 'growy');
+								if (settings.statIcons)
+									modelStatLbl.innerHTML += `<img src="img/rules/statlines/${stat}.svg" class="modelStatIcon" title="${stat.toUpperCase()}">`;
+								else
+									modelStatLbl.innerHTML += stat;
+								modelStatTag.append(modelStatLbl);
+								let modelStatVl = document.createElement('span');
+								modelStatVl.classList.add('bg5', 'mini', 'naked');
+								modelStatVl.innerHTML += statline[stat]
+								modelStatTag.append(modelStatVl);
+								modelStatRow.append(modelStatTag);
+							}
+							appendModel.append(modelStatRow);
 						}
-						appendModel.append(modelStatRow);
 						let modelContent = document.createElement('div');
 						modelContent.classList.add('accordion-content', 'bg2', 'cCenter');
 						/*
@@ -578,19 +781,26 @@ function listBuild() {
 						*/
 						for (var weapon of model.weapons) {
 							let weaponDiv = document.createElement('div');
-							weaponDiv.classList.add('tag', 'wide', 'bg6');
+							weaponDiv.classList.add('weaponBox', 'wide', 'bg6');
 							let statRow = document.createElement('div');
 							statRow.classList.add('statRow', 'noBorder');
 							let nameDiv = document.createElement('div');
-							nameDiv.classList.add('tag', 'wide', 'bg3');
+							nameDiv.setAttribute(`data-profile`, JSON.stringify({
+								user: {
+									name: model.name,
+									statlines: model.statlines
+								},
+								...weapon
+							}));
+							nameDiv.classList.add('tag', 'wide', 'bg3', 'weapon', 'clickable');
 							let abilTag = document.createElement('div');
 							abilTag.classList.add('statTag')
 							nameDiv.innerHTML += ((weapon.customName) ? weapon.customName : weapon.name);
 							if (weapon.amount) nameDiv.innerHTML += ` x ${weapon.amount}`;
 							weaponDiv.append(nameDiv);
-							if (weapon.customNotes) weaponDiv.innerHTML += `<p class='textSmall'>${weapon.customNotes}</p>`
+							if (weapon.customNotes) weaponDiv.innerHTML += `<p class='textSmall textSans'>${customMarkdown(weapon.customNotes)}</p>`
 							for (var stat of Object.keys(weapon)) {
-								if (stat == 'Abilities') {
+								if (stat == 'abilities') {
 									// THIS USED TO MAKE A BOX BUT THE UI GOT MESSY
 									// let abilLbl = document.createElement('label');
 									// abilLbl.classList.add('bg3', 'wide', 'flat', 'grow');
@@ -600,12 +810,15 @@ function listBuild() {
 									// abilVl.innerHTML += weapon[stat];
 									// abilTag.append(abilLbl);
 									// abilTag.append(abilVl);
-								} else if (!['amount', 'name', 'customName', 'customNotes'].includes(stat)) {
+								} else if (['range', 'type', 's', 'ap', 'd'].includes(stat)) {
 									let statTag = document.createElement('div');
 									statTag.classList.add('statTag', 'naked');
 									let statLbl = document.createElement('label');
 									statLbl.classList.add('bg3', 'flat', 'naked', 'grow');
-									statLbl.innerHTML += stat;
+									if (settings.statIcons)
+										statLbl.innerHTML += `<img src="img/rules/weapons/stats/${stat}.svg" class="weaponStatIcon"  title="${stat.toUpperCase()}">`;
+									else
+										statLbl.innerHTML += stat.toUpperCase();
 									let statVl = document.createElement('span');
 									statVl.classList.add('bg7', 'flat', 'naked', 'grow');
 									statVl.innerHTML += weapon[stat];
@@ -614,11 +827,28 @@ function listBuild() {
 									statRow.append(statTag);
 								}
 							}
+
 							weaponDiv.append(statRow);
-							if (weapon["Abilities"] != '-')
+							if (weapon.abilities && weapon.abilities != '-') {
 								// THIS WAS FOR THE UI BOX ABOVE
 								// weaponDiv.append(abilTag);
-								weaponDiv.innerHTML += `<p class='textSmall'>${weapon["Abilities"]}</p>`
+								let abilText = weapon.abilities;
+								if (settings.statIcons) {
+									if (abilText.includes('Blast')) {
+										abilText = abilText.replaceAll(/Blast[.]?/g, '');
+										weaponDiv.innerHTML += `<img src='img/icons/blast.png' title='Blast Weapons: When targetting outside of Engagement Range: minimum three attacks against units with 6+ models, and always make maximum number of attacks against units with 11+ models.' class='weaponIcon_abil'>`;
+									}
+									if (abilText.includes('Plague Weapon')) {
+										abilText = abilText.replaceAll(/Plague Weapon[.]?/g, '').trim();
+										weaponDiv.innerHTML += `<img src='img/icons/plague.png' title='Plague Weapon: Each time an attack is made with this weapon, re-roll a wound roll of 1.' class='weaponIcon_abil'>`;
+									}
+									if (abilText.includes('Each time an attack is made with this weapon, that attack automatically hits the target')) {
+										abilText = abilText.replaceAll(/Each time an attack is made with this weapon, that attack automatically hits the target[.]?/g, '').trim();
+										weaponDiv.innerHTML += `<img src='img/icons/flamer.png' title='Flamer: Each time an attack is made with this weapon, that attack automatically hits the target.' class='weaponIcon_abil'>`;
+									}
+								}
+								weaponDiv.innerHTML += `<p class='textSmall textSans'>${abilText}</p>`;
+							}
 							modelContent.append(weaponDiv);
 						}
 						unitContent.append(appendModel);
@@ -633,6 +863,12 @@ function listBuild() {
 					██   ██ ███████    ██     ███ ███   ██████  ██   ██ ██████  ███████
 					*/
 					// unitContent.innerHTML += `<h2>Keywords</h2>`;
+					if (unit.warlord) {
+						let newKeyword = document.createElement('div');
+						newKeyword.classList.add('tag', 'mini', 'bg3');
+						newKeyword.innerHTML = `Warlord`;
+						unitContent.append(newKeyword)
+					}
 					for (var keyword of unit.keywords) {
 						let newKeyword = document.createElement('div');
 						newKeyword.classList.add('tag', 'mini', 'bg7');
@@ -640,10 +876,11 @@ function listBuild() {
 							newKeyword.classList.remove('bg7');
 							newKeyword.classList.add('bg3');
 						}
-						newKeyword.innerHTML += keyword;
+						for (var word of keyword.split(" ")) {
+							newKeyword.innerHTML += word.charAt(0).toUpperCase() + word.slice(1) + " ";
+						}
 						unitContent.append(newKeyword)
 					}
-
 					/*
 					███████ ██████  ███████ ██      ██      ███████
 					██      ██   ██ ██      ██      ██      ██
@@ -659,7 +896,7 @@ function listBuild() {
 						unitContent.append(newSpell)
 						let newSpellContent = document.createElement('div');
 						newSpellContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
-						if (spell.customNotes) newSpellContent.innerHTML += `<p class='textSmall'>${spell.customNotes}</p>`
+						if (spell.customNotes) newSpellContent.innerHTML += `<p class='textSmall textSans'>${customMarkdown(spell.customNotes)}</p>`
 						newSpellContent.innerHTML += `
 							<div class="statRow noBorder">
 							<div class="statTag">
@@ -671,7 +908,7 @@ function listBuild() {
 							<span class="bg7 textSmall">${spell.range}</span>
 							</div>
 							</div>
-							<div class="textSmall cLeft">${spell.details.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
+							<div class="textSmall cLeft textSans">${spell.details.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(spell.details, phase)) newSpell.classList.add(phase);
 						}
@@ -694,7 +931,7 @@ function listBuild() {
 						if (rule.name == 'Explodes') {
 							newRule.classList.add('permaUse');
 							newRuleContent.innerHTML += `
-							<div class="textSmall cLeft">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>
+							<div class="textSmall cLeft textSans">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>
 							<div class="statRow noBorder">
 							<div class="statTag">
 							<label class="bg3 textSmall">Roll</label>
@@ -723,9 +960,9 @@ function listBuild() {
 								<span class="bg7 textSmall">${rule.deny}</span>
 								</div>
 								</div>
-								<div class="textSmall cCenter">${rule.desc}</div>`
+								<div class="textSmall cCenter textSans">${rule.desc}</div>`
 						} else {
-							newRuleContent.innerHTML += `<div class="textSmall cLeft">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
+							newRuleContent.innerHTML += `<div class="textSmall cLeft textSans">${((rule.customNotes) ? customMarkdown(rule.customNotes) : '')}<br>${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
 						}
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(rule.desc, phase)) newRule.classList.add(phase);
@@ -739,28 +976,39 @@ function listBuild() {
 					     ██    ██    ██   ██ ██   ██    ██    ██   ██ ██    ██ ██      ██  ██  ██      ██
 					███████    ██    ██   ██ ██   ██    ██    ██   ██  ██████  ███████ ██      ██ ███████
 					*/
-					for (var stratagem of unit.stratagems) {
-						if (detachment.subfaction.length == 0 || detachment.subfaction == stratagem.subfaction || detachment.faction == stratagem.subfaction || detachment.variant == stratagem.subfaction) {
-							let newStratagem = document.createElement('div');
-							if (detachment.faction != stratagem.subfaction)
-								if (detachment.subfaction)
-									newStratagem.setAttribute(`data-subfaction`, detachment.subfaction);
-							newStratagem.classList.add('accordion-header', 'tag', 'mini', 'stratTag', 'clickable');
-							let fileName = '';
-							if ("0123456789".includes(stratagem.cp_cost)) fileName = stratagem.cp_cost;
-							else fileName = 'null';
-							newStratagem.innerHTML += `<img src="img/icons/cp${fileName}.png" style="margin: 0px; padding: 0px; width: 12px; height: 12px;"> ${stratagem.name}`;
-							unitContent.append(newStratagem);
-							let newStratagemContent = document.createElement('div');
-							newStratagemContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
-							newStratagemContent.innerHTML += `
-								<p class="textSmall">${stratagem.subfaction} - ${stratagem.type}</p>
-		            <p class="textSmall cLeft">${stratagem.description}</p>
+					if (settings.stratagems) {
+						for (var stratagem of unit.stratagems) {
+							if (detachment.subfaction.length == 0 || detachment.subfaction == stratagem.subfaction || detachment.faction == stratagem.subfaction || detachment.variant == stratagem.subfaction) {
+								let newStratagem = document.createElement('div');
+								if (detachment.faction != stratagem.subfaction)
+									if (detachment.subfaction)
+										newStratagem.setAttribute(`data-subfaction`, detachment.subfaction);
+								newStratagem.classList.add('accordion-header', 'tag', 'mini', 'stratTag', 'clickable');
+								let fileName = '';
+								if ("0123456789".includes(stratagem.cp_cost)) fileName = stratagem.cp_cost;
+								else fileName = 'null';
+								// Startagem name from all aaps to first letter caps
+								let stratParse = stratagem.name;
+								let stratName = '';
+								stratParse = stratParse.split(" ");
+								for (let i = 0; i < stratParse.length; i++) {
+									stratParse[i] = stratParse[i].toLowerCase();
+									stratName += stratParse[i][0].toUpperCase() + stratParse[i].substr(1) + " ";
+								}
+								stratName = stratName.trim();
+								newStratagem.innerHTML += `<img src="img/icons/cp${fileName}.png" style="margin: 0px; padding: 0px; width: 12px; height: 12px;"> ${stratName}`;
+								unitContent.append(newStratagem);
+								let newStratagemContent = document.createElement('div');
+								newStratagemContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
+								newStratagemContent.innerHTML += `
+								<p class="textSmall textSans">${stratagem.subfaction} - ${stratagem.type}</p>
+		            <p class="textSmall cLeft textSans">${stratagem.description}</p>
 		          	`;
-							for (phase of Object.keys(phaseList)) {
-								if (makeUseTag(stratagem.description, phase)) newStratagem.classList.add(phase);
+								for (phase of Object.keys(phaseList)) {
+									if (makeUseTag(stratagem.description, phase)) newStratagem.classList.add(phase);
+								}
+								unitContent.append(newStratagemContent)
 							}
-							unitContent.append(newStratagemContent)
 						}
 					}
 					let searchBox = document.createElement('div')
@@ -769,6 +1017,7 @@ function listBuild() {
 						if (unit.waha.link) {
 							let wahaIcon = document.createElement('img')
 							wahaIcon.classList.add('linkImg');
+							wahaIcon.setAttribute("title", `View Datasheet on Wahapedia`);
 							wahaIcon.setAttribute("data-link", unit.waha.link);
 							wahaIcon.src = 'https://wahapedia.ru/favicon.png';
 							searchBox.appendChild(wahaIcon);
@@ -777,18 +1026,28 @@ function listBuild() {
 					// Pic Search
 					let picSearch = document.createElement('img')
 					picSearch.classList.add('linkImg');
+					picSearch.setAttribute("title", `Search for images on Google`);
 					picSearch.setAttribute("data-link", `https://www.google.com/search?tbm=isch&q=Warhammer%2040000%20${unit.name}%20miniature`);
 					picSearch.src = 'img/icons/picsearch.png';
 					searchBox.appendChild(picSearch);
+					// Fandom search
+					let fandomSearch = document.createElement('img')
+					fandomSearch.classList.add('linkImg');
+					fandomSearch.setAttribute("title", `Search for lore on Fandom`);
+					fandomSearch.setAttribute("data-link", `https://warhammer40k.fandom.com/wiki/Special:Search?scope=internal&query=${unit.name}`);
+					fandomSearch.src = 'img/icons/fandom.ico';
+					searchBox.appendChild(fandomSearch);
 					// GW Search
 					let gwsearch = document.createElement('img')
 					gwsearch.classList.add('linkImg');
+					gwsearch.setAttribute("title", `Search in Games-Workshop catalogue`);
 					gwsearch.setAttribute("data-link", `https://www.games-workshop.com/en-US/searchResults?_dyncharset=UTF-8&_dynSessConf=-5255390880923486912&qty=&sorting=&view=&Ntt=${unit.name}`);
 					gwsearch.src = 'img/icons/gw.ico';
 					searchBox.appendChild(gwsearch);
 					// eBay search
 					let ebaySearch = document.createElement('img')
 					ebaySearch.classList.add('linkImg');
+					ebaySearch.setAttribute("title", `Search on eBay`);
 					ebaySearch.setAttribute("data-link", `https://www.ebay.com/sch/i.html?_nkw=40k+${unit.name}`);
 					ebaySearch.src = 'img/icons/ebay.ico';
 					searchBox.appendChild(ebaySearch);

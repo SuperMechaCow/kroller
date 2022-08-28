@@ -3,7 +3,6 @@
 Thanks
 http://myminiaturemischief.blogspot.com/2017/07/warhammer-40k-8th-edition-rending-pony.html
 https://www.battlescribe.net/
-
 */
 
 /*
@@ -27,17 +26,15 @@ const qrcode = require('qrcode');
 const crypto = require('crypto');
 const Fuse = require('fuse.js');
 const request = require('request');
-var md = require('markdown-it')('commonmark', {
-	linkify: true,
-	breaks: true,
-	typographer: true
-});
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/database.db');
 const http = require('http');
 var app = express()
 const server = http.createServer(app);
 const io = require('socket.io')(server);
+const calculator = require('./modules/calculator.js');
+
+const calc = new calculator.Calculator();
 
 /*
 ██       ██████   ██████   ██████  ███████ ██████
@@ -57,16 +54,16 @@ const logger = winston.createLogger({
 			filename: 'error.log',
 			level: 'error',
 			format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.json()
-        )
+				winston.format.timestamp(),
+				winston.format.json()
+			)
 		}),
 		new winston.transports.File({
 			filename: 'combined.log',
 			format: winston.format.combine(
-			            winston.format.timestamp(),
-			            winston.format.json()
-			        )
+				winston.format.timestamp(),
+				winston.format.json()
+			)
 		}),
 		new winston.transports.Console({
 			format: winston.format.combine(
@@ -635,10 +632,8 @@ async function resolveRoster() {
 		}
 
 		let forceData = await forcesFromBS(files);
-		console.log(forceData);
 		if (forceData.length) {
 			let gameData = await createGame();
-			console.log(gameData);
 			let descString = 'Empty Game'
 			if (forceData[0][0]) {
 				descString = forceData[0][0].name;
@@ -670,6 +665,13 @@ disclient.on('messageCreate', message => {
 		switch (args[0]) {
 			case 'ping':
 				message.reply(`I'm alive!`)
+				break;
+			case 'calc':
+				let results = calc.rollCalc(args[1]);
+				console.log(results);
+				message.reply(`
+					${((results.o.total) ? '**Total:** ' + results.o.total + '\n' : '')}${((results.o.s) ? '**Succ:** ' + results.o.s + '\n**Fail:** ' + results.o.f : '')}
+					`);
 				break;
 			case 'unit':
 				let searchResults = fuzzysearch(command, wahaData.Datasheets, 5);
@@ -706,6 +708,12 @@ disclient.login(discordtoken.TOKEN);
 ██    ██    ██    ██ ██          ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██      ██
  ██████     ██    ██ ███████     ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ███████
 */
+
+var cantrips = {
+	'blast': 'Blast',
+	'plague': 'Plague Weapon',
+	'flamer': 'Each time an attack is made with this weapon, that attack automatically hits the target'
+}
 
 class Game {
 	constructor() {
@@ -783,18 +791,18 @@ function matchModel(obj1, obj2) {
 					}
 				}
 				if (matchedElements == obj1[ide].length) {
-					return true
+					return true;
 				}
 			}
-			return false
+			return false;
 		}
 	}
-	return true
+	return true;
 }
 
 function sortBySlot(units) {
-	let newOrder = []
-	let slotOrder = ['HQ', 'Troops', 'Elites', 'Fast Attack', 'Heavy Support', 'Dedicated Transport', 'Flyers', 'Lord of War', 'Fortification']
+	let newOrder = [];
+	let slotOrder = ['HQ', 'Troops', 'Elites', 'Fast Attack', 'Heavy Support', 'Dedicated Transport', 'Flyers', 'Lord of War', 'Fortification', 'No Force Org Slot'];
 	for (slot of slotOrder) {
 		for (unit of units) {
 			if (unit.slot == slot) {
@@ -802,11 +810,60 @@ function sortBySlot(units) {
 			}
 		}
 	}
-	return newOrder
+	return newOrder;
+}
+
+function combineBrackets(unit) {
+	// preceding index, name, succeeding index, lower range of top bracket
+	let checkMatch = /(\d+\.\s)?(.+?)(\[\d]\s)?\((\d+)\+/g.exec(unit.models[0].name);
+	if (checkMatch != null) {
+		let newStatlines = [];
+		for (var model of unit.models) {
+			if (unit.models.indexOf(model) == 0) {
+				model.statlines[0].W = (checkMatch[4] - 1) * 2;
+				newStatlines.push(model.statlines[0]);
+			} else {
+				//preceding index, name, succeeding index, lower range of bracket, upper range of bracket
+				let nameMatch = /(\d+\.\s)?(.+?)(\[\d]\s)?\((\d+)-(\d+)\s.*\)/g.exec(model.name);
+				if (nameMatch != null)
+					model.statlines[0].W = nameMatch[5];
+				newStatlines.push(model.statlines[0]);
+			}
+		}
+		unit.models[0].name = checkMatch[2].trim()
+		unit.models[0].statlines = newStatlines;
+		unit.models = [unit.models.shift()];
+		return unit;
+	} else {
+		return unit;
+	}
 }
 
 function prepError(err) {
 	return `${new Date()}\n${err.stack}`
+}
+
+function combineWeapons(weapons) {
+	let tempWeapons = [];
+	// for every weapon
+	for (var weapon of weapons) {
+		let numMatches = 0;
+		// for every other weapon
+		for (var otherweapon of weapons) {
+			// if they match
+			if (JSON.stringify(weapon) === JSON.stringify(otherweapon))
+				numMatches++;
+			// if it's not the first match
+			if (numMatches > 1) {
+				// increase this weapon's amount by the other amount
+				weapon.amount = Number(weapon.amount) + Number(otherweapon.amount);
+				// remove the other weapon from the list
+				weapons.splice(weapons.indexOf(weapon), 1);
+			}
+		}
+		tempWeapons.push(weapon)
+	}
+	return tempWeapons;
 }
 
 /*
@@ -929,7 +986,7 @@ function parseBS(data) {
 		var force = {
 			name: data.roster.$.name,
 			detachments: [],
-			costs: {},
+			costs: {}
 		}
 
 		//Grab customName
@@ -937,7 +994,7 @@ function parseBS(data) {
 			force.customName = data.roster.$.customName
 		}
 		if (data.roster.customNotes) {
-			force.customNotes = md.renderInline(data.roster.customNotes[0]);
+			force.customNotes = data.roster.customNotes[0];
 		}
 
 		//Grab all of the army costs
@@ -962,7 +1019,8 @@ function parseBS(data) {
 				subfaction: '',
 				variant: '',
 				factionIcon: '',
-				units: []
+				units: [],
+				rules: []
 			}
 			//Some factions have multiple names
 			if (faction == 'Adeptus Astartes') faction = 'Space Marines';
@@ -978,7 +1036,17 @@ function parseBS(data) {
 				newDetachment.customName = detachment.$.customName;
 			}
 			if (detachment.customNotes) {
-				newDetachment.customNotes = md.renderInline(detachment.customNotes[0]);
+				newDetachment.customNotes = detachment.customNotes[0];
+			}
+
+			// Grab army rules (BattleScribe doesn't keep all of them in a rational place, so things like Armor of Contempt are missing)
+			if (detachment.rules) {
+				for (rule of detachment.rules[0].rule) {
+					newDetachment.rules.push({
+						name: rule.$.name,
+						desc: rule.description[0]
+					})
+				}
 			}
 
 			//If it's not a list, put it in one so it can be looped through
@@ -1022,12 +1090,8 @@ function parseBS(data) {
 					//If the selection is not a unit (sometimes it's a configuration),
 					//this will remain "undefined".
 					newUnit.name = unit.$.name
-					if (unit.$.customName) {
-						newUnit.customName = unit.$.customName
-					}
-					if (unit.customNotes) {
-						newUnit.customNotes = md.renderInline(unit.customNotes[0]);
-					}
+					if (unit.$.customName) newUnit.customName = unit.$.customName
+					if (unit.customNotes) newUnit.customNotes = unit.customNotes[0];
 
 					//
 					//  Start collecting keywords
@@ -1071,6 +1135,11 @@ function parseBS(data) {
 					// Some units (especially daemons and CSM marines) are in multiple factions
 					// Find all possible datasheets
 					let datasheetList = wahaData.Datasheets.filter(datasheet => datasheet.name == unit.$.name)
+					// If you couldn't find one, try again without the S at the end ofthe name
+					if (datasheetList.length == 0) {
+						let tempName = unit.$.name.slice(0, -1);
+						datasheetList = wahaData.Datasheets.filter(datasheet => datasheet.name == tempName);
+					}
 					// If there was more than one possible datasheet
 					if (datasheetList.length > 1) {
 						// Check the datasheet keywords for each possible datasheet
@@ -1084,10 +1153,12 @@ function parseBS(data) {
 							}
 						}
 					}
-					//If there was only one datasheet found, that must be the correct one
-					else {
+					// If there was only one datasheet found, that must be the correct one
+					else if (datasheetList.length == 1) {
 						datasheet = datasheetList[0]
 					}
+					// Datasheet not found
+					else {}
 					if (datasheet) newUnit.waha = datasheet;
 					//Start collecting rules
 					//This is the most obvious place to put all of the rules for the entire unit,
@@ -1097,26 +1168,29 @@ function parseBS(data) {
 						if (!Array.isArray(unit.rules[0].rule)) unit.rules[0].rule = [unit.rules[0].rule]
 						//Loop through each rule
 						for (rule of unit.rules[0].rule) {
-							//New blank object for the rules
-							let newRule = {
-								name: rule.$.name,
-								desc: rule.description[0],
-								subkeys: rule.description[0].match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
-								targets: rule.description[0].match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
-								phases: []
+							// If the rule does not have a description then we can't make a tag from it. It's probably BS junk
+							if (rule.description) {
+								//New blank object for the rules
+								let newRule = {
+									name: rule.$.name,
+									desc: rule.description[0],
+									subkeys: rule.description[0].match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
+									targets: rule.description[0].match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
+									phases: []
+								}
+								//Grab customName
+								if (rule.$.customName) {
+									newRule.customName = rule.$.customName
+								}
+								if (rule.customNotes) {
+									newRule.customNotes = rule.customNotes[0];
+								}
+								//Look for specific mentions of a phase
+								for (phase of phaseList) {
+									if (newRule.desc.includes((phase + " phase"))) newRule.phases.push(phase)
+								}
+								newUnit.rules.push(newRule)
 							}
-							//Grab customName
-							if (rule.$.customName) {
-								newRule.customName = rule.$.customName
-							}
-							if (rule.customNotes) {
-								newRule.customNotes = md.renderInline(rule.customNotes[0]);
-							}
-							//Look for specific mentions of a phase
-							for (phase of phaseList) {
-								if (newRule.desc.includes((phase + " phase"))) newRule.phases.push(phase)
-							}
-							newUnit.rules.push(newRule)
 						}
 					}
 					//This is number two of the three stupid places you can store unit rules
@@ -1140,7 +1214,7 @@ function parseBS(data) {
 										newRule.customName = profile.$.customName
 									}
 									if (profile.customNotes) {
-										newRule.customNotes = md.renderInline(profile.customNotes[0]);
+										newRule.customNotes = profile.customNotes[0];
 									}
 									for (phase of phaseList) {
 										if (newRule.desc.includes((phase + "phase"))) newRule.phases.push(phase)
@@ -1228,7 +1302,8 @@ function parseBS(data) {
 							faction: '',
 							keywords: [],
 							weapons: [],
-							wargear: []
+							wargear: [],
+							amount: 0
 						}
 						newModel.amount = selection.$.number
 						let profileParse = []
@@ -1264,10 +1339,11 @@ function parseBS(data) {
 									newModel.customName = profile.$.customName
 								}
 								if (profile.$.customNotes) {
-									newModel.customNotes = md.renderInline(profile.$.customNotes[0]);
+									newModel.customNotes = profile.$.customNotes[0];
 								}
 								let charaParse = profile.characteristics[0].characteristic
-								newModel.statlines = {}
+								newModel.statlines = []
+								let statline = {}
 								for (chara of charaParse) {
 									let statname = chara.$.name
 									if (statname == 'Save') statname = 'Sv'
@@ -1275,8 +1351,9 @@ function parseBS(data) {
 									stattext = stattext.replace('+', '')
 									stattext = stattext.replace('\"', '')
 									if (stattext == 'N/A') stattext = '*'
-									newModel.statlines[statname] = stattext
+									statline[statname] = stattext
 								}
+								newModel.statlines.push(statline);
 							}
 							//This is number three of the three stupid places you can store unit rules
 							else if (profile.$.typeName == "Abilities") {
@@ -1297,7 +1374,7 @@ function parseBS(data) {
 										newRule.customName = profile.$.customName
 									}
 									if (profile.customNotes) {
-										newRule.customNotes = md.renderInline(profile.customNotes[0]);
+										newRule.customNotes = profile.customNotes[0];
 									}
 									for (phase of phaseList) {
 										if (newRule.desc.includes((phase + "phase"))) newRule.phases.push(phase)
@@ -1336,11 +1413,13 @@ function parseBS(data) {
 							for (weapProf of weaponFound) {
 								let newWeapon = {
 									name: '',
-									amount: weapon.$.number
+									amount: weapon.$.number,
+									cantrips: []
 								}
 								let newWargear = {
 									name: '',
-									amount: weapon.$.number
+									amount: weapon.$.number,
+									cantrips: []
 								}
 								if (Object.keys(weapProf).length) {
 									let charaParse = weapProf.characteristics[0].characteristic
@@ -1350,15 +1429,21 @@ function parseBS(data) {
 											newWeapon.customName = weapon.$.customName
 										}
 										if (weapon.customNotes) {
-											newWeapon.customNotes = md.renderInline(weapon.customNotes[0]);
+											newWeapon.customNotes = weapon.customNotes[0];
 										}
 										// newWeapon.amount = weapon.number
 										for (chara of charaParse) {
-											newWeapon[chara.$.name] = chara._
+											newWeapon[chara.$.name.toLowerCase()] = chara._
 											if (chara._) {
-												if (chara._.includes('select one of the profiles below')) {
-													//This trick will turn off adding this weapon to the list
-													newWeapon.name = ''
+												//This trick will turn off adding this weapon to the list
+												if (chara._.includes('select one of the profiles below'))
+													newWeapon.name = '';
+												if (chara.$.name.toLowerCase() == 'abilities') {
+													for (var ct of Object.keys(cantrips)) {
+														if (chara._.includes(cantrips[ct])) {
+															newWeapon.cantrips.push(ct)
+														}
+													}
 												}
 											}
 										}
@@ -1420,7 +1505,7 @@ function parseBS(data) {
 											newSpell.customName = spell.$.customName;
 										}
 										if (spell.customNotes) {
-											newSpell.customNotes = md.renderInline(spell.customNotes[0]);
+											newSpell.customNotes = spell.customNotes[0];
 										}
 										let spellChara = spellProf.characteristics[0].characteristic;
 
@@ -1446,6 +1531,7 @@ function parseBS(data) {
 										newUnit.models[newUnit.models.length - 1].amount++;
 									else
 										newUnit.models[newUnit.models.length - 1] = 1;
+									console.log(newUnit.models[newUnit.models.length - 1].amount);
 								} else {
 									newUnit.models.push(newModel)
 								}
@@ -1500,10 +1586,18 @@ function parseBS(data) {
 					}
 
 					if (newUnit.models) {
-						if (unclaimedWeapons.length) {
-							for (model in newUnit.models) {
-								newUnit.models[model].weapons = unclaimedWeapons
-							}
+						// Check for bracketting models
+						newUnit = combineBrackets(newUnit);
+						// Give them the unclaimed weapons
+						for (model in newUnit.models) {
+							if (unclaimedWeapons.length)
+								// This one adds unclaimed weapons to each model's existing list
+								// newUnit.models[model].weapons = newUnit.models[model].weapons.concat(unclaimedWeapons);
+								// This one sets each model's list to unclaimed models
+								// newUnit.models[model].weapons = unclaimedWeapons;
+								// But I think the correct answer is to give the weapons to anyone who does not have weapons
+								if (!newUnit.models[model].weapons.length)
+									newUnit.models[model].weapons = combineWeapons(unclaimedWeapons);
 						}
 					}
 					newDetachment.units.push(newUnit)

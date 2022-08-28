@@ -9,6 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <!-- <script src="js/testdata.js" charset="utf-8"></script> -->
   <script src="/socket.io/socket.io.js"></script>
+  <script src="js/calculator.js" charset="utf-8"></script>
   <script src="js/interface.js" charset="utf-8"></script>
   <title>40kroller</title>
   <link rel="stylesheet" href="css/40kroller.css">
@@ -126,11 +127,10 @@
       <!-- Attacker -->
       <div class="accordion-content bg4">
         <div class="bg5 block cCenter">
-          <p>This feature is currently disabled to focus on testing other features. Please feel free to test importing Battlescribe roster files (.rosz), sharing games with your friends, using the Discord bot, using the turn phase and score
-            trackers.</p>
+          <p>Most of this feature is non-functional as it is being overhauled. This message will be removed when the feature is complete.</p>
           <p>Please leave any feedback with the feedback form in the 'Import - Share' tab.</p>
         </div>
-        <h2 id="attackerName" class="cCenter" title="Abilities will show here if they are detected.">Attacker's Stats</h2>
+        <h2 id="attackerName" class="cCenter io" title="Abilities will show here if they are detected.">Attacker's Stats</h2>
         <div class="statRow bg5">
           <div class="statTag" id="attackerModels" title="The number of models in the attacking unit.">
             <label for="sim_atkr_mdls" class="bg4">Mdls</label>
@@ -178,9 +178,7 @@
             <input type="number" class="spinner io bg7" name="sim_atkr_d" id="sim_atkr_d" size=1 value=1>
           </div>
         </div>
-        <div id="defenderHeader">
-          <h2 id="defenderName" class="cCenter">Defender's Stats</h2>
-        </div>
+        <h2 id="defenderName" class="cCenter io">Defender's Stats</h2>
         <!--
         ██   ██ ██ ████████     ███    ███  ██████  ██████  ███████
         ██   ██ ██    ██        ████  ████ ██    ██ ██   ██ ██
@@ -293,7 +291,7 @@
           <div class="block bg6" title="Roll xDy+z attacks for each model instead of the flat Damage characteristic.">
             <input type="checkbox" class="selectMod io" id="sim_damage_random_checked"> Random number of damage:<br>
             <input type="number" class="spinner io bg7" name="sim_damage_random_dice" id="sim_damage_random_dice" size=1 value=1> D
-            <input type="number" class="spinner io bg7" name="sim_damage_random_denom" id="sim_damage_random_denom" size=1 value=6> +
+            <input type="number" class="spinner io bg7" name="sim_damage_random_faces" id="sim_damage_random_faces" size=1 value=6> +
             <input type="number" class="spinner io bg7" name="sim_damage_random_mod" id="sim_damage_random_mod" size=1 value=0>
           </div>
 
@@ -320,7 +318,7 @@
        ██████   ██████     ██    ██       ██████     ██
       -->
       <div class="accordion-header bg0 banner isOpen">Output</div>
-      <div id="output" class="accordion-content isOpen io">
+      <div id="output" class="accordion-content isOpen io textSans">
         <% if (locals.outputPretty) { %>
         <%- outputPretty %>
         <% } else { %>
@@ -343,7 +341,15 @@
         <hr>
         <b>Update July 24th, 2022:</b>
         <ul>
-          <li><span class='oR' title='Feedback is the second most effective way of getting your issue fixed. The first is joining the Discord channel and complaining.'>Please leave feedback</span> in the Share tab if something is not working for you! You can now also upload the problem roster file as well.</li>
+          <li>You can now edit custom notes in BattleScribe and add markdown and custom accordions as such:
+            <pre>#[Header](Content)</pre>
+            You can also use bold, italics, line break, headers, images, links, and CP and Dice with {0} and [0]
+          </li>
+          <li>
+            Bracketting units now combine into one model
+          </li>
+          <li><span class='oR' title='Feedback is the second most effective way of getting your issue fixed. The first is joining the Discord channel and complaining.'>Please leave feedback</span> in the Share tab if something is not working for
+            you! You can now also upload the problem roster file as well.</li>
         </ul>
         <hr>
         <p class="cCenter">
@@ -359,20 +365,6 @@
         <p class="cCenter">Feel free to host, contribute, and share!</p>
         <% } %>
       </div>
-
-      <!--
-      ███████ ███████ ████████ ██    ██ ██████
-      ██      ██         ██    ██    ██ ██   ██
-      ███████ █████      ██    ██    ██ ██████
-           ██ ██         ██    ██    ██ ██
-      ███████ ███████    ██     ██████  ██
-    -->
-      <!--
-      <div class="accordion-header bg0 banner">Setup</div>
-      <div class="accordion-content bg4">
-
-      </div>
-    -->
 
       <!--
       ███████ ██   ██  █████  ██████  ███████
@@ -410,9 +402,55 @@
           </form>
         </div>
       </div>
-      <% } %>
+
+      <!--
+      ███████ ███████ ████████ ██    ██ ██████
+      ██      ██         ██    ██    ██ ██   ██
+      ███████ █████      ██    ██    ██ ██████
+           ██ ██         ██    ██    ██ ██
+      ███████ ███████    ██     ██████  ██
+    -->
+
+      <div class="accordion-header bg0 banner">Settings</div>
+      <div class="accordion-content bg4">
+        <div class="settingBox">
+          <p class="textFull">Auto-open all phase abilities</p>
+          <label class="switch">
+            <input id="setAutoOpen" type="checkbox" class="io" onchange="settings.autoOpen = !settings.autoOpen; reload();">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="settingBox">
+          <p class="textFull">Close other tabs when opening new tab</p>
+          <label class="switch">
+            <input id="setAutoClose" type="checkbox" class="io" onchange="settings.autoClose = !settings.autoClose; reload();" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="settingBox">
+          <p class="textFull">Show stat icons</p>
+          <label class="switch">
+            <input id="setStatIcons" type="checkbox" class="io" onchange="settings.statIcons = !settings.statIcons; reload();" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="settingBox">
+          <p class="textFull">Show role icons</p>
+          <label class="switch">
+            <input id="setStatIcons" type="checkbox" class="io" onchange="settings.slotIcons = !settings.slotIcons; reload();" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="settingBox">
+          <p class="textFull">Show Stratagems</p>
+          <label class="switch">
+            <input id="setStratagems" type="checkbox" class="io" onchange="settings.stratagems = !settings.stratagems; reload();" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <% } %>
+      </div>
     </div>
-  </div>
   </div>
   <div id="dfdrList" class="listView bg1 cCenter">
     <% if (locals.gameCode) { %>
@@ -438,13 +476,12 @@
   });
   <% } %>
   <% if (locals.forceData) { %>
-    forceData = <%- JSON.stringify(forceData) %>;
-    console.log(forceData);
-    <% } %>
+  forceData = <%- JSON.stringify(forceData) %>;
+  console.log(forceData);
+  <% } %>
   <% if (locals.scoreboard) { %>
   console.log(<%- scoreboard %>);
   getTrackers(<%- scoreboard %>);
   <% } %>
 </script>
-
 </html>

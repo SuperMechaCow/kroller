@@ -1,5 +1,16 @@
 /* jura-regular - latin */
 @font-face {
+  font-family: 'Bank Gothic';
+  font-style: normal;
+  /* font-weight: 800; */
+  src: url('../fonts/BankGothic.ttf');
+  /* IE9 Compat Modes */
+  src: local(''),
+    url('../fonts/BankGothic.ttf')
+}
+
+/* jura-regular - latin */
+@font-face {
   font-family: 'Jura';
   font-style: normal;
   /* font-weight: 800; */
@@ -19,11 +30,12 @@
 }
 
 * {
-  font-family: 'Jura';
+  font-family: 'Jura', 'Bank Gothic', 'Arial';
   font-weight: 400;
   scrollbar-width: thin;
   scrollbar-color: #999999 #000000;
   user-select: none;
+  /* font-size: 16px; */
 }
 
 /* Works on Chrome, Edge, and Safari */
@@ -63,6 +75,12 @@ h1, h2, h3, h4, hr {
   color: #ffffff;
   -webkit-user-select: none;
   -moz-user-select: none;
+  font-family: 'Bank Gothic', 'Jura', 'Arial';
+}
+
+h1 {
+  color: #ffffff;
+  font-size: 2em;
 }
 
 h2 {
@@ -101,6 +119,10 @@ li {
 
 .textFull {
   font-size: 1em;
+}
+
+.textSans {
+  font-family: 'Arial';
 }
 
 .cCenter {
@@ -219,9 +241,31 @@ li {
   display: inline;
 }
 
-.importForm {
+/* .importForm {
   position: absolute;
   top: 25%;
+} */
+.weaponBox {
+  border-radius: 5px;
+}
+
+.weaponIcon_abil {
+  /* float: left; */
+  width: 30px;
+}
+
+.weaponStatIcon {
+  height: 10px;
+}
+
+.weaponTypeIcon {
+  height: 14px;
+}
+
+.modelStatIcon {
+  height: 6px;
+  margin-left: 50%;
+  transform: translateX(-25%);
 }
 
 /*
@@ -277,7 +321,7 @@ li {
 }
 
 .accordion-content {
-  /* display: none; */
+  display: none;
   transition: 0.25s;
   margin: 0px;
   padding: 0px;
@@ -285,6 +329,8 @@ li {
   overflow-y: hidden;
   max-width: 0px;
 }
+
+.accordion-content * {}
 
 .accordion-content.hide {
   display: inline-block;
@@ -301,6 +347,8 @@ li {
   max-width: none;
 }
 
+.accordion-content.isOpen * {}
+
 .accordion-content .block {
   display: block;
   font-size: 0.8em;
@@ -316,7 +364,11 @@ li {
 }
 
 .accordion-content.unitBox img {
- max-width: 250px;
+  max-width: 250px;
+}
+
+.unit {
+  /* font-family: 'Bank Gothic', 'Jura', 'Arial'; */
 }
 
 #feedback {
@@ -337,6 +389,87 @@ li {
 .fileSpot {}
 
 .fileBtn {}
+
+/* I straight stole this from w3schools and I'm not sorry */
+/* The switch - the box around the slider */
+.switch {
+  /* float: right; */
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: #332211;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #332211;
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 5px;
+}
+
+.slider.round:before {
+  border-radius: 5px;
+}
+
+.settingBox {
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #AA6622;
+  display: flex;
+  justify-content: space-between;
+  overflow:auto;
+  margin: 5px 0px 5px 0px;
+  padding: 5px;
+}
+
+.settingBox p {
+  margin: 0px;
+  width: 80%;
+}
 
 /*
 ███████ ████████  █████  ██████  ██       ██████   ██████ ██   ██ ███████
@@ -388,6 +521,10 @@ li {
   border-width: 1px;
   border-radius: 5px 5px 5px 5px;
   border-color: #000000;
+}
+
+.statTag .growy {
+  height: auto;
 }
 
 .statTag .flat {
@@ -593,7 +730,7 @@ li {
 .listView .linkImg {
   float: none;
   display: inline-block;
-  margin: 2px 5px 2px 5px;
+  margin: 2px 10px 2px 10px;
   height: 25px;
   width: 25px;
   cursor: pointer;
@@ -612,7 +749,7 @@ li {
 .factionIcon {
   height: 80px;
   float: left;
-  -webkit-filter:invert(100%);
+  -webkit-filter: invert(100%);
   filter: invert(100%);
 }
 
@@ -682,6 +819,7 @@ li {
   .listView {
     transition: none;
   }
+
   #content {
     min-width: 300px;
     max-width: 300px;
@@ -722,12 +860,14 @@ li {
    ██    ██    ██ ██    ██ ██      ██   ██     ██    ██ ██  ██ ██ ██      ██
    ██     ██████   ██████   ██████ ██   ██      ██████  ██   ████ ███████ ██
 */
-
 @media only screen and (hover: none) {
   * {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
+
   *::-webkit-scrollbar {
     display: none;
   }
