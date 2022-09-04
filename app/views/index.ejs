@@ -13,6 +13,12 @@
   <script src="js/interface.js" charset="utf-8"></script>
   <title>40kroller</title>
   <link rel="stylesheet" href="css/40kroller.css">
+  <link id="40kolor" rel="stylesheet" href="">
+  <!-- <link id="40kolor" rel="stylesheet" href="css/40kolor_classico.css"> -->
+  <!-- <link id="40kolor" rel="stylesheet" href="css/40kolor_greyknight.css"> -->
+  <!-- <link id="40kolor" rel="stylesheet" href="css/40kolor_pitchblack.css"> -->
+  <!-- <link id="40kolor" rel="stylesheet" href="css/40kolor_morphG.css"> -->
+  <!-- <link id="40kolor" rel="stylesheet" href="css/40kolor_morphP.css"> -->
 </head>
 
 <body onload="init()">
@@ -36,7 +42,7 @@
     <span id="toggledfdr" class="openNav" onclick="toggleNav(this)">&#9776;</span>
     <h1 id="banner" title="This is the name of this webapp." align="center" onclick="tickle()">40kroller</h1>
     <h4 id="subbanner" align="center">Warhammer 40k Battle Tracker</h4>
-    <div id="content">
+    <div id="content" class="bg2">
       <!--
       ████████ ██████   █████   ██████ ██   ██ ███████ ██████
          ██    ██   ██ ██   ██ ██      ██  ██  ██      ██   ██
@@ -44,6 +50,7 @@
          ██    ██   ██ ██   ██ ██      ██  ██  ██      ██   ██
          ██    ██   ██ ██   ██  ██████ ██   ██ ███████ ██   ██
       -->
+      <a href="#tracker"></a>
       <div class="accordion-header bg0 banner">Tracker</div>
 
       <div class="accordion-content bg4">
@@ -123,6 +130,7 @@
       ██   ██    ██       ██    ██   ██ ██      ██  ██      ██   ██ ██    ██ ██      ██
       ██   ██    ██       ██    ██   ██  ██████ ██   ██     ██   ██  ██████  ███████ ███████
       -->
+      <a href="#attackroll"></a>
       <div class="accordion-header bg0 banner">Attack Roll</div>
       <!-- Attacker -->
       <div class="accordion-content bg4">
@@ -192,22 +200,22 @@
             Add <input type="number" class="spinner io bg7" name="sim_hit_mod" id="sim_hit_mod" size=1 value=0> to the hit roll
           </div>
           <div class="block bg6" title="Roll xDy+z attacks for each model instead of the flat Attack characteristic.">
-            <input type="checkbox" class="selectMod io" id="sim_hit_attacks_checked"> Random number of attacks:<br>
+            <input type="checkbox" class="selectMod io" id="sim_hit_attacks"> Random number of attacks:<br>
             <input type="number" class="spinner io bg7" name="sim_hit_attacks_dice" id="sim_hit_attacks_dice" size=1 value=1> D
             <input type="number" class="spinner io bg7" name="sim_hit_attacks_faces" id="sim_hit_attacks_faces" size=1 value=6> +
             <input type="number" class="spinner io bg7" name="sim_hit_attacks_mod" id="sim_hit_attacks_mod" size=1 value=0>
           </div>
           <div class="block bg6" title="These attacks always hit. Do not roll.">
-            <input type="checkbox" class="selectMod io" id="sim_hit_autohit_checked"> Auto-hit without rolling
+            <input type="checkbox" class="selectMod io" id="sim_hit_autohit"> Auto-hit without rolling
           </div>
           <div class="block bg6" title="Reroll the hit roll if it's lower than this number.">
-            <input type="checkbox" class="selectMod io" id="sim_hit_reroll_checked"> Re-roll
-            <input type="number" class="spinner io bg7" name="sim_hit_reroll__target" id="sim_hit_reroll__target" size=1 value=1> -
+            <input type="checkbox" class="selectMod io" id="sim_hit_reroll"> Re-roll
+            <input type="number" class="spinner io bg7" name="sim_hit_reroll_target" id="sim_hit_reroll_target" size=1 value=1> or lower
           </div>
           <div class="block bg6" title="Attack again if you roll a higher than the provided number">
-            <input type="checkbox" class="selectMod io" id="sim_hit_extraattack_checked">
-            <input type="number" class="spinner io bg7" name="sim_hit_extraattack_amount" id="sim_hit_extraattack_amount" size=1 value=1> bonus Attacks on
-            <input type="number" class="spinner io bg7" name="sim_hit_extraattack_target" id="sim_hit_extraattack_target" size=1 value=6> +
+            <input type="checkbox" class="selectMod io" id="sim_hit_exploding">
+            <input type="number" class="spinner io bg7" name="sim_hit_exploding_amount" id="sim_hit_exploding_amount" size=1 value=1> bonus Attacks on
+            <input type="number" class="spinner io bg7" name="sim_hit_exploding_target" id="sim_hit_exploding_target" size=1 value=6> +
           </div>
           <!-- <div class="block bg6" title="This hit always hits on this number or higher">
             <input type="checkbox" class="selectMod io" id="sim_hit_extrahit">
@@ -215,7 +223,7 @@
             <input type="number" class="spinner io bg7" name="sim_hit_extrahit_target" id="sim_hit_extrahit_target" size=1 value=6> +
           </div> -->
           <div class="block bg6" title="This hit automatically hits and wounds on this number or higher">
-            <input type="checkbox" class="selectMod io" id="sim_hit_autowound_checked"> Auto-wound on
+            <input type="checkbox" class="selectMod io" id="sim_hit_autowound"> Auto-wound on
             <input type="number" class="spinner io bg7" name="sim_hit_autowound_target" id="sim_hit_autowound_target" size=1 value=6> +
           </div>
           <div class="block bg6" title="Inflict a Mortal Wound on a wound roll greater than this number">
@@ -236,7 +244,7 @@
             Add <input type="number" class="spinner io bg7" name="sim_wound_mod" id="sim_wound_mod" size=1 value=0> to the wound roll
           </div>
           <div class="block bg6" title="Reroll the wound roll if it\'s lower than this number.">
-            <input type="checkbox" class="selectMod io" id="sim_wound_reroll_checked"> Re-roll
+            <input type="checkbox" class="selectMod io" id="sim_wound_reroll"> Re-roll
             <input type="number" class="spinner io bg7" name="sim_wound_reroll_target" id="sim_wound_reroll_target" size=1 value=1> or less
           </div>
           <div class="block bg6" title="Ignore all wound rolls at or below this number (like Transhuman Physiology)">
@@ -244,16 +252,16 @@
             <input type="number" class="spinner io bg7" name="sim_wound_ignore_target" id="sim_wound_ignore_target" size=1 value=4>
           </div>
           <div class="block bg6" title="Hit with additional AP on this number or higher">
-            <input type="checkbox" class="selectMod io" id="sim_wound_bonusap_checked">
+            <input type="checkbox" class="selectMod io" id="sim_wound_bonusap">
             <input type="number" class="spinner io bg7" name="sim_wound_bonusap_amount" id="sim_wound_bonusap_amount" size=1 value=1> Bonus AP on
             <input type="number" class="spinner io bg7" name="sim_wound_bonusap_target" id="sim_wound_bonusap_target" size=1 value=6> +
           </div>
           <div class="block bg6" title="This wound automatically damages the target on this number or higher">
-            <input type="checkbox" class="selectMod io" id="sim_wound_autodamage_checked"> Auto-damage on
+            <input type="checkbox" class="selectMod io" id="sim_wound_autodamage"> Auto-damage on
             <input type="number" class="spinner io bg7" name="sim_wound_autodamage_target" id="sim_wound_autodamage_target" size=1 value=6> +
           </div>
           <div class="block bg6" title="Inflict a Mortal Wound on a wound roll greater than this number">
-            <input type="checkbox" class="selectMod io" id="sim_wound_mortals_checked">
+            <input type="checkbox" class="selectMod io" id="sim_wound_mortals">
             <input type="number" class="spinner io bg7" name="sim_wound_mortals_amount" id="sim_wound_mortals_amount" size=1 value=1> Mortals on
             <input type="number" class="spinner io bg7" name="sim_wound_mortals_target" id="sim_wound_mortals_target" size=1 value=6> +
           </div>
@@ -289,7 +297,7 @@
         <div class="accordion-header bg1 banner">Damage</div>
         <div class="accordion-content bg2">
           <div class="block bg6" title="Roll xDy+z attacks for each model instead of the flat Damage characteristic.">
-            <input type="checkbox" class="selectMod io" id="sim_damage_random_checked"> Random number of damage:<br>
+            <input type="checkbox" class="selectMod io" id="sim_damage_random"> Random number of damage:<br>
             <input type="number" class="spinner io bg7" name="sim_damage_random_dice" id="sim_damage_random_dice" size=1 value=1> D
             <input type="number" class="spinner io bg7" name="sim_damage_random_faces" id="sim_damage_random_faces" size=1 value=6> +
             <input type="number" class="spinner io bg7" name="sim_damage_random_mod" id="sim_damage_random_mod" size=1 value=0>
@@ -303,7 +311,7 @@
             <input type="number" class="spinner io bg7" name="sim_damage_fightback_target" id="sim_damage_fightback_target" size=1 value=4>+
           </div>
           <div class="block bg6" title="When defending models die, attempt to use Reanimation Protocols.">
-            <input type="checkbox" class="selectMod io" id="sim_damage_reanimate_checked"> Reanimate on
+            <input type="checkbox" class="selectMod io" id="sim_damage_reanimate"> Reanimate on
             <input type="number" class="spinner io bg7" name="sim_damage_reanimate_target" id="sim_damage_reanimate_target" size=1 value=5>+
             re-rolling <input type="number" class="spinner io"name="reanimatereroll" id="reanimatereroll" size=1 value=1> or lower
             adding <input type="number" class="spinner io"name="reanimatemod" id="reanimatemod" size=1 value=1> to roll.
@@ -317,6 +325,7 @@
       ██    ██ ██    ██    ██    ██      ██    ██    ██
        ██████   ██████     ██    ██       ██████     ██
       -->
+      <a href="#output"></a>
       <div class="accordion-header bg0 banner isOpen">Output</div>
       <div id="output" class="accordion-content isOpen io textSans">
         <% if (locals.outputPretty) { %>
@@ -374,6 +383,7 @@
       ███████ ██   ██ ██   ██ ██   ██ ███████
       -->
       <% if (locals.gameCode) { %>
+      <a href="#share"></a>
       <div class="accordion-header bg0 banner">Share</div>
       <div class="accordion-content bg4 cCenter">
         <h2 class="cCenter">Game Code:</h2>
@@ -410,46 +420,62 @@
            ██ ██         ██    ██    ██ ██
       ███████ ███████    ██     ██████  ██
     -->
-
+      <a href="#settings"></a>
       <div class="accordion-header bg0 banner">Settings</div>
       <div class="accordion-content bg4">
-        <div class="settingBox">
+        <div class="settingBox bg3">
           <p class="textFull">Auto-open all phase abilities</p>
           <label class="switch">
             <input id="setAutoOpen" type="checkbox" class="io" onchange="settings.autoOpen = !settings.autoOpen; reload();">
             <span class="slider round"></span>
           </label>
         </div>
-        <div class="settingBox">
+        <div class="settingBox bg3">
           <p class="textFull">Close other tabs when opening new tab</p>
           <label class="switch">
             <input id="setAutoClose" type="checkbox" class="io" onchange="settings.autoClose = !settings.autoClose; reload();" checked>
             <span class="slider round"></span>
           </label>
         </div>
-        <div class="settingBox">
+        <div class="settingBox bg3">
           <p class="textFull">Show stat icons</p>
           <label class="switch">
             <input id="setStatIcons" type="checkbox" class="io" onchange="settings.statIcons = !settings.statIcons; reload();" checked>
             <span class="slider round"></span>
           </label>
         </div>
-        <div class="settingBox">
+        <div class="settingBox bg3">
           <p class="textFull">Show role icons</p>
           <label class="switch">
             <input id="setStatIcons" type="checkbox" class="io" onchange="settings.slotIcons = !settings.slotIcons; reload();" checked>
             <span class="slider round"></span>
           </label>
         </div>
-        <div class="settingBox">
+        <div class="settingBox bg3">
           <p class="textFull">Show Stratagems</p>
           <label class="switch">
             <input id="setStratagems" type="checkbox" class="io" onchange="settings.stratagems = !settings.stratagems; reload();" checked>
             <span class="slider round"></span>
           </label>
         </div>
-        <% } %>
+        <div class="settingBox bg3">
+          <p class="textFull">Kolor Scheme</p>
+          <select onchange="changeKolor(this.value)" style="float: left;">
+            <option value="classico">Classico</option>
+            <option value="greyknight">Grey Knight</option>
+            <option value="morphG">Xeno Morph G</option>
+            <option value="morphP">Xeno Morph P</option>
+            <option value="starkwhite">Stark White</option>
+            <option value="pitchblack">Pitch Black</option>
+            <!-- <option value="pitchblack">Pitch Black</option> -->
+          </select>
+        </div>
+        <!-- <div class="accordion-header bg1 banner">Button Maker</div>
+        <div class="accordion-content bg5 cCenter">
+
+        </div> -->
       </div>
+      <% } %>
     </div>
   </div>
   <div id="dfdrList" class="listView bg1 cCenter">
@@ -467,6 +493,9 @@
     <% } %>
   </div>
 </body>
+
+
+
 <script type="text/javascript">
   <% if (locals.gameCode) { %>
   gameCode = '<%- gameCode %>';
@@ -484,4 +513,5 @@
   getTrackers(<%- scoreboard %>);
   <% } %>
 </script>
+
 </html>

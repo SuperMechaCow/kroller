@@ -73,9 +73,9 @@ class Calculator {
 				let max = i.faces + i.mod;
 				let multi = (i.target - min) / ((max - min) + 1);
 				if (i.comp = ">") {
-					o.s = Math.round(i.dice * multi);
-				} else {
 					o.f = Math.round(i.dice * multi);
+				} else {
+					o.s = Math.round(i.dice * multi);
 				}
 			}
 			if (o.f > 1)

@@ -1,0 +1,139 @@
+/* .factionIcon {
+  -webkit-filter: none;
+  filter: none;
+} */
+
+.modelStatIcon {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+
+.weaponStatIcon {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+
+.weaponIcon_abil {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+
+#output {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+* {
+  color: #ffffff;
+}
+
+body {
+  background-color: #000000;
+}
+
+h1, h2, h3, h4, hr {
+  color: #ffffff;
+}
+
+input:checked+.slider {
+  background-color: #000000;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #000000;
+}
+
+.accordion-header {
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.accordion-header .statTag {
+  color: #ffffff;
+}
+
+.accordion-content.isOpen {
+  border-color: #000000;
+}
+
+.accordion-content .block {
+  color: #000000;
+  border-color: #000000;
+}
+
+.openNav {
+  color: #ffffff;
+}
+
+.tag {
+  color: #000000;
+}
+
+h1 {
+  color: #ffffff;
+}
+
+h2 {
+  color: #FFFFFF;
+}
+
+h3 {
+  color: #FFFFFF;
+}
+
+a {
+  color: #FFFFFF;
+}
+
+a:hover {
+  color: #cccccc;
+}
+
+.bg0 {
+  background-color: #000000;
+}
+
+.bg1 {
+  background-color: #000000;
+}
+
+.bg2 {
+  background-color: #000000;
+}
+
+.bg3 {
+  background-color: #000000;
+}
+
+.bg4 {
+  background-color: #000000;
+}
+
+.bg5 {
+  background-color: #000000;
+}
+
+.bg6 {
+  background-color: #000000;
+}
+
+.bg7 {
+  background-color: #000000;
+}
+
+.bg7.tag {
+  background-color: #ffffff;
+}
+
+#atkrList {
+  background-color: #000000;
+}
+
+#dfdrList {
+  background-color: #000000;
+
+}
+
+.useTag {
+  box-shadow: 0px 0px 2px 1px #666;
+}

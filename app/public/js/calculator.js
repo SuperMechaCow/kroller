@@ -1,7 +1,49 @@
+//https://stackoverflow.com/questions/3225251/how-can-i-share-code-between-node-js-and-the-browser
+
 class Calculator {
 	constructor() {
 		this.atkr_weapon;
 		this.dfdr_model;
+		this.dice = {};
+		this.resetDice();
+	}
+	calculate(ioList) {
+		let ootpoot = '';
+		// Make the number of attacks
+		// if random attacks not checked
+		if (!ioList.sim_hit_attacks.checked) {
+			this.dice.tohit = ioList.sim_atkr_mdls.value * ioList.sim_atkr_a.value;
+		}
+		// If random number of attacks
+		else {
+			console.log(ioList.sim_hit_attacks_dice.value + "D" + ioList.sim_hit_attacks_faces.value + "+" + ioList.sim_hit_attacks_mod.value);
+			this.dice.tohit = this.rollCalc(ioList.sim_hit_attacks_dice.value + "D" + ioList.sim_hit_attacks_faces.value + "+" + ioList.sim_hit_attacks_mod.value).o.total;
+		}
+		console.log("Number of attacks: " + this.dice.tohit);
+		ootpoot += "<p>Number of attacks: " + this.dice.tohit + "<br>";
+		// Make the hit roll to get towound
+		// If they auto-hit without rolling (flamer)
+		if (ioList.sim_hit_autohit.checked) {
+			this.dice.towound = this.dice.tohit;
+		} else {
+			let argList = ':';
+			if (ioList.sim_hit_reroll.checked) argList += 'r' + ioList.sim_hit_reroll_target.value;
+			if (ioList.sim_hit_exploding.checked) argList += 'e' + ioList.sim_hit_exploding_target.value;
+			if (ioList.sim_hit_autowound.checked) argList += 'w' + ioList.sim_hit_autowound_target.value;
+			if (ioList.sim_hit_mortals.checked) argList += 'm' + ioList.sim_hit_mortals_target.value;
+			// if (ioList.sim_hit_mortals || ioList.sim_hit_autowound) argList += 'n' + ioList.sim_hit_reroll__target;
+			let woundParse = this.rollCalc(this.dice.tohit + "D6+" + ioList.sim_hit_mod.value + ">" + ioList.sim_atkr_as.value);
+
+			this.dice.towound = woundParse.o.successes;
+		}
+		console.log("Number of hits: " + this.dice.towound);
+		ootpoot += "Number of hits: " + this.dice.towound + "</p>";
+
+
+		return ootpoot;
+	}
+
+	resetDice() {
 		this.dice = {
 			tohit: 0,
 			towound: 0,
@@ -10,14 +52,10 @@ class Calculator {
 			toreanimate: 0
 		}
 	}
-	calculate() {
-		// if random attacks not checked
-		// this.tohit = atkr_weapon.models * atkr_weapon.a
-		// else
-		// this.tohit = for each dice, roll 1-face, then add mod
 
-	}
 	rollCalc(dice) {
+		console.log(dice);
+		this.resetDice();
 		// 1 - ! - single or multi roll?
 		// 2 - \d - number of dice
 		// 3 - D - denominator signifier
@@ -26,7 +64,8 @@ class Calculator {
 		// 6 - > or < - comparator
 		// 7 - \d - target
 		// 8 - :* - arguments (like rerolls and naturals)
-		dice = /(\!)?(\d+)*(D)?(\d+)([\+\-]\d+)?([><])?(\d+)?(:.*)?$/gi.exec(dice);
+		// rX: reroll, nX: any natural, mX: mortals on, wX: autowounds, eX: exploding, pX: plasma self-wound, iX: transhuman, aX: AP
+		dice = /(\!)?(\d+)*(D)?(\d+)([\+\-]\d+)?([><])?(\d+)?(\:.*)?/gi.exec(dice);
 		let o = { //output
 			total: 0,
 			values: [],
@@ -48,19 +87,26 @@ class Calculator {
 			mod: ((dice[5]) ? Number(dice[5]) : 0),
 			comp: dice[6],
 			target: Number(dice[7]),
-			re: undefined,
-			nat: undefined
+			args: {}
 		}
+		console.log(dice);
 		if (dice[8]) {
 			let argCheck; //Check each type of argument one by one
-			// Rerolls (r)
-			argCheck = dice[8].match(/r(\d+|f)/);
-			if (argCheck)
-				i.re = argCheck[0].replace("r", "");
-			// Naturals
-			argCheck = dice[8].match(/n(\d+)/);
-			if (argCheck)
-				i.nat = Number(argCheck[0].replace("n", ""));
+			let argList = {
+				r: 'reroll',
+				n: 'natural',
+				m: 'mortals',
+				w: 'autowound',
+				e: 'exploding',
+				p: 'plasma',
+				i: 'ignore',
+				a: 'ap'
+			}
+			for (var arg of Object.keys(argList)) {
+				argCheck = dice[8].match(new RegExp(arg + '(\d+)')); // Check for each type of argument
+				if (argCheck) i.args[argList[arg]] = argCheck[0].replace(arg, ""); // Save the number to the property
+			}
+			console.log(argList);
 		}
 		if (dice[1])
 			i.single = true;
@@ -73,31 +119,27 @@ class Calculator {
 				let min = 1 + i.mod;
 				let max = i.faces + i.mod;
 				let multi = (i.target - min) / ((max - min) + 1);
+				if (multi > 1) multi = 1;
+				// Find formula for rerolling higher than 1's
+				if (i.args.reroll) i.dice * (i.args.reroll / 6);
 				if (i.comp = ">") {
-					o.successes = Math.round(i.dice * multi);
+					o.successes = i.dice - Math.round(i.dice * multi);
 				} else {
-					o.failures = Math.round(i.dice * multi);
+					o.successes = Math.round(i.dice * multi);
 				}
 			}
-			if (o.failures > 1)
-				o.failures = 1;
-			if (o.failures < 0)
-				o.failures = 0;
-			if (o.failures != undefined)
-				o.successes = i.dice - o.failures;
-			if (o.successes != undefined)
-				o.failures = i.dice - o.successes;
+
 			// Save this for simulator
 			// for (let die = 0; die < i.dice; die++) {
 			// 	o.values.push((die % i.faces) + 1 + i.mod);
 			// }
 		} else {
 			// roll all dice, add mod, check against value once, return chance of success
-      // Turns out you need calculus to see if the chances of hitting a target on X number of dice with Y faces and a Z modifier
-      // min = dice+mon, max = dice*face+mod, avg = max-min / target-min
-      let min = i.dice + i.mod;
-      let max = (i.dice * i.faces) + i.mod;
-      o.total = ((i.dice * i.faces - i.dice) / 2) + i.dice + i.mod;
+			// Turns out you need calculus to see if the chances of hitting a target on X number of dice with Y faces and a Z modifier
+			// min = dice+mon, max = dice*face+mod, avg = max-min / target-min
+			let min = i.dice + i.mod;
+			let max = (i.dice * i.faces) + i.mod;
+			o.total = ((i.dice * i.faces - i.dice) / 2) + i.dice + i.mod;
 		}
 		return {
 			i: i,

@@ -353,14 +353,14 @@
 000000443|1|Fleshborer hive|24"|Assault 30|5|-1|1||
 000000444|1|Grasping tongue|12"|Assault 1|6|-3|3|Each time you select a target for this weapon, you can ignore the <a href="/wh40k9ed/the-rules/core-rules/#Look-out-Sir">Look Out, Sir</a> rule.|
 000000445|1|Heavy venom cannon|36"|Heavy 3|9|-3|4||
-000000446|1|Impaler cannon|24"|Heavy 3|6|-2|2|<a href="/wh40k9ed/the-rules/matched-play/#Indirect-Fire-Weapons">Indirect Fire</a>. This weapon can target units that are not visible to the bearer, as long as the target is visible to a friendly <span class="tooltip00763" data-tooltip-content="#tooltip_content00763" data-tooltip-anchor="#tooltip_content00763"><span class="kwb2">&lt;<span class="kwb3">H</span>IVE</span> <span class="kwb">FLEET&gt;</span> <span class="kwb">SYNAPSE</span></span> model. Each time an attack is made with this weapon, the target does not receive the benefits of <a href="/wh40k9ed/the-rules/core-rules/#Light-Cover">Light Cover</a> against that attack.|
+000000446|1|Impaler cannon|24"|Heavy 3|6|-2|2|<a href="/wh40k9ed/the-rules/matched-play/#Indirect-Fire-Weapons">Indirect Fire</a>. This weapon can target units that are not visible to the bearer, as long as the target is visible to a friendly <span class="tooltip00807" data-tooltip-content="#tooltip_content00807" data-tooltip-anchor="#tooltip_content00807"><span class="kwb2">&lt;<span class="kwb3">H</span>IVE</span> <span class="kwb">FLEET&gt;</span> <span class="kwb">SYNAPSE</span></span> model. Each time an attack is made with this weapon, the target does not receive the benefits of <a href="/wh40k9ed/the-rules/core-rules/#Light-Cover">Light Cover</a> against that attack.|
 000000447|1|Massive toxic lashes (shooting)|8"|Assault 2D6|User|-2|1|Each time an attack is made with this weapon against a unit (excluding <span class="kwb">VEHICLE</span> or <span class="kwb">TITANIC</span> units), an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 2+ is always successful.|
 000000448|1|Rupture cannon|48"|Heavy 3|14|-4|D6+4||
 000000449|1|Shockcannon|36"|Assault 2|7|-2|3|Each time an attack is made with this weapon against a <span class="kwb">VEHICLE</span> unit, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 4+ successfully wounds the target and inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> in addition to any normal damage.|
 000000450|1|Spike rifle|18"|Assault 1|3|0|1||
 000000451|1|Spinefists|12"|Pistol 2|5|-1|1||
 000000452|1|Spinemaws|6"|Pistol 4|2|0|1||
-000000453|1|Spore mine launcher|48"|Heavy D3|*|*|*|<a href="/wh40k9ed/the-rules/matched-play/#Indirect-Fire-Weapons">Indirect Fire</a>. This weapon can target units that are not visible to the bearer, as long as they are visible to a friendly <span class="tooltip00763" data-tooltip-content="#tooltip_content00763" data-tooltip-anchor="#tooltip_content00763"><span class="kwb2">&lt;<span class="kwb3">H</span>IVE</span> <span class="kwb">FLEET&gt;</span> <span class="kwb">SYNAPSE</span></span> model. Each time an attack is made with this weapon, if a hit is scored, the target suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> and the attack sequence ends.|
+000000453|1|Spore mine launcher|48"|Heavy D3|*|*|*|<a href="/wh40k9ed/the-rules/matched-play/#Indirect-Fire-Weapons">Indirect Fire</a>. This weapon can target units that are not visible to the bearer, as long as they are visible to a friendly <span class="tooltip00807" data-tooltip-content="#tooltip_content00807" data-tooltip-anchor="#tooltip_content00807"><span class="kwb2">&lt;<span class="kwb3">H</span>IVE</span> <span class="kwb">FLEET&gt;</span> <span class="kwb">SYNAPSE</span></span> model. Each time an attack is made with this weapon, if a hit is scored, the target suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> and the attack sequence ends.|
 000000454|1|Stinger salvoes|24"|Assault 8|5|-1|1||
 000000455|1|Stranglethorn cannon|36"|Heavy D3+3|8|-2|2|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
 000000456|1|Strangleweb|8"|Assault D3|2|0|1||
@@ -721,7 +721,7 @@
 000000867|1|Twin heavy bolter|36"|Heavy 6|5|-1|2||
 000000868|1|Twin heavy flamer|12"|Heavy 2D6|5|-1|1|Each time an attack is made with this weapon, that attack automatically hits the target.|
 000000869|1|Vanquisher battle cannon|72"|Heavy 1|8|-3|D6|Roll two dice when inflicting damage with this weapon and discard the lowest result.|
-000000870|1|Volcano cannon|120"|Heavy 3D3|16|-5|2D6|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. You can re-roll failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> when targeting <span class="tooltip00764" data-tooltip-content="#tooltip_content00764" data-tooltip-anchor="#tooltip_content00764"><span class="kwb">TITANIC</span></span> units with this weapon.|
+000000870|1|Volcano cannon|120"|Heavy 3D3|16|-5|2D6|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. You can re-roll failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> when targeting <span class="tooltip00808" data-tooltip-content="#tooltip_content00808" data-tooltip-anchor="#tooltip_content00808"><span class="kwb">TITANIC</span></span> units with this weapon.|
 000000871|1|Vulcan mega-bolter|60"|Heavy 20|6|-2|2||
 000000872|1|Wyvern quad stormshard mortar|48"|Heavy 4D6|4|0|1|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. This weapon can target units that are not visible to the bearer. You can re-roll failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> for this weapon.|
 000000873|1|Adamantium tracks|Melee|Melee|User|-2|D3||
@@ -994,12 +994,9 @@
 000001183|1|Autocannon|48"|Heavy 2|7|-1|2||
 000001184|1|Autogun|24"|Rapid Fire 1|3|0|1||
 000001185|1|Autopistol|12"|Pistol 1|3|0|1||
-000001186|1|Baleflamer|18"|Assault D6|6|-2|2|This weapon automatically hits its target.|
-000001187|1|Battle cannon|72"|Heavy D6|8|-2|D3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
-000001188|1|Single frequency|48"|Heavy D3|8|-2|D3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. Units do not receive the <a href="/wh40k9ed/the-rules/core-rules/#Terrain-and-Cover">benefit of cover</a> to their <a href="/wh40k9ed/the-rules/core-rules/#4.-Saving-Throw">saving throws</a> for attacks made with this weapon.|
-000001188|2|Varied frequency|36"|Assault D6|4|-1|1|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. Units do not receive the <a href="/wh40k9ed/the-rules/core-rules/#Terrain-and-Cover">benefit of cover</a> to their <a href="/wh40k9ed/the-rules/core-rules/#4.-Saving-Throw">saving throws</a> for attacks made with this weapon.|
-000001189|1|Blight grenade|6"|Grenade D6|3|0|1|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon.|
-000001190|1|Blight launcher|24"|Assault 2|6|-2|D3|You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon.|
+000001186|1|Baleflamer|18"|Assault 2D3|6|-2|2|Each time an attack is made with this weapon, that attack automatically hits the target.|
+000001188|1|Single frequency|48"|Heavy 3|8|-3|3|<a href="/wh40k9ed/factions/chaos-space-marines/#Sonic-Weapon">Sonic Weapon</a>|
+000001188|2|Varied frequency|36"|Assault 6|5|-2|1|<a href="/wh40k9ed/factions/chaos-space-marines/#Sonic-Weapon">Sonic Weapon</a>|
 000001191|1|Bolt pistol|12"|Pistol 1|4|0|1||
 000001192|1|Boltgun|24"|Rapid Fire 1|4|0|1||
 000001193|1|Combi-bolter|24"|Rapid Fire 2|4|0|1||
@@ -1010,33 +1007,32 @@
 000001196|1|Boltgun|24"|Rapid Fire 1|4|0|1||
 000001196|2|Plasma gun (standard)|24"|Rapid Fire 1|7|-3|1||
 000001196|3|Plasma gun (supercharge)|24"|Rapid Fire 1|8|-3|2|If any unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> of 1 are made for attacks with this weapon profile, the bearer is destroyed after shooting with this weapon.|
-000001197|1|Cypher’s bolt pistol|16"|Pistol 3|4|-1|1||
-000001198|1|Cypher’s plasma pistol|12"|Pistol 2|8|-3|2||
-000001199|1|Daemongore cannon|18"|Heavy D6|User|-2|3|This weapon automatically hits its target.|
-000001200|1|Demolisher cannon|24"|Heavy D6|10|-3|D6|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
-000001202|1|Doom siren|8"|Assault D6|5|-2|1|This weapon automatically hits its target. Units do not receive the <a href="/wh40k9ed/the-rules/core-rules/#Terrain-and-Cover">benefit of cover</a> to their <a href="/wh40k9ed/the-rules/core-rules/#4.-Saving-Throw">saving throws</a> for attacks made with this weapon.|
-000001203|1|Ectoplasma cannon|24"|Heavy D3|7|-3|D3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
+000001197|1|Cypher’s bolt pistol|18"|Pistol 6|4|-1|1||
+000001198|1|Cypher’s plasma pistol|12"|Pistol 3|8|-3|2||
+000001199|1|Daemongore cannon|18"|Heavy D6|10|-4|D3+3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
+000001200|1|Demolisher siege cannon|24"|Heavy D3+3|10|-4|D6|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
+000001202|1|Doom siren|12"|Assault D6|5|-3|1|<a href="/wh40k9ed/factions/chaos-space-marines/#Sonic-Weapon">Sonic Weapon</a>. Each time an attack is made with this weapon, that attack automatically hits the target.|
+000001203|1|Ectoplasma cannon|36"|Heavy D3|7|-3|3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
 000001204|1|Flamer|12"|Assault D6|4|0|1|Each time an attack is made with this weapon, that attack automatically hits the target.|
-000001205|1|Fleshmetal guns|24"|Assault 6|6+D3|-D3|D3|<i>See <a href="/wh40k9ed/factions/chaos-space-marines/Obliterators">Fleshmetal Guns</a> ability</i>|
+000001205|1|Warp hail|24"|Heavy D6+9|5|-1|1||
+000001205|2|Ruinous salvo|24"|Heavy D3+3|7|-2|2||
+000001205|3|Focused malice|24"|Heavy D3|9|-3|4||
 000001206|1|Frag grenade|6"|Grenade D6|3|0|1|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
-000001207|1|Gorestorm cannon|18"|Heavy D6|User|-2|2|This weapon automatically hits its target. When attacking units with 10 or more models, change this weapon’s Type to <a href="/wh40k9ed/the-rules/core-rules/#HEAVY">Heavy 2D6</a>.|
-000001208|1|Hades autocannon|36"|Heavy 4|8|-1|2||
-000001209|1|Hades gatling cannon|48"|Heavy 12|8|-2|2||
+000001207|1|Gorestorm cannon|24"|Heavy 3D3|9|-2|3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
+000001208|1|Hades autocannon|36"|Heavy 4|8|-2|2||
+000001209|1|Hades gatling cannon|48"|Heavy 12|8|-3|2||
 000001210|1|Havoc launcher|48"|Heavy D6|5|0|1|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
 000001211|1|Heavy bolter|36"|Heavy 3|5|-1|2||
 000001212|1|Heavy flamer|12"|Heavy D6|5|-1|1|Each time an attack is made with this weapon, that attack automatically hits the target.|
 000001213|1|Heavy stubber|36"|Heavy 3|4|0|1||
 000001214|1|Heavy warpflamer|12"|Heavy D6|5|-2|1|Each time an attack is made with this weapon, that attack automatically hits the target.|
-000001215|1|Helbrute plasma cannon|36"|Heavy D3|8|-3|2|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. Each time an unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> of 1 is made for an attack with this weapon, the bearer suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> after shooting with this weapon.|
+000001215|1|Helbrute plasma cannon|36"|Heavy D3|8|-3|3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. Each time an unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> of 1 is made for an attack with this weapon, the bearer suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> after shooting with this weapon.|
 000001216|1|Hellfyre missile rack|36"|Heavy 2|8|-2|D3||
-000001217|1|Ichor cannon|48"|Heavy D6|7|-4|D3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
-000001218|1|Inferno bolt pistol|12"|Pistol 1|4|-2|1||
-000001219|1|Inferno boltgun|24"|Rapid Fire 1|4|-2|1||
-000001221|1|Khârn’s plasma pistol|12"|Pistol 1|8|-3|2|On an unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> of 1, the bearer suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> after shooting with this weapon.|
+000001217|1|Ichor cannon|48"|Heavy D6+3|7|-3|2|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
+000001221|1|Khârn’s plasma pistol|12"|Pistol 1|8|-3|2|Each time an unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> of 1 is made for an attack with this weapon, the bearer suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> after shooting with this weapon.|
 000001222|1|Krak grenades|6"|Grenade 1|6|-1|D3||
 000001223|1|Lascannon|48"|Heavy 1|9|-3|D6||
-000001224|1|Lash of Torment|6"|Assault 2|User|-1|2|This weapon can be fired within 1" of an enemy unit, and can target enemy units within 1" of friendly units.|
-000001225|1|Magma cutter|6"|Pistol 1|8|-4|3||
+000001225|1|Magma cutter|6"|Assault 1|8|-4|D6+2||
 000001226|1|Meltagun|12"|Assault 1|8|-4|D6|Each time an attack made with this weapon targets a unit within half range, that attack has a Damage characteristic of D6+2.|
 000001227|1|Frag missile|48"|Heavy D6|4|0|1|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
 000001227|2|Krak missile|48"|Heavy 1|8|-2|D6||
@@ -1047,59 +1043,49 @@
 000001231|2|Supercharge|12"|Pistol 1|8|-3|2|If any unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> of 1 are made for attacks with this weapon profile, the bearer is destroyed after shooting with this weapon.|
 000001232|1|Predator autocannon|48"|Heavy 2D3|7|-1|3||
 000001233|1|Reaper autocannon|36"|Heavy 4|7|-2|1||
-000001234|1|Shotgun|12"|Assault 2|3|0|1|If the target is within half range, add 1 to this weapon’s Strength.|
-000001235|1|Skullhurler|60"|Heavy D6|9|-3|D3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. When attacking units with 10 or more models, change this weapon’s Type to <a href="/wh40k9ed/the-rules/core-rules/#HEAVY">Heavy</a> 2D6.|
-000001236|1|Sonic blaster|24"|Assault 3|4|0|1|Units do not receive the <a href="/wh40k9ed/the-rules/core-rules/#Terrain-and-Cover">benefit of cover</a> to their <a href="/wh40k9ed/the-rules/core-rules/#4.-Saving-Throw">saving throws</a> for attacks made with this weapon.|
-000001237|1|Soulreaper cannon|24"|Heavy 4|5|-3|1||
-000001238|1|Talon of Horus (shooting)|24"|Rapid Fire 2|4|-1|D3||
+000001235|1|Skullhurler|60"|Heavy 2D6|10|-3|3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
+000001236|1|Sonic blaster|24"|Assault 3|4|-1|1|<a href="/wh40k9ed/factions/chaos-space-marines/#Sonic-Weapon">Sonic Weapon</a>|
+000001238|1|Talon of Horus (shooting)|24"|Assault 4|5|-1|2||
 000001239|1|Twin heavy bolter|36"|Heavy 6|5|-1|2||
 000001240|1|Twin heavy flamer|12"|Heavy 2D6|5|-1|1|Each time an attack is made with this weapon, that attack automatically hits the target.|
 000001241|1|Twin lascannon|48"|Heavy 2|9|-3|D6||
-000001242|1|Tyrant’s Claw (shooting)|9"|Assault D6|5|-1|1|This weapon automatically hits its target.|
-000001243|1|Warp bolter|24"|Assault 2|4|-1|2||
-000001244|1|Warpflame pistol|6"|Pistol D6|3|-2|1|This weapon automatically hits its target.|
-000001245|1|Warpflamer|8"|Assault D6|4|-2|1|This weapon automatically hits its target.|
-000001246|1|Xyclos Needler|18"|Pistol 3|2|-2|2|Attacks made with this weapon wound on a 2+ unless the target is a <span class="kwb">VEHICLE</span> or <span class="kwb">TITANIC</span> unit.|
+000001242|1|Tyrant’s Claw (shooting)|12"|Assault D6|5|-1|1|Each time an attack is made with this weapon, that attack automatically hits the target.|
+000001246|1|Xyclos Needler|18"|Pistol 3|2|-2|2|Each time an attack is made with this weapon against a unit (excluding <span class="kwb">VEHICLE</span> or <span class="kwb">TITANIC</span> units), an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 2+ is always successful.|
 000001247|1|Black Staff of Ahriman|Melee|Melee|+3|-1|3||
 000001248|1|The Blade of Magnus|Melee|Melee|x2|-4|3|Each time after the bearer has fought, select one enemy model that lost any wounds as a result of attacks made with this weapon but was not destroyed. That model’s unit suffers D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a>.|
-000001249|1|Brutal assault weapon|Melee|Melee|User|0|1|Each time the bearer fights, it can make 1 additional attack with this weapon.|
+000001249|1|Brutal assault weapon|Melee|Melee|User|0|1|Each time the bearer fights, it makes 1 additional attack with this weapon.|
 000001250|1|Chainaxe|Melee|Melee|+1|-1|1||
 000001251|1|Chainfist|Melee|Melee|x2|-4|D3|Each time an attack is made with this weapon, subtract 1 from that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>, and if that attack is allocated to a <span class="kwb">VEHICLE</span> model, that attack has a Damage characteristic of 3.|
 000001252|1|Astartes chainsword|Melee|Melee|User|-1|1|Each time the bearer fights, it makes 1 additional attack with this weapon.|
-000001255|1|Daemon jaws|Melee|Melee|User|-1|2||
-000001256|1|Daemonic axe|Melee|Melee|+1|-3|3|When attacking with this weapon, you must subtract 1 from the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
+000001256|1|Daemonic axe|Melee|Melee|+2|-2|3||
 000001257|1|Defiler claws|Melee|Melee|x2|-3|D6||
-000001258|1|Defiler scourge|Melee|Melee|+4|-2|3|Each time the bearer fights, it can make 3 additional attacks with this weapon.|
-000001259|1|Drach’nyen|Melee|Melee|+1|-3|3|Roll a D6 each time the bearer fights. On a 1 they suffer 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> and cannot use this weapon further during this phase. On a 2+ they can make that many additional attacks with this weapon.|
-000001260|1|Fleshmetal weapons|Melee|Melee|+D3|-D3|D3|<i>See <a href="/wh40k9ed/factions/chaos-space-marines/Mutilators">Fleshmetal Weapons</a> ability</i>|
+000001258|1|Defiler scourge|Melee|Melee|+4|-2|2|Each time the bearer fights, it makes 3 additional attacks with this weapon.|
+000001259|1|Drach’nyen|Melee|Melee|+3|-4|3|Each time an attack is made with this weapon, on an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6, the target suffers D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> in addition to any normal damage.|
 000001261|1|Force axe|Melee|Melee|+2|-2|D3||
 000001262|1|Force stave|Melee|Melee|+3|-1|D3||
 000001263|1|Force sword|Melee|Melee|+1|-3|D3||
-000001264|1|Gorechild|Melee|Melee|+1|-4|D3|This weapon always hits on a roll of 2+, regardless of any modifiers.|
+000001264|1|Gorechild|Melee|Melee|User|-4|2||
 000001265|1|Smash|Melee|Melee|x2|-4|6||
-000001265|2|Slash|Melee|Melee|User|-2|D3|Make 3 <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> for each attack made with this weapon.|
-000001266|1|Helbrute fist|Melee|Melee|x2|-3|3||
-000001267|1|Helbrute hammer|Melee|Melee|x2|-4|D6|When attacking with this weapon, you must subtract 1 from the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
-000001268|1|Heldrake claws|Melee|Melee|User|-1|D3|When attacking models that can <a href="/wh40k9ed/the-rules/core-rules/#Flying">FLY</a>, you may add 1 to this weapon’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
+000001265|2|Slash|Melee|Melee|User|-3|2|Each time an attack is made with this weapon profile, make 3 <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> instead of 1.|
+000001266|1|Helbrute fist|Melee|Melee|x2|-3|3|Each time the bearer fights, if it is equipped with 2 Helbrute fists, it makes 1 additional attack with 1 of those weapons.|
+000001267|1|Helbrute hammer|Melee|Melee|x2|-4|D6|Each time an attack is made with this weapon, subtract 1 from that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
+000001268|1|Heldrake claws|Melee|Melee|User|-2|2|Each time an attack made with this weapon is allocated to an <a href="/wh40k9ed/the-rules/core-rules/#Aircraft"><span class="kwb">AIRCRAFT</span></a> model, that attack has a Damage characteristic of 4.|
 000001270|1|Hideous mutations|Melee|Melee|User|-2|2||
-000001271|1|Horrifying mutations|Melee|Melee|User|-2|1||
 000001272|1|Improvised weapon|Melee|Melee|User|0|1||
-000001273|1|Lasher tendrils|Melee|Melee|User|-2|2|Each time the bearer fights, it can make 6 additional attacks with this weapon.|
+000001273|1|Lasher tendrils|Melee|Melee|User|-2|1|Each time the bearer fights, it makes 6 additional attacks with this weapon.|
 000001274|1|Lightning claw|Melee|Melee|User|-2|1|Each time the bearer fights, it makes 1 additional attack with this weapon. Each time an attack is made with this weapon, you can re-roll the <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>.|
-000001275|1|Malefic talons|Melee|Melee|User|-2|2|Each time a model with malefic talons fights, it can make 1 additional attack with this weapon. A model armed with two sets of malefic talons can make 3 additional attacks with them instead.|
-000001277|1|Master-crafted power sword|Melee|Melee|+1|-3|2||
-000001278|1|Maulerfiend fists|Melee|Melee|x2|-3|3||
-000001279|1|Mechatendrils|Melee|Melee|User|0|1|Each time the bearer fights, it can make 2 additional attacks with this weapon.|
-000001280|1|Plague knife|Melee|Melee|User|0|1|You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon.|
+000001275|1|Malefic talons|Melee|Melee|User|-1|2|Each time the bearer fights, it makes 1 additional attack with this weapon.|
+000001278|1|Maulerfiend fists|Melee|Melee|x2|-3|D3+3||
+000001279|1|Mechatendrils|Melee|Melee|4|0|1|Each time the bearer fights, it makes 4 additional attacks with this weapon.|
 000001281|1|Greater plague probe|Melee|Melee|User|-2|1|Each time an attack is made with this weapon, re-roll a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 1.|
 000001284|1|Power axe|Melee|Melee|+2|-2|1||
 000001285|1|Power fist|Melee|Melee|x2|-3|2|Each time an attack is made with this weapon, subtract 1 from that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
 000001286|1|Power maul|Melee|Melee|+3|-1|1||
-000001287|1|Power scourge|Melee|Melee|+2|-2|2|Each time the bearer fights, it can make 3 additional attacks with this weapon.|
+000001287|1|Power scourge|Melee|Melee|+1|-2|2|Each time the bearer fights, it makes 3 additional attacks with this weapon.|
 000001288|1|Power sword|Melee|Melee|+1|-3|1||
-000001289|1|Rod of Torment|Melee|Melee|+1|-1|D3|Each time an attack is made with this weapon against a <span class="kwb">VEHICLE</span> unit, it has a Damage characteristic of 1.|
-000001290|1|Talon of Horus (melee)|Melee|Melee|x2|-4|D3||
-000001291|1|Tyrant’s Claw (melee)|Melee|Melee|x2|-3|D3|When attacking with this weapon, you must subtract 1 from the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
+000001289|1|Rod of Torment|Melee|Melee|User|-2|3||
+000001290|1|Talon of Horus (melee)|Melee|Melee|User|-4|1|Each time an attack is made with this weapon, make 2 <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> instead of 1.|
+000001291|1|Tyrant’s Claw (melee)|Melee|Melee|User|-2|1|Each time an attack is made with this weapon, make 2 <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> instead of 1.|
 000001292|1|Tzaangor blades|Melee|Melee|User|-1|1|Each time the bearer fights, it makes 1 additional attack with this weapon.|
 000001300|1|Ironstorm missile pod|72"|Heavy D6|5|-1|2|<a href="/wh40k9ed/the-rules/matched-play/#Indirect-Fire-Weapons">Indirect Fire</a>. <a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. This weapon can target units that are not visible to the bearer.|
 000001306|1|Strike|Melee|Melee|+6|-4|6||
@@ -1389,24 +1375,9 @@
 000001664|1|Icarus ironhail heavy stubber|36"|Heavy 4|4|-1|1|Each time an attack is made with this weapon against an <a href="/wh40k9ed/the-rules/core-rules/#Aircraft"><span class="kwb">AIRCRAFT</span></a> unit, add 1 to that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
 000001665|1|Ironhail heavy stubber|36"|Heavy 4|4|-1|1||
 000001666|1|Krakstorm grenade launcher|18"|Assault 1|6|-1|D3||
-000001669|1|Hellforged sword|Melee|Melee|User|-2|3||
-000001670|1|Hellblade|Melee|Melee|User|-3|1|Each time you make a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6+ for this weapon, that hit is resolved with a Damage of 2.|
-000001672|1|Plaguesword|Melee|Melee|User|0|1|You can re-roll failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> for this weapon.|
-000001673|1|Piercing claws|Melee|Melee|User|-1|1|Each time you make a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6+ for this weapon, that hit is resolved with an AP of -4.|
-000001674|1|Plague belcher|9"|Assault D6|4|0|1|You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon. This weapon automatically hits its target.|
-000001675|1|Plague spewer|9"|Heavy D6|5|-1|1|You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon. This weapon automatically hits its target.|
-000001676|1|Bubotic axe|Melee|Melee|+1|-2|1|You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon.|
-000001677|1|Flail of corruption|Melee|Melee|+2|-2|2|You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon. Make D3 <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> each time you attack with this weapon. Excess damage from this weapon is not lost; instead, keep allocating damage to another model in the target unit until either all the damage has been allocated or the target is destroyed.|
-000001678|1|Mace of contagion|Melee|Melee|+2|-1|3|You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon. When attacking with this weapon, you must subtract 1 from the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
-000001679|1|Great plague cleaver|Melee|Melee|x2|-3|D6|You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon. When attacking with this weapon, you must subtract 1 from the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
-000001683|1|Puscleaver|Melee|Melee|+1|-2|D3|This weapon wounds on a 2+, unless the target is a VEHICLE, in which case <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">roll to wound</a> as normal.|
-000001684|1|Axe of Blind Fury|Melee|Melee|+3|-3|D3|You cannot re-roll or modify <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> of 1 for attacks made with the Axe of Blind Fury. Instead, these attacks automatically hit a friendly unit within 1". Randomly determine which unit is hit if there is more than one. If there are no friendly units within 1", the hit is ignored.|
-000001685|1|Black Mace|Melee|Melee|+3|-2|2|Roll a D6 each time a model is slain by the Black Mace; on a 6, that model’s unit suffers an additional <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> at the end of the phase.|
-000001686|1|Murder Sword|Melee|Melee|+1|-4|1|At the start of the first battle round but before the first turn has begun, you must nominate one enemy <a href="/wh40k9ed/the-rules/core-rules/#Characters">CHARACTER</a> to be the target of the bearer of the Murder Sword (this can be a character that is not yet set up on the battlefield). Remember to tell your opponent which character you have nominated. Each attack made with the Murder Sword that hits the selected character automatically inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> upon that character instead of the normal damage.|
-000001688|1|Cursed Crozius|Melee|Melee|+2|-2|3|Re-roll all failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> for this weapon when targeting an IMPERIUM unit.|
-000001691|1|Blade of the Hydra|Melee|Melee|+1|-2|2|Each time the bearer fights, it can make D3 additional attacks with this weapon.|
-000001692|1|Claws of the Black Hunt|Melee|Melee|+1|-3|D3|Increase the wielder’s Attacks characteristic by 2. In addition, you can re-roll failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> for this weapon.|
-000001693|1|Blissgiver|6"|Assault D6|User|-1|1|This weapon can be fired within 1" of an enemy unit, and can target enemy units within 1" of friendly units. If an enemy <a href="/wh40k9ed/the-rules/core-rules/#Characters">CHARACTER</a> model is wounded by Blissgiver but not slain, roll a D6 at the end of the phase; on a 6, they suffer D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a>.|
+000001669|1|Hellforged sword|Melee|Melee|+1|-3|3||
+000001685|1|The Black Mace|Melee|Melee|+2|-2|3|Each time an attack is made with this weapon, excess damage it inflicts is not lost. Instead, keep allocating excess damage to another model in the target unit until either all the excess damage has been allocated or the target unit is destroyed.|
+000001691|1|Blade of the Hydra|Melee|Melee|+1|-2|1|Each time the bearer fights, it makes D3+3 additional attacks with this weapon (if there are 6 or more enemy models within 3" of the bearer when it is selected to fight, it makes 6 additional attacks with this weapon instead).|
 000001694|1|Fury of Deimos|24"|Rapid Fire 3|5|-2|2||
 000001695|1|Destroyer of Crys’yllix|Melee|Melee|x2|-3|4|Each time an attack is made with this weapon, subtract 1 from that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
 000001697|1|Soul Glaive|Melee|Melee|+2|-3|2|Each time an attack is made with this weapon, you can re-roll the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> and you can re-roll the <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>.|
@@ -1450,7 +1421,7 @@
 000001755|1|Pater Cog-tooth|Melee|Melee|+3|-2|3||
 000001756|1|Anzion’s Pseudogenetor|Melee|Melee|+2|-1|1|Each time the bearer fights, it makes 3D3 additional attacks with this weapon.|
 000001758|1|The Uncreator Gauntlet|Melee|Melee|x2|-3|3|Each time the bearer fights, it makes 1 additional attack with this weapon. Each time an attack made with this weapon hits a <span class="kwb">VEHICLE</span> unit, that attack inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> in addition to any normal damage.|
-000001759|1|Phosphoenix|18"|Assault 3|5|-3|2|Each time an attack is made with this weapon, the target does not receive the benefits of <a href="/wh40k9ed/the-rules/core-rules/#Dense-Cover">Dense Cover</a> against that attack. Each time an attack is made with this weapon against an enemy unit, if a hit is scored, until the end of the phase, that enemy unit is exposed and the bearer gains the following ability:<br><br>‘<span class="redfont">Target Exposure (Aura)</span><b>:</b> While a friendly <span class="tooltip00525" data-tooltip-content="#tooltip_content00525" data-tooltip-anchor="#tooltip_content00525"><span class="kwb2">&lt;<span class="kwb3">F</span>ORGE</span> <span class="kwb">WORLD&gt;</span> <span class="kwb">CORE</span></span> unit is within 6" of this model, each time a model in that unit makes a ranged attack against an exposed unit, the target does not receive the benefits of <a href="/wh40k9ed/the-rules/core-rules/#Dense-Cover">Dense Cover</a> against that attack.’|
+000001759|1|Phosphoenix|18"|Assault 3|5|-3|2|Each time an attack is made with this weapon, the target does not receive the benefits of <a href="/wh40k9ed/the-rules/core-rules/#Dense-Cover">Dense Cover</a> against that attack. Each time an attack is made with this weapon against an enemy unit, if a hit is scored, until the end of the phase, that enemy unit is exposed and the bearer gains the following ability:<br><br>‘<span class="redfont">Target Exposure (Aura)</span><b>:</b> While a friendly <span class="tooltip00550" data-tooltip-content="#tooltip_content00550" data-tooltip-anchor="#tooltip_content00550"><span class="kwb2">&lt;<span class="kwb3">F</span>ORGE</span> <span class="kwb">WORLD&gt;</span> <span class="kwb">CORE</span></span> unit is within 6" of this model, each time a model in that unit makes a ranged attack against an exposed unit, the target does not receive the benefits of <a href="/wh40k9ed/the-rules/core-rules/#Dense-Cover">Dense Cover</a> against that attack.’|
 000001764|1|The Red Axe|Melee|Melee|+2|-5|2|Each time the bearer fights, it makes 3 additional attacks with this weapon.|
 000001766|1|The Adamantine Arm|Melee|Melee|x3|-3|4|Each time the bearer fights, no more than one attack can be made with this weapon. Each time an attack is made with this weapon, add 1 to that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
 000001768|1|Weapon XCIX|24"|Heavy 3|7|-2|2|Each time an attack is made with this weapon, on an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6, that attack inflicts 2 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> in addition to any normal damage.|
@@ -1473,7 +1444,7 @@
 000001786|1|The Emperor’s Benediction|12"|Pistol 3|4|-1|2|This weapon can target a <a href="/wh40k9ed/the-rules/core-rules/#Characters">CHARACTER</a> even if it is not the closest enemy unit, unless the bearer is within 1" of an enemy unit.|
 000001791|1|Blade of Conquest|Melee|Melee|+2|-4|D3||
 000001793|1|Mamorph Tuskblade|Melee|Melee|+2|-3|2||
-000001794|1|Pietrov’s Mk 45|12"|Pistol 2|4|-1|2|Friendly <span class="tooltip00537" data-tooltip-content="#tooltip_content00537" data-tooltip-anchor="#tooltip_content00537"><span class="kwb">VALHALLAN</span></span> units within 6" of the bearer can never lose more than one model as the result of any single failed <a href="/wh40k9ed/the-rules/core-rules/#Morale-Tests">Morale test</a>.|
+000001794|1|Pietrov’s Mk 45|12"|Pistol 2|4|-1|2|Friendly <span class="tooltip00562" data-tooltip-content="#tooltip_content00562" data-tooltip-anchor="#tooltip_content00562"><span class="kwb">VALHALLAN</span></span> units within 6" of the bearer can never lose more than one model as the result of any single failed <a href="/wh40k9ed/the-rules/core-rules/#Morale-Tests">Morale test</a>.|
 000001797|1|Claw of the Desert Tigers|Melee|Melee|+1|-3|2|Each time the bearer fights, it can make 2 additional attacks with this weapon.|
 000001803|1|Kurnous’ Bow|18"|Pistol 3|5|-|-|<a href="/wh40k9ed/factions/aeldari/#Shuriken-Weapons">Shuriken</a>. Each time an attack is made with this weapon, if that attack successfully wounds the target, it inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> on the target and the attack sequence ends.|
 000001805|1|Shard of Anaris|Melee|Melee|+1|-3|1|Each time the bearer fights, it makes D3+3 additional attacks with this weapon.|
@@ -1526,7 +1497,7 @@
 000001949|1|Distended maw|Melee|Melee|User|-1|1|You can re-roll <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> of 1 for this weapon.|
 000001950|1|Serrated claws|Melee|Melee|User|-2|2|Each time you make a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6+ for this weapon, that hit is resolved with an AP of -4 instead of -2.|
 000001951|1|Ravaging claws|Melee|Melee|User|-1|2|When resolving an attack made with this weapon, on a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6+ this weapon has an Armour Penetration characteristic of -4 for that attack.|
-000001954|1|A’rgath|Melee|Melee|+1|-4|D3|Re-roll all failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> for this weapon when targeting a <a href="/wh40k9ed/the-rules/core-rules/#Characters">CHARACTER</a>. If wielded by a <span class="tooltip00553" data-tooltip-content="#tooltip_content00553" data-tooltip-anchor="#tooltip_content00553"><span class="kwb">MONSTER</span></span>, increase this weapon’s Damage characteristic to 3.|
+000001954|1|A’rgath|Melee|Melee|+1|-4|D3|Re-roll all failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> for this weapon when targeting a <a href="/wh40k9ed/the-rules/core-rules/#Characters">CHARACTER</a>. If wielded by a <span class="tooltip00578" data-tooltip-content="#tooltip_content00578" data-tooltip-anchor="#tooltip_content00578"><span class="kwb">MONSTER</span></span>, increase this weapon’s Damage characteristic to 3.|
 000001955|1|Skullreaver|Melee|Melee|+3|-4|D6|Re-roll all failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> for this weapon when targeting a TITANIC unit. Each time you make a wound roll of 6+ for this weapon, the target suffers D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> in addition to the normal damage.|
 000001957|1|Soul Bane|Melee|Melee|User|-5|1|<a href="/wh40k9ed/the-rules/core-rules/#Invulnerable-Saves">Invulnerable saves</a> cannot be taken against this weapon.|
 000001962|1|Corruption|Melee|Melee|+2|-3|D3|Re-roll all failed <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> made for this weapon.|
@@ -1612,7 +1583,7 @@
 000002141|1|Burna|12"|Assault D6|5|-1|1|Each time an attack is made with this weapon profile, that attack automatically hits the target.|
 000002141|2|Cutta|12"|Assault 2|8|-4|D6|Each time an attack made with this weapon profile targets a unit within half range, that attack has a Damage characteristic of D6+2.|
 000002142|1|Kustom mega-zappa|36"|Heavy 3D3|8|-3|D6|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>. If any unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> of 1 are made for attacks with this weapon, the bearer suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> after shooting with this weapon.|
-000002143|1|Kustom shokk rifle|24"|Assault 2|8|-3|D6|If any unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> of 1 are made for attacks with this weapon, the bearer suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> after shooting with this weapon. Each time an attack is made with this weapon, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6 inflicts 1 mortal wound on the target in addition to any normal damage.|
+000002143|1|Kustom shokk rifle|24"|Assault 2|8|-3|D6|If any unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> of 1 are made for attacks with this weapon, the bearer’s unit suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> after shooting with this weapon. Each time an attack is made with this weapon, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6 inflicts 1 mortal wound on the target in addition to any normal damage.|
 000002144|1|Mek speshul|30"|Dakka 14/10|5|-2|2||
 000002145|1|Rivet kannon|36"|Dakka 9/6|7|-2|2||
 000002146|1|Rokkit kannon|24"|Heavy 3D3|8|-2|3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
@@ -1637,7 +1608,7 @@
 000002189|1|Krushin’ tracks|Melee|Melee|User|-2|2||
 000002190|1|Blade of Admonition|Melee|Melee|+3|-3|3|Each time an attack is made with this weapon against a <a href="/wh40k9ed/the-rules/core-rules/#Characters"><span class="kwb">CHARACTER</span></a> unit, that attack automatically hits the target.|
 000002195|1|Wrath of the Emperor|18"|Pistol 4|5|-1|2||
-000002196|1|Helspear|12"|Assault 1|+1|-3|D3||
+000002196|1|Helspear|12"|Assault 1|7|-3|3|Each time an attack is made with this weapon, if a hit is scored, draw a straight line between the closest point of this model’s base (or hull) and that of the closest model in the target unit. Make one <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> against the target unit, and each other unit this line passes over.|
 000002197|1|Infernus incinerator|12"|Heavy D6|6|-1|1|Each time an attack is made with this weapon, that attack automatically hits the target.|
 000002198|1|Twin adrathic destructor|18"|Assault 2|5|-3|3||
 000002199|1|Galatus warblade (shooting)|12"|Heavy 2D6|6|-1|1|Each time an attack is made with this weapon, that attack automatically hits the target.|
@@ -1705,29 +1676,24 @@
 000002276|1|The Holy Orb|6"|Grenade 1|-|-|-|You can only use this weapon once per battle. This weapon automatically hits its target (no <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> are made). When this weapon hits a target, roll one D6 for every 10 models in the target unit (rounding up). For each roll of 2+ that unit suffers D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a>.|
 000002277|1|Reaper chaincannon|24"|Heavy 8|5|-1|1||
 000002278|1|Thunder hammer|Melee|Melee|x2|-2|3|Each time an attack is made with this weapon, subtract 1 from that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
-000002279|1|Excruciator cannon|36"|Assault D3|+2|-2|D3||
-000002280|1|Lashing warp energies|6"|Pistol D6|7|-2|2||
-000002281|1|Accursed crozius|Melee|Melee|+1|-1|2||
-000002282|1|Axe of dismemberment|Melee|Melee|x2|-3|D3|Each time you make a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6+ for this weapon, the target unit suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> in addition to any other damage.|
-000002283|1|Bladed limbs and tail|Melee|Melee|+3|-2|D3|After the Lord Discordant makes his close combat attacks, you can attack with his Helstalker. Make a number of additional attacks as shown in the damage chart, using this weapon profile.|
+000002279|1|Excruciator cannon|36"|Assault 3|6|-2|2||
+000002280|1|Lashing warp energies|6"|Assault 8|User|-2|2||
+000002281|1|Accursed crozius|Melee|Melee|+2|-1|2||
+000002282|1|Axe of dismemberment|Melee|Melee|+3|-3|2|Each time an attack is made with this weapon, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> of 6 inflicts 2 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> on the target and the attack sequence ends.|
+000002283|1|Bladed limbs|Melee|Melee|6|-2|2|Each time the bearer fights, it makes 4 additional attacks with this weapon.|
 000002284|1|Close combat weapon|Melee|Melee|User|0|1||
-000002285|1|Crushing fists|Melee|Melee|+1|-1|D3||
-000002286|1|Daemonic mutations|Melee|Melee|User|-2|D3||
-000002287|1|Eviscerating claws|Melee|Melee|+2|-3|3||
-000002288|1|Impaler chainglaive|Melee|Melee|+2|-2|2|If the bearer made a <a href="/wh40k9ed/the-rules/core-rules/#Charging-with-a-Unit">charge move</a> or performed a <a href="/wh40k9ed/the-rules/core-rules/#Performing-a-Heroic-Intervention">Heroic Intervention</a> this turn, attacks with this weapon are made with a Strength characteristic of x2 instead of +2.|
-000002289|1|Soulflayer tendrils|Melee|Melee|User|-2|2|Each time the bearer fight, it can make 2 additional attacks with this weapon.|
-000002290|1|Techno-virus injector|Melee|Melee|+4|-4|D3|After the Lord Discordant makes his close combat attacks, you can attack with his Helstalker. Make a single attack using this weapon profile in addition to the Helstalker’s bladed limbs and tail. Each time a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> for an attack made with this weapon is successful when targeting a VEHICLE unit, that unit suffers D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> in addition to any normal damage.|
-000002291|1|Foecleaver|Melee|Melee|+3|-2|D3||
-000002292|1|Inferno Tome|8"|Assault D6|5|-1|D3|This weapon automatically hits its target.|
-000002293|1|The Burning Rod|Melee|Melee|+3|-1|D3|At the end of each <a href="/wh40k9ed/the-rules/core-rules/#FIGHT-PHASE">Fight phase</a>, you can pick a unit within 1" of the bearer. That unit suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a>.|
+000002285|1|Crushing fists|Melee|Melee|x2|-3|2||
+000002288|1|Impaler chainglaive|Melee|Melee|+2|-3|2|Each time an attack is made with this weapon, if the bearer made a <a href="/wh40k9ed/the-rules/core-rules/#Charging-with-a-Unit">charge move</a> this turn, add 1 to that attack’s <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>.|
+000002289|1|Soulflayer tendrils and claws|Melee|Melee|User|-3|2||
+000002291|1|Foecleaver|Melee|Melee|+4|-3|2|Each time an attack is made with this weapon against an <span class="kwb">IMPERIUM</span> unit, add 1 to that attack’s <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>.|
+000002293|1|Burning Rod|Melee|Melee|+3|-2|D3|Each time the bearer fights, after the bearer has resolved all of its attacks, select one enemy unit that was hit as a result of those attacks but was not destroyed. Roll 3D6: if the result is greater than or equal to the Leadership characteristic of that enemy unit, that enemy unit suffers 3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a>.|
 000002294|1|Mecha-serpents|Melee|Melee|+1|-1|2|Each time the bearer fights, it can make 1 (and only 1) attack with this weapon for each enemy model within 1" of the bearer.|
 000002295|1|Caliban steel blade|Melee|Melee|User|-3|D3|Each time an attack is made with this weapon, on a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6+, that attack has a Damage characteristic of D6.|
-000002296|1|Ghorisvex’s Teeth|Melee|Melee|User|-3|2|Each time the bearer fights, it can make 2 additional attacks with this weapon. Each time you roll a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6+ for an attack made with this weapon, the target of the attack suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> in addition to the normal damage.|
-000002299|1|Angelsbane|24"|Rapid Fire 2|5|-2|2|This weapon has a Damage characteristic of 3 if the target has the <span class="kwb">IMPERIUM</span> keyword.|
-000002301|1|Spineshiver Blade|Melee|Melee|+1|-3|1|Each time the bearer fights, it can make D6 additional attacks with this weapon.|
-000002302|1|Boltgun|24"|Rapid Fire 3|4|-1|2||
-000002302|2|Meltagun|12"|Assault 1|9|-4|D6|When using the meltagun profile, each time an attack made with this weapon targets a unit within half range, that attack has a Damage characteristic of D6+2.|
-000002303|1|Blade of the Relentless|Melee|Melee|+1|-3|1|If the bearer slays any enemy models in the <a href="/wh40k9ed/the-rules/core-rules/#FIGHT-PHASE">Fight phase</a> with this weapon, then from the end of that Fight phase until the end of the battle, <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound rolls</a> for attacks made with this weapon are automatically successful (no wound roll is made).|
+000002296|1|Ghorisvex’s Teeth|Melee|Melee|User|-3|2|Each time the bearer fights, it makes 3 additional attacks with this weapon.|
+000002302|1|Warp-twisted meltagun|18"|Assault 1|9|-4|D6+2||
+000002302|2|Master-crafted boltgun|24"|Rapid Fire 1|4|-1|2||
+000002303|1|Blade of the Relentless|Melee|Melee|+1|-4|2|Each time the bearer fights, it can make 1 additional attack with this weapon. Each time an attack is made with this weapon, on an unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> of 6, the target suffers 2 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> and the attack sequence ends.|
+000002304|1|Orb of Unlife|9"|Grenade 1|-|-|-|The bearer can only shoot with this weapon once per battle, and <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> made with this weapon can never generate additional hits (e.g. if the bearer is engaged in <a href="/wh40k9ed/factions/chaos-space-marines/#Wanton-Destruction">Wanton Destruction</a>). When an attack is made with this weapon, if a hit is scored:<br><ul><li>The target unit suffers D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> and the attack sequence ends. If the target unit contains 11 or more models or if the bearer is engaged in Wanton Destruction, the target unit suffers D3+3 mortal wounds instead and the attack sequence ends.</li><li>Until the end of the battle, subtract 1 from the Toughness characteristic of models in the target unit.</li></ul>|
 000002308|1|Cacophonous melody|18"|Assault 6|4|-1|1||
 000002308|2|Euphonic blast|24"|Assault 1|8|-3|3||
 000002310|1|Heirloom pistol|12"|Pistol 1|4|-2|2|This weapon wounds on a 4+, unless it is targeting a VEHICLE or TITANIC unit, in which case it wounds on a 6+.|
@@ -1894,26 +1860,18 @@
 000002545|1|Acquittal|16"|Pistol 1|5|-3|1|When resolving an attack made with this weapon against a unit that is not a <span class="kwb">VEHICLE</span> or <span class="kwb">MONSTER</span>, this weapon has a Damage characteristic of D6 for that attack.|
 000002546|1|Blade of Triumph|Melee|Melee|+2|-4|3||
 000002551|1|Sword of Judgement|Melee|Melee|+3|-3|3||
-000002552|1|Q’o’ak|Melee|Melee|User|-3|D3|When resolving an attack made with this weapon, <a href="/wh40k9ed/the-rules/core-rules/#Invulnerable-Saves">invulnerable saves</a> cannot be made.|
-000002553|1|Thaa’ris and Rhi’ol|Melee|Melee|User|-2|2|When resolving an attack made with this weapon, you can re-roll the <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>. When rolling for this weapon’s <span class="redfont">Daemon Weapon</span> ability, on a 2+ you can make a number of additional attacks equal to the result with this weapon this phase.|
-000002554|1|Zaall|Melee|Melee|User|-5|2|When rolling for this weapon’s <span class="redfont">Daemon Weapon</span> ability, on a 2+ add a number to this weapon’s Strength characteristic equal to the result until the end of this phase.|
-000002555|1|G’holl’ax|Melee|Melee|x2|-3|3|When resolving an attack made with this weapon, subtract 1 from the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>, and an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 2+ is always successful.|
-000002556|1|Ul’o’cca|Melee|Melee|User|0|1|When resolving an attack made with this weapon, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 4+ inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> on the target in addition to any other damage.|
-000002561|1|Ashen Axe|Melee|Melee|+1|-2|D3|Enemy units within <a href="/wh40k9ed/the-rules/core-rules/#Engagement-Range">Engagement Range</a> of the bearer cannot <a href="/wh40k9ed/the-rules/core-rules/#Fall-Back">Fall Back</a> unless they have the <span class="kwb">VEHICLE</span>, <span class="kwb">TITANIC</span> or <span class="kwb">AIRCRAFT</span> keyword.|
-000002563|1|Flayer|Melee|Melee|+1|-3|2|Each model destroyed by an attack with this weapon counts as two for the purposes of <a href="/wh40k9ed/the-rules/core-rules/#Morale-Tests">Morale tests</a>.|
-000002566|1|Talons of the Night Terror|Melee|Melee|+1|-1|1|Each time the bearer is selected to fight, until that fight is resolved, it makes D3 additional attacks with this weapon, or D6 additional attacks with this weapon if it made a <a href="/wh40k9ed/the-rules/core-rules/#Charging-with-a-Unit">charge move</a> or <a href="/wh40k9ed/the-rules/core-rules/#Performing-a-Heroic-Intervention">performed a Heroic Intervention</a> this turn.|
-000002572|1|Viper’s Bite|24"|Rapid Fire 2|5|-3|2||
-000002574|1|Shadeblade|Melee|Melee|+1|-3|D3|When resolving an attack made against the bearer, subtract 1 from the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
+000002561|1|Ashen Axe|Melee|Melee|+2|-3|2|Each time the bearer fights, if any enemy models are destroyed as the result of an attack made with this weapon, roll 2D6. If the result equals or exceeds the Leadership characteristic of the destroyed model’s unit, then until the end of the battle, that unit cannot <a href="/wh40k9ed/the-rules/core-rules/#Advance">Advance</a> or <a href="/wh40k9ed/the-rules/core-rules/#Fall-Back">Fall Back</a>, and that unit is not eligible to fight in the <a href="/wh40k9ed/the-rules/core-rules/#FIGHT-PHASE">Fight phase</a> until after all eligible units from your army have done so.|
+000002563|1|Flayer|Melee|Melee|+2|-3|2|Each time an attack made with this weapon destroys an enemy model, that model counts as 2 destroyed models in the next <a href="/wh40k9ed/the-rules/core-rules/#MORALE-PHASE">Morale phase</a>.|
+000002572|1|Viper’s Spite|18"|Pistol 6|4|-3|1||
 000002575|1|Swing|Melee|Melee|+2|-2|2||
-000002575|2|Smash|Melee|Melee|x2|-3|D6|When the bearer fights using the smash profile, it can only make two attacks. When resolving an attack made with the smash profile, roll two D6 when inflicting damage with it and discard one of the results.|
-000002578|1|Axe of the Forgemaster|Melee|Melee|+3|-3|2|When resolving an attack made with this weapon against a <span class="kwb">VEHICLE</span> unit, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> of 5+ inflicts D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> on the target in addition to any normal damage.|
-000002579|1|Spitespitter|24"|Rapid Fire 2|5|-3|D3||
-000002580|1|Techno-venomous Mechatendrils|Melee|Melee|User|0|1|When the bearer fights, it makes 4 additional attacks with this weapon, and only those 4 attacks can be made with this weapon. When resolving an attack made with this weapon, if a hit is scored the target suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> and the attack sequence ends.|
-000002582|1|Fatal Sonancy|12"|Assault D6|6|-2|1|When resolving an attack made with this weapon, do not make a <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>: it automatically scores a hit. When resolving an attack made with this weapon, the target does not receive the <a href="/wh40k9ed/the-rules/core-rules/#Terrain-and-Cover">benefit of cover</a> to its <a href="/wh40k9ed/the-rules/core-rules/#4.-Saving-Throw">saving throw</a>.|
-000002585|1|Distortion|Melee|Melee|User|-4|D3|At the start of the <a href="/wh40k9ed/the-rules/core-rules/#FIGHT-PHASE">Fight Phase</a>, the bearer can look upon their reflection. Until the end of that phase, this weapon has a Strength characteristic of x2, and when resolving an attack made with this weapon, subtract 1 from the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
-000002587|1|Crimson Killer|12"|Pistol 1|9|-3|3|When resolving an attack made with this weapon, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 4+ inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> on the target in addition to any normal damage.|
-000002588|1|Gorefather|Melee|Melee|+2|-2|3|When resolving an attack made with this weapon, subtract 1 from the <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>, and on an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6 the target suffers 3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> and the attack sequence ends.|
-000002590|1|Berserker Glaive|Melee|Melee|+1|-2|2|When the bearer would lose a wound, roll one D6; on a 5+ that wound is not lost.|
+000002575|2|Smash|Melee|Melee|x2|-3|D3+3||
+000002578|1|Axe of the Forgemaster|Melee|Melee|+3|-3|2|Each time an attack is made with this weapon, on an unmodified wound roll of 6, the target suffers 1 mortal wound in addition to any normal damage (if the target is a <span class="kwb">VEHICLE</span> unit, it suffers 3 mortal wounds in addition to any normal damage instead).|
+000002579|1|Combi-bolter|30"|Rapid Fire 2|5|-3|2||
+000002579|2|Combi-weapon|30"|Rapid Fire 1|5|-3|2||
+000002585|1|Elegant incision|Melee|Melee|User|-2|1|Each time an attack is made with this weapon profile, make 2 <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> instead of 1.|
+000002585|2|Inelegant slash|Melee|Melee|x2|-4|2||
+000002587|1|Crimson Killer|12"|Pistol 1|9|-3|3|Each time an attack is made with this weapon, an unmodified successful <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 4+ inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> on the target in addition to any normal damage.|
+000002588|1|Gorefather|Melee|Melee|+2|-2|3|Each time an attack is made with this weapon, subtract 1 from that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>, and on an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6, the target suffers 3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> and the attack sequence ends.|
 000002595|1|Lashing tongues|Melee|Melee|4|0|1|When the bearer fights, it makes 8 additional attacks with this weapon and no more than 8 attacks can be made with this weapon.|
 000002596|1|Lashing tongues|Melee|Melee|4|0|1|When the bearer fights, it makes 4 additional attacks with this weapon and no more than 4 attacks can be made with this weapon.|
 000002597|1|Bladed axle|Melee|Melee|x2|-1|2|When the bearer fights, it makes D6 additional attacks with this weapon and no more than that number of attacks can be made with this weapon.|
@@ -1988,8 +1946,7 @@
 000002778|1|Cleave|Melee|Melee|+3|-3|2|<a href="/wh40k9ed/factions/death-guard/#Plague-Weapon">Plague Weapon</a>. Each time an attack is made with this weapon, subtract 1 from that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
 000002778|2|Scythe|Melee|Melee|+1|-1|1|<a href="/wh40k9ed/factions/death-guard/#Plague-Weapon">Plague Weapon</a>. Each time an attack is made with this weapon, make 3 <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> instead of 1.|
 000002779|1|Vomitryx|12"|Assault 7|7|-3|2|<a href="/wh40k9ed/factions/death-guard/#Plague-Weapon">Plague Weapon</a>. Each time an attack is made with this weapon, that attack automatically hits the target.|
-000002780|1|Surgeon Acolyte’s tools|Melee|Melee|User|-1|1||
-000002781|1|The Chirurgeon|Melee|Melee|4|-2|1|Each time the bearer fights it can make 3 additional attacks with this weapon.|
+000002781|1|Chirurgeon|Melee|Melee|4|-1|1|Each time the bearer fights, it makes 4 additional attacks with this weapon.|
 000002800|1|Dirgesinger|18"|Assault 2|4|0|2|When resolving an attack made with this weapon, on a <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6+ this weapon has an Armour Penetration characteristic of -3 for that attack.|
 000002801|1|The Outcast’s Blades|Melee|Melee|User|-1|1|Each time an attack is made with this weapon, make 2 <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit rolls</a> instead of 1.|
 000002802|1|Sanctity|Melee|Melee|+2|-3|2|Each time an attack is made with this weapon, <a href="/wh40k9ed/the-rules/core-rules/#Invulnerable-Saves">invulnerable saving throws</a> cannot be made against that attack.|
@@ -2807,11 +2764,11 @@
 000003841|1|Twilight Fang|Melee|Melee|+2|-3|2|Each time the bearer fights, until that fight is resolved, add the current battle round number to the Attacks characteristic of the bearer.|
 000003845|1|The Storied Sword|Melee|Melee|+2|-3|2|Each time an attack is made with this weapon, that attack automatically hits the target.|
 000003847|1|Crescendo|12"|Pistol 6|4|-3|2|<a href="/wh40k9ed/factions/aeldari/#Shuriken-Weapons">Shuriken</a>|
-000003848|1|Cegorach’s Rose|Melee|Melee|+2|-2|3|Each time an attack is made with this weapon, you can re-roll the <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>. The bearer has the <span class="tooltip00765" data-tooltip-content="#tooltip_content00765" data-tooltip-anchor="#tooltip_content00765"><span class="kwb">HARLEQUIN’S</span> <span class="kwb">KISS</span></span> keyword.|
-000003851|1|The Avenging Blade|Melee|Melee|+2|-|-|Each time an attack is made with this weapon, ifthat attack successfully wounds the target, it inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> on the target and the attack sequence ends.|
+000003848|1|Cegorach’s Rose|Melee|Melee|+2|-2|3|Each time an attack is made with this weapon, you can re-roll the <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>. The bearer has the <span class="tooltip00809" data-tooltip-content="#tooltip_content00809" data-tooltip-anchor="#tooltip_content00809"><span class="kwb">HARLEQUIN’S</span> <span class="kwb">KISS</span></span> keyword.|
+000003851|1|The Avenging Blade|Melee|Melee|+2|-|-|Each time an attack is made with this weapon, if that attack successfully wounds the target, it inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> on the target and the attack sequence ends.|
 000003853|1|Shadowsting|Melee|Melee|+3|-2|2|Each time the bearer fights, it makes 2 additional attacks with this weapon.|
 000003856|1|The Spider’s Bite|Melee|Melee|+2|-4|2|Each time an attack is made with this weapon, on an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6 that attack has a Damage characteristic of 3.|
-000003860|1|Serpent’s Tail|Melee|Melee|+2|-3|2|The bearer has the <span class="tooltip00765" data-tooltip-content="#tooltip_content00765" data-tooltip-anchor="#tooltip_content00765"><span class="kwb">HARLEQUIN’S</span> <span class="kwb">KISS</span></span> keyword. Each time the bearer fights, if you used the <a href="/wh40k9ed/factions/aeldari/#Harlequins-Stratagems">Kiss of Death</a> Stratagem when the bearer was selected to fight, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6 inflicts D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> on the target in addition to any normal damage, instead of 1.|
+000003860|1|Serpent’s Tail|Melee|Melee|+2|-3|2|The bearer has the <span class="tooltip00809" data-tooltip-content="#tooltip_content00809" data-tooltip-anchor="#tooltip_content00809"><span class="kwb">HARLEQUIN’S</span> <span class="kwb">KISS</span></span> keyword. Each time the bearer fights, if you used the <a href="/wh40k9ed/factions/aeldari/#Harlequins-Stratagems">Kiss of Death</a> Stratagem when the bearer was selected to fight, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6 inflicts D3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> on the target in addition to any normal damage, instead of 1.|
 000003861|1|Song of the Bloody-Handed|Melee|Melee|+7|-4|3|If an enemy unit is destroyed by an attack made with this weapon, that unit’s <a href="/wh40k9ed/the-rules/narrative-play/#Out-of-Action">Out of Action</a> test is failed on a result of 1-3, instead of a 1.|
 000003862|1|Soulblast blade|Melee|Melee|+2|-3|3|If an enemy unit is destroyed by an attack made with this weapon, roll one D6 before removing the last model in that unit from play. On a 4+, each enemy unit within 3" of that last model suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a>.|
 000003863|1|Soulsever pistol|12"|Pistol 3|5|-1|2|<a href="/wh40k9ed/factions/aeldari/#Shuriken-Weapons">Shuriken</a>|
@@ -2819,8 +2776,6 @@
 000003868|1|The Night’s Blade|Melee|Melee|User|-3|2|Each time an attack is made with this weapon against a unit that is not a <span class="kwb">VEHICLE</span>, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 2+ is always successful.|
 000003870|1|Shadow’s Touch|Melee|Melee|+3|-4|2|In your <a href="/wh40k9ed/the-rules/core-rules/#PSYCHIC-PHASE">Psychic phase</a>, if the bearer <a href="/wh40k9ed/the-rules/core-rules/#Manifesting-Psychic-Powers">manifests</a> any psychic powers from the <b><a href="/wh40k9ed/factions/space-marines/#Obscuration-Discipline">Obscuration discipline</a></b>, then until the start of your next Psychic phase, each time an attack is made with this weapon, <a href="/wh40k9ed/the-rules/core-rules/#Invulnerable-Saves">invulnerable saving throws</a> cannot be made against that attack.|
 000003875|1|Exile Glaive|Melee|Melee|x3|-3|2||
-000003876|1|Corrodax|Melee|Melee|x2|-2|2|Each time an attack made with this weapon is allocated to a model with a 3+ save or better, that attack has a Damage characteristic of 3.|
-000003877|1|Hateblaze|12"|Assault 2D3|5|-1|2|Each time an attack is made with this weapon, that attack automatically hits the target.|
 000003878|1|Misery’s Burden|Melee|Melee|User|-|-|Each time the bearer fights, it makes 1 additional attack with this weapon and no more than 1 attack can be made with this weapon. Each time an attack is made with this weapon, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 2+ inflicts 2 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> on the target and the attack sequence ends.|
 000003879|1|Tyrant’s End|18"|Pistol 1|3|-4|3|Each time an attack is made with this weapon, if a hit is scored and the target’s strength is higher than the bearer’s, that attack automatically wounds the target.|
 000003880|1|Divine Ossein|Melee|Melee|+2|-3|3||
@@ -2875,3 +2830,34 @@
 000003943|1|Volkite cardanelle|45"|Heavy 8|7|-1|2|Each time an attack is made with this weapon, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6 inflicts 2 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> on the target in addition to any normal damage.|
 000003944|1|Volkite culverin|45"|Heavy 4|6|0|2|Each time an attack is made with this weapon, an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6 inflicts 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> on the target in addition to any normal damage.|
 000003946|1|Warp blade|Melee|Melee|+2|-3|3|Each time an attack is made with this weapon, the Damage characteristic of that attack cannot be reduced and the target cannot make use of any abilities that allow them to ignore wounds.|
+000003947|1|Havoc autocannon|48"|Heavy 2|7|-2|2||
+000003948|1|Tainted chainaxe|Melee|Melee|+1|-1|2||
+000003949|1|Herald’s Talon|Melee|Melee|User|-3|2|Each time an attack is made with this weapon, you can re-roll the <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>.|
+000003950|1|Staff of possession|Melee|Melee|+3|-1|D3|Each time the bearer fights, if one or more attacks made with this weapon were allocated to a <a href="/wh40k9ed/the-rules/core-rules/#PSYCHIC-PHASE"><span class="kwb">PSYKER</span></a> model, after the bearer has resolved all of its attacks, that <span class="kwb">PSYKER</span> model’s unit suffers <a href="/wh40k9ed/the-rules/core-rules/#Perils-of-the-Warp">Perils of the Warp</a>.|
+000003951|1|Exalted power axe|Melee|Melee|+2|-2|2||
+000003952|1|Duellist’s sword|Melee|Melee|User|-3|2||
+000003953|1|Helstalker autocannon|48"|Heavy 3|7|-1|2||
+000003954|1|Flamer tendril|12"|Pistol D6|4|0|1|Each time an attack is made with this weapon, that attack automatically hits the target.|
+000003955|1|Melta tendril|6"|Pistol 1|8|-4|D6+2||
+000003956|1|Commune stave|Melee|Melee|User|-1|D3||
+000003957|1|Commune blade|Melee|Melee|User|-3|2||
+000003958|1|Daemon blade|Melee|Melee|User|-2|2|Each time an attack is made with this weapon, on an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6, the target suffers 1 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a> in addition to any normal damage.|
+000003959|1|Heavy chainaxe|Melee|Melee|+4|-4|2|Each time an attack is made with this weapon, subtract 1 from that attack’s <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a>.|
+000003960|1|Cultist firearm|24"|Rapid Fire 1|3|0|1||
+000003961|1|Cultist grenade launcher|24"|Assault 1|6|-1|D3||
+000003962|1|Blasphemous appendages|Melee|Melee|User|-1|1||
+000003963|1|Accursed weapon|Melee|Melee|+1|-3|1|Each time the bearer fights, it makes 1 additional attack with this weapon.|
+000003964|1|Warp claws|Melee|Melee|User|-2|1|Each time an attack is made with this weapon, you can re-roll the <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>.|
+000003965|1|Twin soulshatter lascannon|48"|Heavy 2|9|-3|D6+2||
+000003966|1|Defiler cannon|72"|Heavy D6|8|-2|3|<a href="/wh40k9ed/the-rules/core-rules/#Blast-Weapons">Blast</a>|
+000003967|1|Heavy hades autocannon|48"|Heavy 4|8|-2|2||
+000003968|1|Forgefiend jaws|Melee|Melee|User|-1|2||
+000003969|1|Berzerker chainblade|Melee|Melee|User|-2|1||
+000003972|1|Wrath of the Abyss|Melee|Melee|x2|-3|3||
+000003973|1|Eightfold-cursed Crozius|Melee|Melee|+2|-2|3|Each time an attack is made with this weapon, if the bearer is a <span class="tooltip00625" data-tooltip-content="#tooltip_content00625" data-tooltip-anchor="#tooltip_content00625"><span class="kwb">PRIEST</span></span> model and the target is not a <span class="kwb">MONSTER</span> or <span class="kwb">VEHICLE</span> unit, a successful <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> automatically wounds the target.|
+000003975|1|Claw of the Stygian Count|Melee|Melee|+2|-3|2|Each time the bearer fights, it makes 2 additional attacks with this weapon. Each time an attack made with this weapon is allocated to an enemy model, that enemy model cannot use any rules to ignore the wounds it loses.|
+000003979|1|Berzerker Glaive|Melee|Melee|+2|-3|2|Each time the bearer would lose a wound, roll one D6: on a 5+, that wound is not lost.|
+000003985|1|The Warp’s Malice|18"|Pistol 2|5|-2|2|While the bearer is engaged in <a href="/wh40k9ed/factions/chaos-space-marines/#Wanton-Massacre">Wanton Massacre</a> or <a href="/wh40k9ed/factions/chaos-space-marines/#Wanton-Slaughter">Wanton Slaughter</a>, this weapon’s Type is changed to <a href="/wh40k9ed/the-rules/core-rules/#PISTOL">Pistol 4</a>. Each time an attack is made with this weapon, on an unmodified <a href="/wh40k9ed/the-rules/core-rules/#1.-Hit-Roll">hit roll</a> of 6, the target suffers 2 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> and the attack sequence ends.|
+000003987|1|The Murder Blade|Melee|Melee|User|*|*|Each time the bearer makes an attack with this weapon that successfully wounds the target, if the target unit has the <a href="/wh40k9ed/the-rules/core-rules/#Characters"><span class="kwb">CHARACTER</span></a> keyword, that attack inflicts 3 <a href="/wh40k9ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a> and the attack sequence ends; if the target unit has the <span class="tooltip00810" data-tooltip-content="#tooltip_content00810" data-tooltip-anchor="#tooltip_content00810"><span class="kwb">PRIMARCH</span></span> or <span class="tooltip00811" data-tooltip-content="#tooltip_content00811" data-tooltip-anchor="#tooltip_content00811"><span class="kwb">DAEMON</span> <span class="kwb">PRIMARCH</span></span> keyword, that attack inflicts D3+3 mortal wounds instead and the attack sequence ends; otherwise, the target unit suffers 2 mortal wounds and the attack sequence ends.|
+000003988|1|Shadesword|Melee|Melee|+1|-4|2|Each time an attack is made with this weapon, on an unmodified <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a> of 6, <a href="/wh40k9ed/the-rules/core-rules/#Invulnerable-Saves">invulnerable saving throws</a> cannot be made against that attack.|
+000003989|1|Splinters of the Ghost Razors|Melee|Melee|+1|-3|2|Each time the bearer fights, it makes 1 additional attack with this weapon. Each time an attack is made with this weapon, you can re-roll the <a href="/wh40k9ed/the-rules/core-rules/#2.-Wound-Roll">wound roll</a>.|

@@ -130,6 +130,7 @@ app.get('/', async (req, res) => {
 		// YOU WILL ONLY SEE '/' WITHOUT A QUERY IF YOU GET AN ERROR MESSAGE. Otherwise it will redirect to a game
 		// Did they provide a battle code?
 		if (req.query.gameCode) {
+			req.query.gameCode = req.query.gameCode.toLowerCase();
 			//Check to see if the battle already exists
 			db.get(`SELECT games.*, scoreboard.* FROM games LEFT JOIN scoreboard ON games.gameCode = scoreboard.gameCode WHERE games.gameCode=?`, req.query.gameCode, (err, game) => {
 				// If there was a database error
@@ -526,6 +527,10 @@ app.get('/api/status', function(req, res) {
 	}
 });
 
+// Do some dice rolls
+app.get('/api/roll', function (req, res) {
+	res.json(calc.rollCalc(req.query.dice));
+});
 /*
 ███████  ██████   ██████ ██   ██ ███████ ████████ ██  ██████
 ██      ██    ██ ██      ██  ██  ██         ██    ██ ██    ██
@@ -802,14 +807,19 @@ function matchModel(obj1, obj2) {
 
 function sortBySlot(units) {
 	let newOrder = [];
-	let slotOrder = ['HQ', 'Troops', 'Elites', 'Fast Attack', 'Heavy Support', 'Dedicated Transport', 'Flyers', 'Lord of War', 'Fortification', 'No Force Org Slot'];
-	for (slot of slotOrder) {
-		for (unit of units) {
+	let catchAll = [];
+	let slotOrder = ['HQ', 'Troops', 'Elites', 'Fast Attack', 'Heavy Support', 'Dedicated Transport', 'Flyers', 'Lord of War', 'Fortification'];
+	for (unit of units) {
+		for (slot of slotOrder) {
 			if (unit.slot == slot) {
-				newOrder.push(unit)
+				newOrder.push(unit);
 			}
 		}
+		if (!slotOrder.includes(unit.slot)) {
+			catchAll.push(unit);
+		}
 	}
+	newOrder = newOrder.concat(catchAll);
 	return newOrder;
 }
 
@@ -891,7 +901,7 @@ async function createGame(req) {
 		qrcode.toFile('public/shares/' + newGame.gameCode + '.png', newGame.url, {
 				color: {
 					dark: '#000000', // Blue dots
-					light: '#ffcc99' // Transparent background
+					light: '#ffffff' // Transparent background
 				}
 			},
 			// Callback for when it is done:
@@ -985,6 +995,7 @@ function parseBS(data) {
 		//Each "tier" in the list hierarchy  starts with an empty object
 		var force = {
 			name: data.roster.$.name,
+			faction: '',
 			detachments: [],
 			costs: {}
 		}
@@ -1022,8 +1033,14 @@ function parseBS(data) {
 				units: [],
 				rules: []
 			}
+			if (force.faction) {
+				force.faction = 'Allied Forces';
+			} else {
+				force.faction = faction;
+			}
 			//Some factions have multiple names
 			if (faction == 'Adeptus Astartes') faction = 'Space Marines';
+			if (faction == 'Craftworlds') faction = 'Aeldari';
 			let factionLink = wahaData.Factions.find(fct => fct.name == faction);
 			if (factionLink) newDetachment.factionLink = factionLink.link;
 
@@ -1053,15 +1070,31 @@ function parseBS(data) {
 			let unitData = detachment.selections[0].selection;
 			//Loop through every unit in the list
 			for (unit of unitData) {
+				let unitType = unit.$.type;
 				// Try to find subfactions and variants
 				if (unit.$.type == 'upgrade') {
 					if (unit.selections) // Searching for upgrade names is not consistent. Search by selection name
 						if (unit.selections[0].selection) // Will always have at least one selection
-							for (var select of unit.selections[0].selection) // Look through all of the selections
+							for (var select of unit.selections[0].selection) {
+								// Look through all of the selections
 								if (wahaData.Subfactions.find(subfaction => subfaction.name == select.$.name)) // If a subfaction name exists that matches this selection name
 									newDetachment.subfaction = select.$.name; // Then you've found the subfaction
 								else if (wahaData.Subfactions.find(subfaction => subfaction.name == select.$.name.split(': ')[1])) // Sometimes formatted as "Subfaction Type: Subfaction Name"
-						newDetachment.subfaction = select.$.name.split(': ')[1];
+									newDetachment.subfaction = select.$.name.split(': ')[1];
+								if (unit.$.name == "Gametype") {
+									let gameName = unit.selections[0].selection[0].$.name;
+									// gameName = gameName.replace('Chapter Approved', 'Grand Tournament');
+									let gameCheck = /(\d. )?(.*\: )?(.*$)/.exec(gameName);
+									if (gameCheck) {
+										force.gametype = gameCheck[3];
+										force.secondaries = wahaData.Secondaries.filter(second => second.game.includes(gameCheck[3]));
+										force.secondaries = force.secondaries.filter(second => second.faction_name == force.faction || second.faction_name == '');
+									} else {
+										force.gametype = gameName;
+									}
+								}
+								if (select.$.type == 'unit') unitType = 'unit';
+							}
 					if (unit.$.name.split(' - ')[0] == 'Army of Renown') // Check for army variants
 						newDetachment.variant = unit.$.name.split(' - ')[1];
 					// Get icon link by faction
@@ -1074,7 +1107,7 @@ function parseBS(data) {
 							newDetachment.factionIcon = `img/factions/${newDetachment.subfaction.replaceAll(' ', '').replaceAll('\'', '_').toLowerCase()}.svg`;
 				}
 				//Single model units are listed as a model rather than a unit
-				else if (unit.$.type == 'model' || unit.$.type == 'unit') {
+				if (unitType == 'model' || unitType == 'unit') {
 					//Create a new blank unit
 					let newUnit = {
 						name: '',
@@ -1086,7 +1119,6 @@ function parseBS(data) {
 						spells: [],
 						stratagems: []
 					}
-
 					//If the selection is not a unit (sometimes it's a configuration),
 					//this will remain "undefined".
 					newUnit.name = unit.$.name
@@ -1135,7 +1167,14 @@ function parseBS(data) {
 					// Some units (especially daemons and CSM marines) are in multiple factions
 					// Find all possible datasheets
 					let datasheetList = wahaData.Datasheets.filter(datasheet => datasheet.name == unit.$.name)
-					// If you couldn't find one, try again without the S at the end ofthe name
+					// If you couldn't find one, try again with first unit's name (Chapter Master -> )
+					if (datasheetList.length == 0) {
+						if (unit.profiles) {
+							let tempName = unit.profiles[0].profile[0].$.name;
+							datasheetList = wahaData.Datasheets.filter(datasheet => datasheet.name == tempName);
+						}
+					}
+					// If you couldn't find one, try again without the 's' at the end ofthe name
 					if (datasheetList.length == 0) {
 						let tempName = unit.$.name.slice(0, -1);
 						datasheetList = wahaData.Datasheets.filter(datasheet => datasheet.name == tempName);

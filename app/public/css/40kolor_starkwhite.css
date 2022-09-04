@@ -1,0 +1,124 @@
+.factionIcon {
+  -webkit-filter: invert(0%);
+  filter: invert(0%);
+}
+
+h1 {
+  color: #000000;
+}
+
+h2 {
+  color: #000000;
+}
+
+h3 {
+  color: #000000;
+}
+
+a {
+  color: #000000;
+}
+
+a:hover {
+  color: #000000;
+}
+
+.bg0 {
+  background-color: #ffffff;
+  border: 1px black solid;
+}
+
+.bg1 {
+  background-color: #ffffff;
+  border: 1px black solid;
+}
+
+.bg2 {
+  background-color: #ffffff;
+  border: 1px black solid;
+}
+
+.bg3 {
+  background-color: #ffffff;
+  border: 1px black solid;
+}
+
+.bg4 {
+  background-color: #ffffff;
+  border: 1px black solid;
+}
+
+.bg5 {
+  background-color: #ffffff;
+  border: 1px black solid;
+}
+
+.bg6 {
+  background-color: #ffffff;
+  border: 1px black solid;
+}
+
+.bg7 {
+  background-color: #ffffff;
+  border: 1px black solid;
+}
+
+#atkrList {
+  background-image: linear-gradient(to right, #ffffff, #ffffff);
+}
+
+#dfdrList {
+  background-image: linear-gradient(to left, #ffffff, #ffffff);
+}
+
+#output {
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+* {
+  color: #000000;
+}
+
+body {
+  background-color: #ffffff;
+}
+
+h1, h2, h3, h4, hr {
+  color: #000000;
+}
+
+input:checked+.slider {
+  background-color: #ffffff;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #ffffff;
+}
+
+.accordion-header {
+  color: #000000;
+  border-color: #000000;
+}
+
+.accordion-header .statTag {
+  color: #ffffff;
+}
+
+.accordion-content.isOpen {
+  border-color: #000000;
+}
+
+.accordion-content .block {
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.openNav {
+  color: #000000;
+}
+
+
+.useTag {
+  box-shadow: 0px 0px 2px 1px #f00;
+}

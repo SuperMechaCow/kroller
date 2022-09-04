@@ -17,7 +17,9 @@ const urls = [
 	'Datasheets_wargear',
 	'Datasheets',
 	'Factions',
+	'Last_update',
 	'PsychicPowers',
+	'Secondaries',
 	'Source',
 	'StratagemPhases',
 	'Stratagems',
@@ -118,6 +120,7 @@ async function scraper(readData) {
 		await grabPage(faction);
 	}
 }
+
 
 fs.readFile(__dirname + '/../data/wahaData.json', 'utf8', (err, data) => {
 	if (err) {

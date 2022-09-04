@@ -1,0 +1,118 @@
+#output {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+body {
+  background-color: #000000;
+}
+
+h1, h2, h3, h4, hr {
+  color: #ffffff;
+}
+
+input:checked+.slider {
+  background-color: #000000;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #000000;
+}
+
+.accordion-header {
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.accordion-header .statTag {
+  color: #000000;
+}
+
+.accordion-content.isOpen {
+  border-color: #000000;
+}
+
+.accordion-content .block {
+  color: #000000;
+  border-color: #000000;
+}
+
+.openNav {
+  color: #ffffff;
+}
+
+h1 {
+  color: #ffffff;
+}
+
+h2 {
+  color: #000000;
+}
+
+h3 {
+  color: #FFFFFF;
+}
+
+a {
+  color: #FFFFFF;
+}
+
+a:hover {
+  color: #cccccc;
+}
+
+.bg0 {
+  background-color: #000000;
+}
+
+.bg1 {
+  background-color: #332211;
+}
+
+.bg2 {
+  background-color: #886622;
+}
+
+.bg3 {
+  background-color: #AA6622;
+}
+
+.bg4 {
+  background-color: #cc8844;
+}
+
+.bg5 {
+  background-color: #eeaa66;
+}
+
+.bg6 {
+  background-color: #ddaa88;
+}
+
+.bg7 {
+  background-color: #ffcc99;
+}
+
+.tag {
+  color: #000000;
+}
+
+#atkrList {
+  background-image: linear-gradient(to right, #332211, #000000);
+}
+
+#dfdrList {
+  background-image: linear-gradient(to left, #332211, #000000);
+}
+
+input:checked+.slider {
+  background-color: #332211;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #332211;
+}
+
+.useTag {
+  box-shadow: 0px 0px 2px 1px #f00;
+}

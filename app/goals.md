@@ -1,33 +1,36 @@
 ## Bugs:
+- No Force Org with models subselections Not displaying in list (canoptek plasmacytes in viral constructs)
 - fix wahalinks (some 'http' and some '/who40ken')
 - Can only find one armiger in app.js
 - Convert gameCode query to lowercase
-- SM character upgrades change unit name and cannot find on waha
 - don't update tracker on swipe or spin
 - T'au not found in factionLinks
 - Not parsing Plagueburst crawlers (listed as upgrade and not unit) (check to see if "upgrade profile has statline characteristic")
 - <brotherhood></brotherhood> in Greyknights
 - Greyknights doesn't show built-in spell
+- aeldari subfaction not found
 - black templars subfaction not found
 - can't copy output/gamecode by button on android
 ~ Plural Unit names not matching Singular unit names (bs/waha names)
+* SM character upgrades change unit name and cannot find on waha
 * unit link icons ONLY WORK IN CHROME (touch?)
 * Error in accordion when copying from button
 * copy link/code/output
 
 ## To Do:
 
-- Finish calculator/simulator MVP
-- load defender model into calculator
-- leadership roll in calculator
-
+1 Finish calculator/simulator MVP
+2 load defender model into calculator
+3 leadership roll in calculator
+- Download rosz/kfon (multer not saving rosz extension)
+- download/upload Custom Army File for kroller
+- print stylesheet
+- Button maker/injector
 - Find cantrips from a list in interface, onclick to show effect in OUTPUT
 - Wound tracker per model type
 - Click on a Keyword to find abilities that mention that keyword
 - Filter Stratagems by type?
-- download/upload Custom Army File for kroller
 - ul/ol in markdown
-- [Reference] Rules
 - accurately count models and weapons
 - What can be highlighted or copied?
 - onclick tooltip
@@ -53,6 +56,7 @@
 - Daily download/cleaning
 - Battlescribe ingestor (with classes/constructors)
 - Battlescribe read direct or search on wahapedia
+~ [Reference] Rules (some still not showing)
 ~ Weapon Ability icons (Blast. Plague Weapon.) Need more
 ~ tech priest control panel (needs more tools/logger)
 ~ Game tracker (needs scorebaord and syncing)

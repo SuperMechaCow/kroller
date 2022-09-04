@@ -6,8 +6,10 @@ app/node_modules/*
 app/discordtoken.js
 app/public/shares*
 app/public/img/factions*
-app/data/wahadata/*.csv
-app/data/wahadata/*.xlsx
+app/data/scraped/*
+app/data/*.csv
+app/data/*.xlsx
+app/data/database.db
 app/shares/*
 exampledata/*
 app/public/uploads*

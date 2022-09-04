@@ -19,7 +19,7 @@ var phaseList = {
 	Shooting: [`a ranged attack`, 'shooting'],
 	Charge: [`charge roll`, `heroic intervention`, 'charge'],
 	Fight: [`melee attack`],
-	Morale: [`morale test`, `leadership`, `combat attrition test`]
+	Morale: [`morale test`, `leadership`, `combat attrition`]
 };
 var unitRoles = [
 	'dedicatedtransport',
@@ -412,6 +412,10 @@ function updatePhaseTags() {
 	}
 }
 
+function changeKolor(stylesheetName) {
+	document.getElementById("40kolor").setAttribute("href", 'css/40kolor_' + stylesheetName + '.css');
+}
+
 function tickle() {
 	tickles++;
 	if (tickles == 10) {
@@ -427,8 +431,12 @@ function customMarkdown(notesString) {
 	// #[Header](Content)
 	do {
 		checkMatch = /#\[(.*?(?=\]))\]\((.*?(?=\)))\)/gs.exec(notesString);
-		if (checkMatch != null)
-			notesString = notesString.replaceAll(`#[${checkMatch[1]}](${checkMatch[2]})`, `<div class="accordion-header tag mini ruleTag clickable">${checkMatch[1]}</div><div class="accordion-content hide bg6 hlSome textSmall cCenter">${checkMatch[2]}</div>`);
+		if (checkMatch != null) {
+			let styler = '';
+			let headerColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/.exec(checkMatch[1]);
+			if (headerColor) styler = `style="background-color: ${headerColor[0]}"`;
+			notesString = notesString.replaceAll(`#[${checkMatch[1]}](${checkMatch[2]})`, `<div ${styler} class="accordion-header tag mini ruleTag clickable">${((headerColor) ? checkMatch[1].replace(headerColor[0], '') : checkMatch[1])}</div><div class="accordion-content hide bg6 hlSome textSmall cCenter">${checkMatch[2]}</div>`);
+		}
 	} while (checkMatch != null);
 	// CP costs
 	// {0} - {9} or {-}
@@ -449,6 +457,12 @@ function customMarkdown(notesString) {
 	// Italics
 	// *This is italics*
 	notesString = notesString.replaceAll(/\*([^\*\n]*)\*/g, `<i>$1</i>`);
+	// Strikethrough
+	// ~~This is Strikethrough~~
+	notesString = notesString.replaceAll(/~~([^\*\n]*)~~/g, `<i>$1</i>`);
+	// Tooltip color
+	// [oRThis is tooltip text]This is the colored text[/o]
+	notesString = notesString.replaceAll(/\[o([R|G|B])+(.*)\](.*)\[\/o\]/g, `<span class="o$1" title="$2">$3</span>`);
 	// horizontal rules
 	// ---
 	notesString = notesString.replaceAll(/^(-{3})$|^-/gm, `<hr>`);
@@ -590,6 +604,15 @@ function init(mode) {
 		// }
 	}
 
+	if (forceData.length == 2) {
+		if (forceData[0].force.gametype != forceData[1].force.gametype) {
+			output(`<span class="oR" title="This is non-fatal. You can still use the app, but probably with limited functionality.">Warning: </span>Forces' game types do not match!`);
+		}
+	}
+
+	changeKolor(['classico', 'greyknight', 'morphG', 'morphP', 'pitchblack', 'starkwhite'][Math.floor(Math.random() * 4)])
+	// changeKolor('greyknight')
+
 }
 
 function reload() {
@@ -618,26 +641,90 @@ function listBuild() {
 		if (force.force) {
 			// Get and erase the list for this force
 			let thisListIndex = forceData.indexOf(force);
-			force = force.force;
+			// force = force.force;
 			let thisList = document.getElementsByClassName('listView')[thisListIndex];
 			thisList.innerHTML = '';
 			// Add force name
 			appendList = document.createElement('h1');
-			appendList.innerText = force.name;
+			appendList.innerText = force.force.name;
 			thisList.append(appendList);
-			if (force.customNotes) thisList.innerHTML += `<h3 class='textSmall textSans'>${customMarkdown(force.customNotes)}</p>`
+
+			// Add any custom notes
+			if (force.force.customNotes) thisList.innerHTML += `<h3 class='textSans'>${customMarkdown(force.force.customNotes)}</p>`
+
+			let forceHeader = document.createElement('div');
+			forceHeader.classList.add('accordion-header', 'bg0', 'banner');
+			forceHeader.innerText = 'Force Details';
+			thisList.append(forceHeader);
+			let forceContent = document.createElement('div');
+			forceContent.classList.add('accordion-content', 'bg4');
+			thisList.append(forceContent);
+
+			//Add game type
+			if (force.force.gametype) {
+				//remove margin from bottom of last thing appended
+				appendList.style.marginBottom = '0px';
+				//then start a new append item
+				appendList = document.createElement('h3');
+				appendList.innerText = force.force.gametype;
+				forceContent.append(appendList);
+
+				// Uncomment to return secondaries to listbuild
+				/*
+				if (force.force.secondaries.length) {
+					let secondList = {}
+					//find all unique
+					for (var secondCat of force.force.secondaries.map(item => item.category).filter((value, index, self) => self.indexOf(value) === index)) {
+						// Sort by category
+						for (var second of force.force.secondaries) {
+							if (secondCat == second.category) {
+								if (secondList[secondCat])
+								secondList[secondCat].push(second);
+								else secondList[secondCat] = [second];
+							}
+						}
+					}
+					//
+					for (var secondCat of Object.keys(secondList)) {
+						appendList = document.createElement('h3');
+						appendList.innerText = secondCat;
+						thisList.append(appendList);
+						appendList = document.createElement('select');
+						thisList.append(appendList);
+						appendOption = document.createElement('option');
+						appendOption.innerText = "[ None ]";
+						appendOption.value = undefined;
+						appendList.append(appendOption);
+						for (var second of secondList[secondCat]) {
+							appendOption = document.createElement('option');
+							let secondParse = second.name;
+							let secondName = '';
+							secondParse = secondParse.split(" ");
+							for (let i = 0; i < secondParse.length; i++) {
+								secondParse[i] = secondParse[i].toLowerCase();
+								secondName += secondParse[i][0].toUpperCase() + secondParse[i].substr(1) + " ";
+							}
+							appendOption.innerText = secondName;
+							appendOption.value = second.name
+							appendList.append(appendOption);
+						}
+					}
+				}
+				*/
+			}
 			// Add costs
 			appendList = document.createElement('div');
 			appendList.classList.add('statRow', 'noBorder');
-			for (var cost of Object.keys(force.costs)) {
+			for (var cost of Object.keys(force.force.costs)) {
 				appendList.innerHTML += `
                 <div class="statTag" title="">
                   <label for="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}" class="bg4">${cost}</label>
-                  <span class="bg7" id="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}">${force.costs[cost]}</span>
+                  <span class="bg7" id="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}">${force.force.costs[cost]}</span>
                 </div>
                 `
 			}
-			thisList.append(appendList);
+			forceContent.append(appendList);
+
 
 			/*
 			██████  ███████ ████████  █████   ██████ ██   ██ ███    ███ ███████ ███    ██ ████████
@@ -647,7 +734,7 @@ function listBuild() {
 			██████  ███████    ██    ██   ██  ██████ ██   ██ ██      ██ ███████ ██   ████    ██
 			*/
 
-			for (var detachment of force.detachments) {
+			for (var detachment of force.force.detachments) {
 				let newBox = document.createElement('div');
 				newBox.classList.add('factionBox');
 
@@ -682,20 +769,26 @@ function listBuild() {
 
 				thisList.append(newBox);
 
+				let unitHeader = document.createElement('div');
+				unitHeader.classList.add('accordion-header', 'bg0', 'banner');
+				unitHeader.innerText = 'Detachment Rules';
+				thisList.append(unitHeader);
+				let unitContent = document.createElement('div');
+				unitContent.classList.add('accordion-content', 'bg4');
 				for (var rule of detachment.rules) {
 					let newrule = document.createElement('div');
 					newrule.innerText = rule.name;
 					newrule.classList.add('accordion-header', 'tag', 'mini', 'ruleTag', 'clickable');
-					thisList.append(newrule);
+					unitContent.append(newrule);
 					let newruleContent = document.createElement('div');
 					newruleContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome', 'textSmall', 'cLeft', 'textSans');
 					newruleContent.innerHTML += customMarkdown(rule.desc);
 					for (phase of Object.keys(phaseList)) {
 						if (makeUseTag(rule.desc, phase)) newrule.classList.add(phase);
 					}
-					thisList.append(newruleContent);
+					unitContent.append(newruleContent);
 				}
-
+				thisList.append(unitContent);
 				// Start listing units
 				/*
 				██    ██ ███    ██ ██ ████████
@@ -707,6 +800,7 @@ function listBuild() {
 
 				for (var unit of detachment.units) {
 					if (!settings.slotIcons) {
+						// If no icons, see if this unit is a different slot and insert a header above if so
 						if (detachment.units.indexOf(unit)) {
 							if (detachment.units[detachment.units.indexOf(unit) - 1].slot != unit.slot)
 								thisList.innerHTML += `<h3>${unit.slot}</h3>`
@@ -716,6 +810,13 @@ function listBuild() {
 					}
 					unitHeader = document.createElement('div');
 					unitHeader.classList.add('accordion-header', 'bg0', 'banner', 'unit');
+					if (unit.customNotes) {
+						let headerColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/.exec(unit.customNotes);
+						if (headerColor) {
+							unit.customNotes = unit.customNotes.replace(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g, '');
+							unitHeader.style.background = `linear-gradient(#000000, ${headerColor[0]})`;
+						}
+					}
 					// Role icon on left side
 					if (settings.slotIcons && unitRoles.includes(unit.slot.replaceAll(' ', '').toLowerCase())) {
 						unitHeader.innerHTML += `
@@ -908,7 +1009,7 @@ function listBuild() {
 							<span class="bg7 textSmall">${spell.range}</span>
 							</div>
 							</div>
-							<div class="textSmall cLeft textSans">${spell.details.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
+							<div class="textSmall cLeft textSans">${spell.details.replaceAll(currentPhase + " phase", `<span class="oR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(spell.details, phase)) newSpell.classList.add(phase);
 						}
@@ -931,7 +1032,7 @@ function listBuild() {
 						if (rule.name == 'Explodes') {
 							newRule.classList.add('permaUse');
 							newRuleContent.innerHTML += `
-							<div class="textSmall cLeft textSans">${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>
+							<div class="textSmall cLeft textSans">${rule.desc.replaceAll(currentPhase + " phase", `<span class="oR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>
 							<div class="statRow noBorder">
 							<div class="statTag">
 							<label class="bg3 textSmall">Roll</label>
@@ -962,7 +1063,7 @@ function listBuild() {
 								</div>
 								<div class="textSmall cCenter textSans">${rule.desc}</div>`
 						} else {
-							newRuleContent.innerHTML += `<div class="textSmall cLeft textSans">${((rule.customNotes) ? customMarkdown(rule.customNotes) : '')}<br>${rule.desc.replaceAll(currentPhase + " phase", `<span class="outputCataR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
+							newRuleContent.innerHTML += `<div class="textSmall cLeft textSans">${((rule.customNotes) ? customMarkdown(rule.customNotes) : '')}<br>${rule.desc.replaceAll(currentPhase + " phase", `<span class="oR" title="${currentPhase}">${currentPhase} phase</span>`)}</div>`
 						}
 						for (phase of Object.keys(phaseList)) {
 							if (makeUseTag(rule.desc, phase)) newRule.classList.add(phase);
@@ -1059,8 +1160,9 @@ function listBuild() {
 			}
 			thisList.innerHTML += `
 			<hr>
-			<div class="accordion-header bg0 banner">Import New</div>
+			<div class="accordion-header bg0 banner">Import / Export</div>
 			<div class="accordion-content bg5 feedbackwrapper">
+			<h2>Import</h2>
 			<form action="/upload" enctype="multipart/form-data" method="post">
 			<label for="atkr_file">Attacker File</label>
 			<input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
@@ -1069,6 +1171,8 @@ function listBuild() {
 			<input type="hidden" name="gameCode" id="gameCode" value="${gameCode}">
 			<input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
 			<!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
+			<h2>Export</h2>
+			<button type="button" class="cCenter" onclick="window.location='uploads/${force.filename}'">Download .rosz</button>
 			</form>
 			</div>`;
 		}

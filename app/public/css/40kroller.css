@@ -1,3 +1,46 @@
+#output {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+body {
+  background-color: #000000;
+}
+
+h1, h2, h3, h4, hr {
+  color: #ffffff;
+}
+
+input:checked+.slider {
+  background-color: #000000;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #000000;
+}
+
+.accordion-header {
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.accordion-header .statTag {
+  color: #ffffff;
+}
+
+.accordion-content.isOpen {
+  border-color: #000000;
+}
+
+.accordion-content .block {
+  color: #000000;
+  border-color: #000000;
+}
+
+.openNav {
+  color: #ffffff;
+}
+
 /* jura-regular - latin */
 @font-face {
   font-family: 'Bank Gothic';
@@ -62,7 +105,6 @@ html, body {
 
 body {
   height: 100%;
-  background-color: #000000;
   display: flex;
 }
 
@@ -72,41 +114,36 @@ b, strong {
 
 h1, h2, h3, h4, hr {
   /* text-align: center; */
-  color: #ffffff;
   -webkit-user-select: none;
   -moz-user-select: none;
   font-family: 'Bank Gothic', 'Jura', 'Arial';
 }
 
 h1 {
-  color: #ffffff;
   font-size: 2em;
 }
 
 h2 {
-  color: #000000;
   font-size: 1em;
   padding: 2px;
   margin: 0px;
 }
 
 h3 {
-  color: #FFFFFF;
   font-size: 1em;
   padding: 2px;
   margin: 0px;
 }
 
-a {
-  color: #FFFFFF;
-}
-
-a:hover {
-  color: #cccccc;
-}
-
 li {
   font-size: 0.8em;
+}
+
+pre {
+  user-select: all;
+}
+.forceGothic {
+  font-family: 'Bank Gothic', 'Jura', 'Arial';
 }
 
 .textTiny {
@@ -148,38 +185,6 @@ li {
   text-shadow: 1px 1px #6666BB;
 }
 
-.bg0 {
-  background-color: #000000;
-}
-
-.bg1 {
-  background-color: #332211;
-}
-
-.bg2 {
-  background-color: #886622;
-}
-
-.bg3 {
-  background-color: #AA6622;
-}
-
-.bg4 {
-  background-color: #cc8844;
-}
-
-.bg5 {
-  background-color: #eeaa66;
-}
-
-.bg6 {
-  background-color: #ddaa88;
-}
-
-.bg7 {
-  background-color: #ffcc99;
-}
-
 .hlSome {
   user-select: auto;
 }
@@ -215,15 +220,12 @@ li {
   min-width: 500px;
   max-width: 500px;
   transition: 0.25s;
-  background-color: #886622;
   padding: 5px;
   margin: auto;
   border-radius: 5px;
 }
 
 #output {
-  background-color: #000000;
-  color: #FFFFFF;
   padding: 0px;
   overflow: hidden;
 }
@@ -287,12 +289,10 @@ li {
 }
 
 .accordion-header {
-  color: #ffffff;
   cursor: pointer;
   border-style: solid;
   border-width: 1px;
   border-radius: 10px 10px 10px 10px;
-  border-color: black;
   padding: 5px;
   display: inline-block;
   margin: 5px 0px 5px 0px;
@@ -311,7 +311,6 @@ li {
 
 .accordion-header .statTag {
   font-weight: 1000;
-  color: #000000;
 }
 
 .accordion-header.isOpen {
@@ -341,7 +340,6 @@ li {
   border-style: solid;
   border-width: 1px;
   border-radius: 0px 0px 10px 10px;
-  border-color: black;
   padding: 5px;
   max-height: none;
   max-width: none;
@@ -354,12 +352,10 @@ li {
   font-size: 0.8em;
   padding: 2px;
   margin: 1px;
-  color: #000000;
   font-weight: 1000;
   border-style: solid;
   border-width: 1px;
   border-radius: 5px 5px 5px 5px;
-  border-color: black;
   margin: 5px 0px 5px 0px;
 }
 
@@ -432,14 +428,6 @@ li {
   transition: .4s;
 }
 
-input:checked+.slider {
-  background-color: #332211;
-}
-
-input:focus+.slider {
-  box-shadow: 0 0 1px #332211;
-}
-
 input:checked+.slider:before {
   -webkit-transform: translateX(20px);
   -ms-transform: translateX(20px);
@@ -458,10 +446,9 @@ input:checked+.slider:before {
 .settingBox {
   border: 1px solid black;
   border-radius: 5px;
-  background-color: #AA6622;
   display: flex;
   justify-content: space-between;
-  overflow:auto;
+  overflow: auto;
   margin: 5px 0px 5px 0px;
   padding: 5px;
 }
@@ -569,7 +556,6 @@ input:checked+.slider:before {
   top: 10px;
   font-size: 30px;
   cursor: pointer;
-  color: #ffffff;
 }
 
 #toggleatkr {
@@ -665,10 +651,6 @@ input:checked+.slider:before {
   background-color: #ffaaaa;
 }
 
-.useTag {
-  box-shadow: 0px 0px 2px 1px #f00;
-}
-
 .newTag {
   box-shadow: 0px 0px 3px 2px #2adcf7;
 }
@@ -683,13 +665,11 @@ input:checked+.slider:before {
 #atkrList {
   transform: translateX(0%);
   left: 0;
-  background-image: linear-gradient(to right, #332211, #000000);
 }
 
 #dfdrList {
   transform: translateX(0%);
   right: 0;
-  background-image: linear-gradient(to left, #332211, #000000);
 }
 
 .listView {
