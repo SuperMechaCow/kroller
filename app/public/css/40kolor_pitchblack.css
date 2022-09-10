@@ -18,6 +18,11 @@
   filter: invert(100%);
 }
 
+/* .listView .roleImg {
+  -webkit-filter: invert(0%);
+  filter: invert(0%);
+} */
+
 #output {
   background-color: #000000;
   color: #ffffff;
@@ -121,7 +126,17 @@ a:hover {
   background-color: #000000;
 }
 
+.bg3.tag {
+  color: #000000;
+  background-color: #666666;
+}
+
+.bg3.tag.weapon {
+  background-color: #ffffff;
+}
+
 .bg7.tag {
+  color: #000000;
   background-color: #ffffff;
 }
 

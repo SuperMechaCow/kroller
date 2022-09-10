@@ -528,7 +528,7 @@ app.get('/api/status', function(req, res) {
 });
 
 // Do some dice rolls
-app.get('/api/roll', function (req, res) {
+app.get('/api/roll', function(req, res) {
 	res.json(calc.rollCalc(req.query.dice));
 });
 /*
@@ -806,15 +806,31 @@ function matchModel(obj1, obj2) {
 }
 
 function sortBySlot(units) {
+	let tempLists = {};
 	let newOrder = [];
 	let catchAll = [];
 	let slotOrder = ['HQ', 'Troops', 'Elites', 'Fast Attack', 'Heavy Support', 'Dedicated Transport', 'Flyers', 'Lord of War', 'Fortification'];
-	for (unit of units) {
-		for (slot of slotOrder) {
+	for (slot of slotOrder) {
+		for (unit of units) {
 			if (unit.slot == slot) {
-				newOrder.push(unit);
+				if (tempLists[slot]) {
+					tempLists[slot].push(unit);
+				} else {
+					tempLists[slot] = [unit];
+				}
 			}
 		}
+	}
+	for (slot of Object.keys(tempLists)) {
+		tempLists[slot].sort(function(a, b) {
+			var textA = a.name.toUpperCase();
+			var textB = b.name.toUpperCase();
+			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+		});
+		newOrder = newOrder.concat(tempLists[slot]);
+	}
+
+	for (unit of units) {
 		if (!slotOrder.includes(unit.slot)) {
 			catchAll.push(unit);
 		}
@@ -1040,7 +1056,11 @@ function parseBS(data) {
 			}
 			//Some factions have multiple names
 			if (faction == 'Adeptus Astartes') faction = 'Space Marines';
-			if (faction == 'Craftworlds') faction = 'Aeldari';
+			if (faction == 'Craftworlds') {
+				force.faction = 'Aeldari';
+				newDetachment.faction = 'Aeldari';
+				faction = 'Aeldari';
+			}
 			let factionLink = wahaData.Factions.find(fct => fct.name == faction);
 			if (factionLink) newDetachment.factionLink = factionLink.link;
 
@@ -1081,6 +1101,8 @@ function parseBS(data) {
 									newDetachment.subfaction = select.$.name; // Then you've found the subfaction
 								else if (wahaData.Subfactions.find(subfaction => subfaction.name == select.$.name.split(': ')[1])) // Sometimes formatted as "Subfaction Type: Subfaction Name"
 									newDetachment.subfaction = select.$.name.split(': ')[1];
+								else if (wahaData.Subfactions.find(subfaction => subfaction.name == select.$.name.split(': ')[0])) // Sometimes formatted as "Subfaction Type: Subfaction Name"
+									newDetachment.subfaction = select.$.name.split(': ')[0];
 								if (unit.$.name == "Gametype") {
 									let gameName = unit.selections[0].selection[0].$.name;
 									// gameName = gameName.replace('Chapter Approved', 'Grand Tournament');
@@ -1570,7 +1592,6 @@ function parseBS(data) {
 										newUnit.models[newUnit.models.length - 1].amount++;
 									else
 										newUnit.models[newUnit.models.length - 1] = 1;
-									console.log(newUnit.models[newUnit.models.length - 1].amount);
 								} else {
 									newUnit.models.push(newModel)
 								}
@@ -1616,7 +1637,9 @@ function parseBS(data) {
 								}
 								let typeData = stratData.type.split(' – ')
 								if (typeData.length > 1) {
-									stratData.subfaction = typeData[0]
+									stratData.subfaction = typeData[0];
+									let subCheck = /(.*)+\((.*)\)/g.exec(stratData.subfaction);
+									if (subCheck) stratData.subfaction = subCheck[2];
 									stratData.type = typeData[1].replace(' Stratagem', '');
 								}
 								newUnit.stratagems.push(stratData)

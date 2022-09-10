@@ -1,23 +1,28 @@
 ## Bugs:
-- No Force Org with models subselections Not displaying in list (canoptek plasmacytes in viral constructs)
+- No Force Org Slot / Warglaives have redundant rules tags
 - fix wahalinks (some 'http' and some '/who40ken')
 - Can only find one armiger in app.js
 - Convert gameCode query to lowercase
 - don't update tracker on swipe or spin
 - T'au not found in factionLinks
 - Not parsing Plagueburst crawlers (listed as upgrade and not unit) (check to see if "upgrade profile has statline characteristic")
-- <brotherhood></brotherhood> in Greyknights
 - Greyknights doesn't show built-in spell
-- aeldari subfaction not found
+- <brotherhood></brotherhood> in Greyknights
 - black templars subfaction not found
+- Necron subfaction not found
 - can't copy output/gamecode by button on android
 ~ Plural Unit names not matching Singular unit names (bs/waha names)
+* aeldari subfaction not found
+* Eldar lists are putting HQ at the bottom? Out of order?
 * SM character upgrades change unit name and cannot find on waha
 * unit link icons ONLY WORK IN CHROME (touch?)
 * Error in accordion when copying from button
 * copy link/code/output
 
 ## To Do:
+
+WHERE YOU LEFT OFF: data[8] isn't getting anything for rollCalc
+
 
 1 Finish calculator/simulator MVP
 2 load defender model into calculator

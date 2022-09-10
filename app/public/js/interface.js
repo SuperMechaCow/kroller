@@ -448,24 +448,24 @@ function customMarkdown(notesString) {
 				fileName = 'null';
 			else
 				fileName = checkMatch[1];
-			notesString = notesString.replaceAll(`{${checkMatch[1]}}`, `<img src="img/icons/cp${fileName}.png" style="margin: 0px; padding: 0px; width: 12px; height: 12px;">`);
+			notesString = notesString.replaceAll(`{${checkMatch[1]}}`, `<img src="img/icons/cp${fileName}.svg" style="margin: 0px; padding: 0px; width: 12px; height: 12px;">`);
 		}
 	} while (checkMatch != null);
 	// Bold
 	// **This is bold**
-	notesString = notesString.replaceAll(/\*\*([^\*\n]*)\*\*/g, `<b>$1</b>`);
+	notesString = notesString.replaceAll(/\*\*([^\*]*)\*\*/g, `<b>$1</b>`);
 	// Italics
 	// *This is italics*
-	notesString = notesString.replaceAll(/\*([^\*\n]*)\*/g, `<i>$1</i>`);
+	notesString = notesString.replaceAll(/\*([^\*]*)\*/g, `<i>$1</i>`);
 	// Strikethrough
 	// ~~This is Strikethrough~~
-	notesString = notesString.replaceAll(/~~([^\*\n]*)~~/g, `<i>$1</i>`);
+	notesString = notesString.replaceAll(/~~([^\*]*)~~/g, `<i>$1</i>`);
 	// Tooltip color
 	// [oRThis is tooltip text]This is the colored text[/o]
 	notesString = notesString.replaceAll(/\[o([R|G|B])+(.*)\](.*)\[\/o\]/g, `<span class="o$1" title="$2">$3</span>`);
 	// horizontal rules
 	// ---
-	notesString = notesString.replaceAll(/^(-{3})$|^-/gm, `<hr>`);
+	// if (/^(-{3})$|^-/gm.exec(notesString)[1]) notesString = notesString.replaceAll(/^(-{3})$|^-/gm, `<hr>`);
 	// Headers
 	// # Header1 - ##### Header5
 	do {
@@ -814,6 +814,12 @@ function listBuild() {
 						let headerColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/.exec(unit.customNotes);
 						if (headerColor) {
 							unit.customNotes = unit.customNotes.replace(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g, '');
+							// This was supposed to match the loaded CSS, but cannot read because it's not in the DOM yet
+							// let fadeColor = window.getComputedStyle(unitHeader);
+							// console.log(fadeColor);
+							// fadeColor = fadeColor.getPropertyValue("background-color");
+							// console.log(fadeColor);
+							// unitHeader.style.background = `linear-gradient(${fadeColor}, ${headerColor[0]})`;
 							unitHeader.style.background = `linear-gradient(#000000, ${headerColor[0]})`;
 						}
 					}
@@ -828,7 +834,7 @@ function listBuild() {
 					if (tempName.length >= 22) tempName = tempName.substring(0, 20) + " ...";
 					unitHeader.innerHTML += tempName;
 					// Warlord icon on right side
-					if (settings.slotIcons && unit.warlord) unitHeader.innerHTML += `<img src="img/icons/warlord.png" class="warlordImg">`;
+					if (settings.slotIcons && unit.warlord) unitHeader.innerHTML += `<img src="img/roles/warlord.png" class="warlordImg">`;
 					let unitContent = document.createElement('div');
 					unitContent.classList.add('accordion-content', 'bg4', 'unitBox');
 					if (unit.customNotes) unitContent.innerHTML += `<p class='textSmall unitNotes textSans'>${customMarkdown(unit.customNotes)}</p>`
@@ -935,17 +941,23 @@ function listBuild() {
 								// weaponDiv.append(abilTag);
 								let abilText = weapon.abilities;
 								if (settings.statIcons) {
+									// THis needs a better way of handling special rules
 									if (abilText.includes('Blast')) {
 										abilText = abilText.replaceAll(/Blast[.]?/g, '');
-										weaponDiv.innerHTML += `<img src='img/icons/blast.png' title='Blast Weapons: When targetting outside of Engagement Range: minimum three attacks against units with 6+ models, and always make maximum number of attacks against units with 11+ models.' class='weaponIcon_abil'>`;
+										weaponDiv.innerHTML += `<img src='img/icons/weapon_abils/blast.png' title='Blast Weapons: When targetting outside of Engagement Range: minimum three attacks against units with 6+ models, and always make maximum number of attacks against units with 11+ models.' class='weaponIcon_abil'>`;
 									}
 									if (abilText.includes('Plague Weapon')) {
 										abilText = abilText.replaceAll(/Plague Weapon[.]?/g, '').trim();
-										weaponDiv.innerHTML += `<img src='img/icons/plague.png' title='Plague Weapon: Each time an attack is made with this weapon, re-roll a wound roll of 1.' class='weaponIcon_abil'>`;
+										weaponDiv.innerHTML += `<img src='img/icons/weapon_abils/plague.png' title='Plague Weapon: Each time an attack is made with this weapon, re-roll a wound roll of 1.' class='weaponIcon_abil'>`;
 									}
 									if (abilText.includes('Each time an attack is made with this weapon, that attack automatically hits the target')) {
-										abilText = abilText.replaceAll(/Each time an attack is made with this weapon, that attack automatically hits the target[.]?/g, '').trim();
-										weaponDiv.innerHTML += `<img src='img/icons/flamer.png' title='Flamer: Each time an attack is made with this weapon, that attack automatically hits the target.' class='weaponIcon_abil'>`;
+										abilText = abilText.replaceAll(/Each time an attack is made with this weapon, that attack automatically hits the target[.]?/, '').trim();
+										weaponDiv.innerHTML += `<img src='img/icons/weapon_abils/flamer.png' title='Flamer: Each time an attack is made with this weapon, that attack automatically hits the target.' class='weaponIcon_abil'>`;
+									}
+									if (abilText.includes('Each time an attack is made with this weapon profile, make')) {
+										let multi = /Each time an attack is made with this weapon profile, make (\d)/g.exec(abilText);
+										abilText = abilText.replaceAll(/Each time an attack is made with this weapon profile, make (\d) hit rolls instead of 1./g, '').trim();
+										weaponDiv.innerHTML += `<img src='img/icons/weapon_abils/Ax${multi[1]}.svg' title='Multi-Attack ${multi[1]}: Each time an attack is made with this weapon profile, make ${multi[1]} hit rolls instead of 1.' class='weaponIcon_abil'>`;
 									}
 								}
 								weaponDiv.innerHTML += `<p class='textSmall textSans'>${abilText}</p>`;
@@ -1079,7 +1091,8 @@ function listBuild() {
 					*/
 					if (settings.stratagems) {
 						for (var stratagem of unit.stratagems) {
-							if (detachment.subfaction.length == 0 || detachment.subfaction == stratagem.subfaction || detachment.faction == stratagem.subfaction || detachment.variant == stratagem.subfaction) {
+							// Filter by faction, subfaction, and army of renown / variant
+							if ((stratagem.type != 'Requisition') && (detachment.subfaction.length == 0 || detachment.subfaction == stratagem.subfaction || detachment.faction == stratagem.subfaction || detachment.variant == stratagem.subfaction)) {
 								let newStratagem = document.createElement('div');
 								if (detachment.faction != stratagem.subfaction)
 									if (detachment.subfaction)
@@ -1097,7 +1110,7 @@ function listBuild() {
 									stratName += stratParse[i][0].toUpperCase() + stratParse[i].substr(1) + " ";
 								}
 								stratName = stratName.trim();
-								newStratagem.innerHTML += `<img src="img/icons/cp${fileName}.png" style="margin: 0px; padding: 0px; width: 12px; height: 12px;"> ${stratName}`;
+								newStratagem.innerHTML += `<img src="img/icons/cp${fileName}.svg" style="margin: 0px; padding: 0px; width: 12px; height: 12px;"> ${stratName}`;
 								unitContent.append(newStratagem);
 								let newStratagemContent = document.createElement('div');
 								newStratagemContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
@@ -1108,7 +1121,7 @@ function listBuild() {
 								for (phase of Object.keys(phaseList)) {
 									if (makeUseTag(stratagem.description, phase)) newStratagem.classList.add(phase);
 								}
-								unitContent.append(newStratagemContent)
+								unitContent.append(newStratagemContent);
 							}
 						}
 					}
