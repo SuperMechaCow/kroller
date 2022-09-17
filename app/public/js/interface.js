@@ -9,7 +9,8 @@ var settings = {
 	autoClose: true,
 	stratagems: true,
 	statIcons: true,
-	slotIcons: true
+	slotIcons: true,
+	forceSort: 'slot' //slot, marker, name, points/power?
 };
 var phaseList = {
 	Pregame: ['during deployment', 'at the start of the first battle round', 'Declare Reserves and Transports', 'before the battle'],
@@ -246,7 +247,10 @@ function weaponSelect() {
 	for (var weaponElement of document.getElementsByClassName('weapon')) {
 		let weapon = JSON.parse(weaponElement.getAttribute('data-profile'));
 		weaponElement.addEventListener("click", (e) => {
-			ioList.attackerName.innerHTML = weapon.user.name + "<br>" + weapon.name + "<br>";
+			if (weapon.user.customName) ioList.attackerName.innerHTML = weapon.user.customName + "<br>"
+			else ioList.attackerName.innerHTML = weapon.user.name + "<br>"
+			if (weapon.customName) ioList.attackerName.innerHTML += weapon.customName + "<br>";
+			else ioList.attackerName.innerHTML += weapon.name + "<br>";
 			ioList.sim_atkr_mdls.value = weapon.amount;
 			let weaponType = weapon.type.split(" ");
 			if (weaponType[0] == 'Melee') {
@@ -267,7 +271,7 @@ function weaponSelect() {
 				let weaponAtt = weaponType[1].match(/(\d)?(D)?(\d)[\+]?(\d)*/);
 				if (weaponAtt[2]) {
 					//There are dice
-					ioList.sim_hit_attacks_checked.checked = true;
+					ioList.sim_hit_attacks.checked = true;
 					ioList.sim_hit_attacks_faces.value = weaponAtt[3];
 					if (weaponAtt[1])
 						//There are multiple dice
@@ -277,13 +281,13 @@ function weaponSelect() {
 						ioList.sim_hit_attacks_mod.value = weaponAtt[4];
 				} else {
 					//There are not dice
-					ioList.sim_hit_attacks_checked.checked = false;
+					ioList.sim_hit_attacks.checked = false;
 					ioList.sim_atkr_a.value = weaponAtt[3];
 				}
 				let weaponDam = weapon.d.match(/(\d)?(D)?(\d)[\+]?(\d)*/);
 				if (weaponDam[2]) {
 					//There are dice
-					ioList.sim_damage_random_checked.checked = true;
+					ioList.sim_damage_random.checked = true;
 					ioList.sim_damage_random_faces.value = weaponDam[3];
 					if (weaponDam[1])
 						//There are multiple dice
@@ -293,7 +297,7 @@ function weaponSelect() {
 						ioList.sim_damage_random_mod.value = weaponDam[4];
 				} else {
 					//There are not dice
-					ioList.sim_damage_random_checked.checked = false;
+					ioList.sim_damage_random.checked = false;
 					ioList.sim_atkr_d.value = weapon.d;
 				}
 			}
@@ -410,6 +414,58 @@ function updatePhaseTags() {
 			// currentPhase = '';
 		}
 	}
+}
+
+function sortBySlot(units) {
+	let tempLists = {};
+	let newOrder = [];
+	let catchAll = [];
+	let slotOrder = ['HQ', 'Troops', 'Elites', 'Fast Attack', 'Heavy Support', 'Dedicated Transport', 'Flyers', 'Lord of War', 'Fortification'];
+	for (slot of slotOrder) {
+		for (unit of units) {
+			if (unit.slot == slot) {
+				if (tempLists[slot]) {
+					tempLists[slot].push(unit);
+				} else {
+					tempLists[slot] = [unit];
+				}
+			}
+		}
+	}
+	for (slot of Object.keys(tempLists)) {
+		tempLists[slot].sort(function(a, b) {
+			var textA = a.name.toUpperCase();
+			var textB = b.name.toUpperCase();
+			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+		});
+		newOrder = newOrder.concat(tempLists[slot]);
+	}
+
+	for (unit of units) {
+		if (!slotOrder.includes(unit.slot)) {
+			catchAll.push(unit);
+		}
+	}
+	newOrder = newOrder.concat(catchAll);
+	return newOrder;
+}
+
+function sortByProperty(units, property) {
+	units.sort(function(a, b) {
+		var nameA = a[property].toUpperCase();
+		var nameB = b[property].toUpperCase();
+		return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
+	});
+	return units;
+}
+
+function sortByCost(units, property) {
+	units.sort(function(a, b) {
+		var nameA = a.costs[property];
+		var nameB = b.costs[property];
+		return (nameA > nameB) ? -1 : (nameA < nameB) ? 1 : 0;
+	});
+	return units;
 }
 
 function changeKolor(stylesheetName) {
@@ -718,13 +774,12 @@ function listBuild() {
 			for (var cost of Object.keys(force.force.costs)) {
 				appendList.innerHTML += `
                 <div class="statTag" title="">
-                  <label for="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}" class="bg4">${cost}</label>
+                  <label for="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}" class="bg4">${cost.toUpperCase()}</label>
                   <span class="bg7" id="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}">${force.force.costs[cost]}</span>
                 </div>
                 `
 			}
 			forceContent.append(appendList);
-
 
 			/*
 			██████  ███████ ████████  █████   ██████ ██   ██ ███    ███ ███████ ███    ██ ████████
@@ -734,7 +789,11 @@ function listBuild() {
 			██████  ███████    ██    ██   ██  ██████ ██   ██ ██      ██ ███████ ██   ████    ██
 			*/
 
+
 			for (var detachment of force.force.detachments) {
+				if (settings.forceSort == 'slot') detachment.units = sortBySlot(detachment.units);
+				else if (['pts', 'pl', 'cp'].includes(settings.forceSort)) detachment.units = sortByCost(detachment.units, settings.forceSort);
+				else if (settings.forceSort) detachment.units = sortByProperty(detachment.units, settings.forceSort);
 				let newBox = document.createElement('div');
 				newBox.classList.add('factionBox');
 
@@ -799,7 +858,7 @@ function listBuild() {
 				*/
 
 				for (var unit of detachment.units) {
-					if (!settings.slotIcons) {
+					if (!settings.slotIcons && settings.forceSort == 'slot') {
 						// If no icons, see if this unit is a different slot and insert a header above if so
 						if (detachment.units.indexOf(unit)) {
 							if (detachment.units[detachment.units.indexOf(unit) - 1].slot != unit.slot)
@@ -814,14 +873,20 @@ function listBuild() {
 						let headerColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/.exec(unit.customNotes);
 						if (headerColor) {
 							unit.customNotes = unit.customNotes.replace(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g, '');
-							// This was supposed to match the loaded CSS, but cannot read because it's not in the DOM yet
-							// let fadeColor = window.getComputedStyle(unitHeader);
-							// console.log(fadeColor);
-							// fadeColor = fadeColor.getPropertyValue("background-color");
-							// console.log(fadeColor);
-							// unitHeader.style.background = `linear-gradient(${fadeColor}, ${headerColor[0]})`;
-							unitHeader.style.background = `linear-gradient(#000000, ${headerColor[0]})`;
+							unit.marker = headerColor[0]
 						}
+					}
+					if (unit.marker) {
+						// unitHeader.style.background = `linear-gradient(#000000 0%, #000000 80%, ${unit.marker} 100%)`;
+						unitHeader.style.borderBottomWidth = `3px`;
+						unitHeader.style.borderBottomColor = unit.marker;
+						unitHeader.style.color = unit.marker;
+						// This was supposed to match the loaded CSS, but cannot read because it's not in the DOM yet
+						// let fadeColor = window.getComputedStyle(unitHeader);
+						// console.log(fadeColor);
+						// fadeColor = fadeColor.getPropertyValue("background-color");
+						// console.log(fadeColor);
+						// unitHeader.style.background = `linear-gradient(${fadeColor}, ${headerColor[0]})`;
 					}
 					// Role icon on left side
 					if (settings.slotIcons && unitRoles.includes(unit.slot.replaceAll(' ', '').toLowerCase())) {
@@ -838,6 +903,20 @@ function listBuild() {
 					let unitContent = document.createElement('div');
 					unitContent.classList.add('accordion-content', 'bg4', 'unitBox');
 					if (unit.customNotes) unitContent.innerHTML += `<p class='textSmall unitNotes textSans'>${customMarkdown(unit.customNotes)}</p>`
+					if (settings.forceSort == 'pts' || settings.forceSort == 'pl') {
+						// Add costs
+						let costDiv = document.createElement('div');
+						costDiv.classList.add('statRow', 'noBorder');
+						for (var cost of Object.keys(unit.costs)) {
+							costDiv.innerHTML += `
+			                <div class="statTag" title="">
+			                  <label for="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}" class="bg4">${cost.toUpperCase()}</label>
+			                  <span class="bg7" id="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}">${unit.costs[cost]}</span>
+			                </div>
+			                `
+						}
+						unitContent.append(costDiv);
+					}
 					/*
 					███    ███  ██████  ██████  ███████ ██      ███████
 					████  ████ ██    ██ ██   ██ ██      ██      ██
@@ -895,6 +974,7 @@ function listBuild() {
 							nameDiv.setAttribute(`data-profile`, JSON.stringify({
 								user: {
 									name: model.name,
+									customName: ((model.customName) ? model.customName : ''),
 									statlines: model.statlines
 								},
 								...weapon
@@ -1171,21 +1251,29 @@ function listBuild() {
 					thisList.append(unitContent);
 				}
 			}
+			let downloadKFON = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(force.force));
 			thisList.innerHTML += `
 			<hr>
-			<div class="accordion-header bg0 banner">Import / Export</div>
+			<div class="accordion-header bg0 banner">Force Settings</div>
 			<div class="accordion-content bg5 feedbackwrapper">
+			<h2>Sort Units:</h2>
+			Role<input type="radio" name="sortBy${forceData.indexOf(force)}" onchange="settings.forceSort = this.value; reload();" value="slot"${((settings.forceSort == 'slot') ? ' checked' : '')}>
+			Marker<input type="radio" name="sortBy${forceData.indexOf(force)}" onchange="settings.forceSort = this.value; reload();" value="marker"${((settings.forceSort == 'marker') ? ' checked' : '')}>
+			Name<input type="radio" name="sortBy${forceData.indexOf(force)}" onchange="settings.forceSort = this.value; reload();" value="name"${((settings.forceSort == 'name') ? ' checked' : '')}>
+			<br>
+			Points<input type="radio" name="sortBy${forceData.indexOf(force)}" onchange="settings.forceSort = this.value; reload();" value="pts"${((settings.forceSort == 'pts') ? ' checked' : '')}>
+			Power<input type="radio" name="sortBy${forceData.indexOf(force)}" onchange="settings.forceSort = this.value; reload();" value="pl"${((settings.forceSort == 'pl') ? ' checked' : '')}>
+			<hr>
 			<h2>Import</h2>
 			<form action="/upload" enctype="multipart/form-data" method="post">
-			<label for="atkr_file">Attacker File</label>
-			<input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
-			<label for="dfdr_file">Defender File</label>
-			<input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
+			${((thisListIndex) ? '<label for="dfdr_file">Defender File</label><input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>' : '<label for="atkr_file">Attacker File</label><input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>')}
 			<input type="hidden" name="gameCode" id="gameCode" value="${gameCode}">
-			<input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
+			<input type="submit" value="Upload BattleScribe Roster" class="fileBtn fileWidget">
 			<!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
+			<hr>
 			<h2>Export</h2>
 			<button type="button" class="cCenter" onclick="window.location='uploads/${force.filename}'">Download .rosz</button>
+			<a href="${downloadKFON}" download="${force.force.name}.kfon"><button type="button" class="cCenter"">Download .kfon</button></a>
 			</form>
 			</div>`;
 		}

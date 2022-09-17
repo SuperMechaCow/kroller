@@ -124,19 +124,19 @@
       </div>
 
       <!--
-       █████  ████████ ████████  █████   ██████ ██   ██     ██████   ██████  ██      ██
-      ██   ██    ██       ██    ██   ██ ██      ██  ██      ██   ██ ██    ██ ██      ██
-      ███████    ██       ██    ███████ ██      █████       ██████  ██    ██ ██      ██
-      ██   ██    ██       ██    ██   ██ ██      ██  ██      ██   ██ ██    ██ ██      ██
-      ██   ██    ██       ██    ██   ██  ██████ ██   ██     ██   ██  ██████  ███████ ███████
+       ██████  █████  ██       ██████ ██    ██ ██       █████  ████████  ██████  ██████
+      ██      ██   ██ ██      ██      ██    ██ ██      ██   ██    ██    ██    ██ ██   ██
+      ██      ███████ ██      ██      ██    ██ ██      ███████    ██    ██    ██ ██████
+      ██      ██   ██ ██      ██      ██    ██ ██      ██   ██    ██    ██    ██ ██   ██
+       ██████ ██   ██ ███████  ██████  ██████  ███████ ██   ██    ██     ██████  ██   ██
       -->
-      <a href="#attackroll"></a>
-      <div class="accordion-header bg0 banner">Attack Roll</div>
+      <a href="#calculator"></a>
+      <div class="accordion-header bg0 banner" style="display: none;">Calculator</div>
       <!-- Attacker -->
-      <div class="accordion-content bg4">
+      <div class="accordion-content bg4" style="display: none;">
         <div class="bg5 block cCenter">
           <p>Most of this feature is non-functional as it is being overhauled. This message will be removed when the feature is complete.</p>
-          <p>Please leave any feedback with the feedback form in the 'Import - Share' tab.</p>
+          <p>Please leave any feedback with the feedback form in the 'Import - Game' tab.</p>
         </div>
         <h2 id="attackerName" class="cCenter io" title="Abilities will show here if they are detected.">Attacker's Stats</h2>
         <div class="statRow bg5">
@@ -348,17 +348,12 @@
           <!-- <li>Be sure to use <span class='oG' title='You can right-click or use the three dots to create custome notes and names for anything in Battlescribe.'>custom notes</span> in your BattleScribe roster!</li> -->
         </ul>
         <hr>
-        <b>Update September 1st, 2022:</b>
+        <b>Update September 17th, 2022:</b>
         <ul>
-          <li>Improved subfaction detection and Stratagem Filtering.</li>
-          <li>You can now edit custom notes in BattleScribe and add markdown and custom accordions as such:
-            <pre>#[Header](Content)</pre>
-            You can also use bold, italics, line break, headers, images, links, and CP and Dice with {0} and [0]
-          </li>
-          <li>
-            Bracketting units now combine into one model, and most weapons now combine into one selector.
-          </li>
-          <li><span class='oR' title='Feedback is the second most effective way of getting your issue fixed. The first is joining the Discord channel and complaining.'>Please leave feedback</span> in the Share tab if something is not working for
+          <li>You can now sort your forces by Name, Role, Costs, and by Squad Marker in the Force Settings tab in your force.</li>
+          <li>To mark a squad, put a html hexidecimal color code as the beginning text in the Custom Notes of the unit you wish to mark (example: '#ff0000' will mark the unit in red).</li>
+          <li>40kroller converts your BattleScribe roster to a "kfon" data structure. You can download this file in the Force Settings tab in your Force. I don't know whay you would use this for, but it's there.</li>
+          <li><span class='oR' title='Feedback is the second most effective way of getting your issue fixed. The first is joining the Discord channel and complaining.'>Please leave feedback</span> in the Game tab if something is not working for
             you! You can now also upload the problem roster file as well.</li>
         </ul>
         <hr>
@@ -377,18 +372,19 @@
       </div>
 
       <!--
-      ███████ ██   ██  █████  ██████  ███████
-      ██      ██   ██ ██   ██ ██   ██ ██
-      ███████ ███████ ███████ ██████  █████
-           ██ ██   ██ ██   ██ ██   ██ ██
-      ███████ ██   ██ ██   ██ ██   ██ ███████
-      -->
+       ██████   █████  ███    ███ ███████
+      ██       ██   ██ ████  ████ ██
+      ██   ███ ███████ ██ ████ ██ █████
+      ██    ██ ██   ██ ██  ██  ██ ██
+       ██████  ██   ██ ██      ██ ███████
+     -->
       <% if (locals.gameCode) { %>
-      <a href="#share"></a>
-      <div class="accordion-header bg0 banner">Share</div>
+      <a href="#game"></a>
+      <div class="accordion-header bg0 banner">Game</div>
       <div class="accordion-content bg4 cCenter">
+        <button type="button" onclick="window.location='/'" title="">Start a New Game</button>
         <h2 class="cCenter">Game Code:</h2>
-        <h1 class="cCenter bg1 hlAll">
+        <h1 class="cCenter bg1 hlAll" style="margin-top: 0px;">
           <%- gameCode %>
         </h1>
         <img id="qrshare" src="shares/<%- gameCode %>.png" alt="Have your friend scan this QR code to join your game session">

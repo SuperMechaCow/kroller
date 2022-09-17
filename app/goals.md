@@ -1,4 +1,5 @@
 ## Bugs:
+- Costs of upgrades is not 100% accurate
 - No Force Org Slot / Warglaives have redundant rules tags
 - fix wahalinks (some 'http' and some '/who40ken')
 - Can only find one armiger in app.js
@@ -21,12 +22,14 @@
 
 ## To Do:
 
-WHERE YOU LEFT OFF: data[8] isn't getting anything for rollCalc
-
-
+data[8] isn't getting anything for rollCalc
 1 Finish calculator/simulator MVP
 2 load defender model into calculator
 3 leadership roll in calculator
+
+- New Game Button
+- Secondary selector
+- Expanded scoreboard when using Secondaries
 - Download rosz/kfon (multer not saving rosz extension)
 - download/upload Custom Army File for kroller
 - print stylesheet
@@ -64,11 +67,12 @@ WHERE YOU LEFT OFF: data[8] isn't getting anything for rollCalc
 ~ [Reference] Rules (some still not showing)
 ~ Weapon Ability icons (Blast. Plague Weapon.) Need more
 ~ tech priest control panel (needs more tools/logger)
-~ Game tracker (needs scorebaord and syncing)
+~ Game tracker
 ~ MARKDOWN IN CUSTOM NOTES (only does basic markdown?!)
 ~ Wahapedia Codex scraper
 ~ Wahapedia download/ingestor (automated)
 ~ Logger for debug (Doesn't show complete sql errors)
+* Sort units by categories (costs, name, marker, role, etc.)
 * Weapon Type Icons
 * paste game code to go to game
 * websockets or syncing

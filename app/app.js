@@ -212,6 +212,13 @@ app.get('/', async (req, res) => {
 									newGame.outputPretty = forceBSData.outputPretty;
 									newGame.output = forceBSData.output;
 								}
+								let outputSearch = forceBSData.filter(output => output.output)
+								if (outputSearch.length)
+									for (var output of outputSearch) {
+										newGame.error = output.error;
+										newGame.outputPretty = output.outputPretty;
+										newGame.output = output.output;
+									}
 								// or add the returned forces to newGame
 								else {
 									newGame.forceData = forceBSData;
@@ -1103,6 +1110,7 @@ function parseBS(data) {
 									newDetachment.subfaction = select.$.name.split(': ')[1];
 								else if (wahaData.Subfactions.find(subfaction => subfaction.name == select.$.name.split(': ')[0])) // Sometimes formatted as "Subfaction Type: Subfaction Name"
 									newDetachment.subfaction = select.$.name.split(': ')[0];
+								// Try to determine game type
 								if (unit.$.name == "Gametype") {
 									let gameName = unit.selections[0].selection[0].$.name;
 									// gameName = gameName.replace('Chapter Approved', 'Grand Tournament');
@@ -1133,19 +1141,28 @@ function parseBS(data) {
 					//Create a new blank unit
 					let newUnit = {
 						name: '',
+						costs: {},
 						slot: '',
 						faction: [],
 						keywords: [],
 						models: [],
 						rules: [],
 						spells: [],
-						stratagems: []
+						stratagems: [],
+						marker: ''
 					}
 					//If the selection is not a unit (sometimes it's a configuration),
 					//this will remain "undefined".
 					newUnit.name = unit.$.name
-					if (unit.$.customName) newUnit.customName = unit.$.customName
+					if (unit.$.customName) newUnit.customName = unit.$.customName;
 					if (unit.customNotes) newUnit.customNotes = unit.customNotes[0];
+
+					//Get costs (This code was only good for one model units, apparently)
+					if (unit.costs) {
+						for (var cost of unit.costs[0].cost) {
+							newUnit.costs[cost.$.name.trim().toLowerCase()] = Math.round(cost.$.value);
+						}
+					}
 
 					//
 					//  Start collecting keywords
@@ -1357,16 +1374,28 @@ function parseBS(data) {
 					let unclaimedWeapons = []
 					for (selection of selectionData) {
 						if (!selection) break;
-						if (selection.$.name == "Warlord") newUnit.warlord = true;
 						let newModel = {
 							name: '',
 							faction: '',
+							costs: {},
 							keywords: [],
 							weapons: [],
 							wargear: [],
 							amount: 0
 						}
-						newModel.amount = selection.$.number
+						if (selection.$.name == "Warlord") newUnit.warlord = true;
+						newModel.amount = Number(selection.$.number)
+						if (selection.$.customName) newModel.customName = selection.$.customName;
+						if (selection.customNotes) newModel.customNotes = selection.customNotes;
+						//Get all costs of models and upgrades
+						if (selection.costs) {
+							for (var cost of selection.costs[0].cost) {
+								newModel.costs[cost.$.name.trim().toLowerCase()] = Math.round(cost.$.value);
+								if (newUnit.costs[cost.$.name.trim().toLowerCase()]) newUnit.costs[cost.$.name.trim().toLowerCase()] += Math.round(cost.$.value)
+								else newUnit.costs[cost.$.name.trim().toLowerCase()] = Math.round(cost.$.value)
+							}
+							newModel.costs.pts = Math.round(newModel.costs.pts / newModel.amount)
+						}
 						let profileParse = []
 						if (newModel.amount) {
 							if (selection.profiles) {
@@ -1382,18 +1411,6 @@ function parseBS(data) {
 						//Grab the model's statline and unique abilities
 						for (profile of profileParse) {
 							if (!profile) break;
-
-
-							/*
-							██   ██ ███████ ██    ██     ██████  ██ ██████      ██    ██  ██████  ██    ██     ██   ██ ███    ██  ██████  ██     ██ ██████  ██
-							██   ██ ██       ██  ██      ██   ██ ██ ██   ██      ██  ██  ██    ██ ██    ██     ██  ██  ████   ██ ██    ██ ██     ██      ██ ██
-							███████ █████     ████       ██   ██ ██ ██   ██       ████   ██    ██ ██    ██     █████   ██ ██  ██ ██    ██ ██  █  ██   ▄███  ██
-							██   ██ ██         ██        ██   ██ ██ ██   ██        ██    ██    ██ ██    ██     ██  ██  ██  ██ ██ ██    ██ ██ ███ ██   ▀▀
-							██   ██ ███████    ██        ██████  ██ ██████         ██     ██████   ██████      ██   ██ ██   ████  ██████   ███ ███    ██    ██
-							*/
-							// This doesn't look for models, just statlines in the unit.
-							// This means no custom names or notes for models
-
 							if (profile.$.typeName == "Unit") {
 								newModel.name = profile.$.name
 								if (profile.$.customName) {
@@ -1586,7 +1603,7 @@ function parseBS(data) {
 						//If it found a model
 						if (newModel.name) {
 							if (newUnit.models.length) {
-								//Check to see if it matches the previous unit
+								//Check to see if it matches the previous model
 								if (matchModel(newUnit.models[newUnit.models.length - 1], newModel)) {
 									if (newUnit.models[newUnit.models.length - 1].amount)
 										newUnit.models[newUnit.models.length - 1].amount++;
@@ -1665,7 +1682,7 @@ function parseBS(data) {
 					newDetachment.units.push(newUnit)
 				}
 			}
-			newDetachment.units = sortBySlot(newDetachment.units)
+			newDetachment.units = newDetachment.units;
 			force.detachments.push(newDetachment)
 		}
 		return {
