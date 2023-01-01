@@ -1,0 +1,243 @@
+{
+  "0": {
+    "name": "factions",
+    "is_csv": "true",
+    "path": "Factions.csv",
+    "columns": [
+      "id TEXT",
+      "name TEXT",
+      "link TEXT",
+      "is_subfaction BOOLEAN",
+      "parent_id TEXT"
+    ]
+  },
+  "1": {
+    "name": "source",
+    "is_csv": "true",
+    "path": "Source.csv",
+    "columns": [
+      "id Text",
+      "name Text",
+      "type Text",
+      "edition Text",
+      "version Text",
+      "errata_date Text",
+      "errata_link Text"
+    ]
+  },
+  "2": {
+    "name": "datasheets",
+    "is_csv": "true",
+    "path": "Datasheets.csv",
+    "columns": [
+      "id string",
+      "name string",
+      "link string",
+      "faction_id string",
+      "source_id string",
+      "role string",
+      "unit_composition string",
+      "transport string",
+      "power_points string",
+      "priest string",
+      "psyker string",
+      "open_play_only boolean",
+      "crusade_only boolean",
+      "virtual string",
+      "cost_per_unit boolean",
+      "Cost string"
+    ]
+  },
+  "3": {
+    "name": "datasheets_abilities",
+    "is_csv": "true",
+    "path": "Datasheets_abilities.csv",
+    "columns": [
+      "datasheet_id string",
+      "line string",
+      "ability_id string",
+      "is_index_wargear boolean",
+      "cost string",
+      "model string",
+      "is_other_wargear boolean"
+    ]
+  },
+  "4": {
+    "name": "datasheets_damage",
+    "is_csv": "true",
+    "path": "Datasheets_damage.csv",
+    "columns": [
+      "datasheet_id string",
+      "line string",
+      "col1 string",
+      "col2 string",
+      "col3 string",
+      "col4 string",
+      "col5 string"
+    ]
+  },
+  "5": {
+    "name": "datasheets_keywords",
+    "is_csv": "true",
+    "path": "Datasheets_keywords.csv",
+    "columns": [
+      "datasheet_id string",
+      "keyword string",
+      "model string",
+      "is_faction_keyword boolean"
+    ]
+  },
+  "6": {
+    "name": "datasheets_models",
+    "is_csv": "true",
+    "path": "Datasheets_models.csv",
+    "columns": [
+      "datasheet_id string",
+      "line string",
+      "name string",
+      "M string",
+      "WS string",
+      "BS string",
+      "S string",
+      "T string",
+      "W string",
+      "A string",
+      "Ld string",
+      "Sv string",
+      "Cost string",
+      "cost_description string",
+      "models_per_unit string",
+      "cost_including_wargear boolean",
+      "base_size string",
+      "base_size_descr string"
+    ]
+  },
+  "7": {
+    "name": "datasheets_options",
+    "is_csv": "true",
+    "path": "Datasheets_options.csv",
+    "columns": [
+      "datasheet_id string",
+      "line string",
+      "button string",
+      "description string",
+      "is_index_wargear boolean"
+    ]
+  },
+  "8": {
+    "name": "datasheets_wargear",
+    "is_csv": "true",
+    "path": "Datasheets_wargear.csv",
+    "columns": [
+      "datasheet_id string",
+      "line string",
+      "wargear_id string",
+      "is_index_wargear boolean",
+      "cost string",
+      "model string",
+      "is_upgrade boolean"
+    ]
+  },
+  "9": {
+    "name": "datasheets_stratagems",
+    "is_csv": "true",
+    "path": "Datasheets_stratagems.csv",
+    "columns": ["datasheet_id string", "stratagem_id string"]
+  },
+  "10": {
+    "name": "wargear",
+    "is_csv": "true",
+    "path": "Wargear.csv",
+    "columns": [
+      "id string",
+      "name string",
+      "type string",
+      "description string",
+      "source_id string",
+      "is_relic boolean",
+      "faction_id string",
+      "legend string"
+    ]
+  },
+  "11": {
+    "name": "wargear_list",
+    "is_csv": "true",
+    "path": "Wargear_list.csv",
+    "columns": [
+      "wargear_id string",
+      "line string",
+      "name string",
+      "Range string",
+      "type string",
+      "S string",
+      "AP string",
+      "D string",
+      "abilities string"
+    ]
+  },
+  "12": {
+    "name": "stratagems",
+    "is_csv": "true",
+    "path": "Stratagems.csv",
+    "columns": [
+      "id string",
+      "faction_id string",
+      "name string",
+      "type string",
+      "cp_cost string",
+      "description string",
+      "legend string",
+      "source_id string",
+      "subfaction_id string"
+    ]
+  },
+  "13": {
+    "name": "stratagemPhases",
+    "is_csv": "true",
+    "path": "StratagemPhases.csv",
+    "columns": ["stratagem_id string", "phase string"]
+  },
+  "14": {
+    "name": "abilities",
+    "is_csv": "true",
+    "path": "Abilities.csv",
+    "columns": [
+      "id string",
+      "type string",
+      "name string",
+      "legend string",
+      "is_other_wargear boolean",
+      "faction_id string",
+      "description string"
+    ]
+  },
+  "15": {
+    "name": "warlord_traits",
+    "is_csv": "true",
+    "path": "Warlord_traits.csv",
+    "columns": [
+      "faction_id string",
+      "faction_name string",
+      "type string",
+      "roll string",
+      "name string",
+      "legend string",
+      "description string"
+    ]
+  },
+  "16": {
+    "name": "psychicPowers",
+    "is_csv": "true",
+    "path": "PsychicPowers.csv",
+    "columns": [
+      "id string",
+      "roll string",
+      "name string",
+      "faction_id string",
+      "faction_name string",
+      "legend string",
+      "type string",
+      "description string"
+    ]
+  }
+}
