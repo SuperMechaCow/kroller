@@ -156,6 +156,7 @@
       "source_id string",
       "is_relic boolean",
       "faction_id string",
+      "faction_name string",
       "legend string"
     ]
   },

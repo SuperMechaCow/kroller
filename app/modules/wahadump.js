@@ -1,4 +1,5 @@
 const csv = require("csvtojson");
+const { parse } = require("csv-parse");
 const fs = require("fs");
 const https = require("https");
 const { stringify } = require("querystring");
@@ -148,31 +149,48 @@ async function createTable(name, columns) {
   await db.run(insert);
 }
 
-async function insertData(name, path) {
-  await getCSV(`${dataFolder + path}`).then((data) => {
-    let insert = `INSERT INTO ${name} VALUES`;
-    let parameters = [];
-    data.forEach((key) => {
-      insert += ` ( `;
-      let row = Object.values(key);
-      parameters.push(row.slice(0, -1));
+async function getCSV(name, file, columns) {
+  let limit = 30000;
+  let parameters = [];
+  let placeholders = [];
+  fs.createReadStream(file)
+    .pipe(parse({ delimiter: "|", from_line: 2, relax_quotes: true }))
+    .on("data", (row) => {
+      row = row.slice(0, -1);
+      let row_ph = [];
+      parameters.push(row);
       row.forEach((value) => {
-        insert += " ?,";
+        row_ph.push(" ?");
         return value;
       });
-      insert = insert.substring(0, insert.length - 4) + "),";
+      placeholders.push(row_ph);
+    })
+    .on("end", () => {
+      if (parameters.flat().length > limit) {
+        let cut_off = Math.ceil(limit / columns);
+        let index = 0;
+        let chunk = Math.ceil(parameters.length / cut_off);
+        for (let i = 0; i < chunk; i++) {
+          insertChunk(
+            name,
+            parameters.slice(index, index + cut_off),
+            placeholders.slice(index, index + cut_off)
+          );
+          index += cut_off;
+        }
+      } else {
+        insertChunk(name, parameters, placeholders);
+      }
     });
-    insert = insert.substring(0, insert.length - 1) + ";";
-    parameters = parameters.flat();
-    db.run(insert, parameters);
-  });
 }
 
-async function getCSV(file) {
-  console.log(file);
-  return await csv({
-    delimiter: "|",
-  }).fromFile(file);
+async function insertChunk(name, parameters, placeholders) {
+  let insert = `INSERT INTO ${name} VALUES `;
+  placeholders.forEach((set) => {
+    insert += `( ${set.flat()} ),`;
+  });
+  insert = insert.substring(0, insert.length - 1) + ";";
+  db.run(insert, parameters.flat());
 }
 
 fs.readFile(dataFolder + "db_init.json", (err, data) => {
@@ -186,7 +204,7 @@ fs.readFile(dataFolder + "db_init.json", (err, data) => {
       if (!table.is_csv) {
         return;
       }
-      insertData(table.name, table.path);
+      getCSV(table.name, dataFolder + table.path, table.columns.length);
     });
   }
 });
