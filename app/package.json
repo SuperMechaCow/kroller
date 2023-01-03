@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "node modules/wahadump.js"
+    "init": "node modules/wahadump.js",
+    "start": "node app.js"
   },
   "dependencies": {
     "adm-zip": "^0.5.9",

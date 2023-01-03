@@ -2,13 +2,12 @@ const csv = require("csvtojson");
 const { parse } = require("csv-parse");
 const fs = require("fs");
 const https = require("https");
-const { stringify } = require("querystring");
 const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database("./data/database.db");
+const dataFolder = __dirname + "/../data/";
+const db = new sqlite3.Database(`${dataFolder}database.db`);
 
 var wahaData = {};
 
-const dataFolder = __dirname + "/../data/";
 const urlPrefix = "https://wahapedia.ru/wh40k9ed/";
 const urlSuffix = ".csv";
 const urls = [
@@ -39,7 +38,7 @@ async function grabSheet(sheet) {
   return new Promise((resolve, reject) => {
     console.log(urlPrefix + sheet + urlSuffix);
     https.get(urlPrefix + sheet + urlSuffix, (res) => {
-      const path = `../data/${sheet}${urlSuffix}`;
+      const path = `${dataFolder}${sheet}${urlSuffix}`;
       const filePath = fs.createWriteStream(path);
       res.pipe(filePath);
       filePath.on("finish", () => {
@@ -54,7 +53,7 @@ async function grabSheet(sheet) {
 async function grabAll() {
   for (var sheet of urls) {
     await grabSheet(sheet);
-    var csvFilePath = `../data/${sheet}.csv`;
+    var csvFilePath = `${dataFolder}${sheet}.csv`;
     wahaData[sheet] = await csv({
       delimiter: "|",
     }).fromFile(csvFilePath);
@@ -66,7 +65,7 @@ async function grabAll() {
   //REPLACE ALL russian booleans with true/false here
   //ADD A "type" TO EACH ITEM FOR SEARCHING LATER (unit/model/ability/etc.)
   //REMOVE "field#" columns
-  fs.writeFile(`../data/wahaData.json`, wahaData, (err) => {
+  fs.writeFile(`${dataFolder}wahaData.json`, wahaData, (err) => {
     if (err) {
       console.log(err);
     } else {
@@ -76,11 +75,11 @@ async function grabAll() {
 }
 
 async function readFromExisting() {
-  fs.readdir(__dirname + "/../data/", async (err, files) => {
+  fs.readdir(dataFolder, async (err, files) => {
     if (err) console.log(err);
     for (var file of files) {
       if (file.split(".")[1] == "csv") {
-        var csvFilePath = __dirname + `/../data/${file}`;
+        var csvFilePath = `${dataFolder}${file}`;
         // Async / await usage
         wahaData[file.split(".")[0]] = await csv({
           delimiter: "|",
@@ -93,7 +92,7 @@ async function readFromExisting() {
     //ADD A "type" TO EACH ITEM FOR SEARCHING LATER (unit/model/ability/etc.)
     //REMOVE "field#" columns
     fs.writeFile(
-      __dirname + `/../data/wahaData.json`,
+      `${dataFolder}wahaData.json`,
       JSON.stringify(wahaData),
       (err) => {
         if (err) {
@@ -111,7 +110,7 @@ async function grabPage(faction) {
   return new Promise((resolve, reject) => {
     console.log(`Getting ${faction.link}`);
     https.get(faction.link + "/", (res) => {
-      const path = `../data/scraped/${faction.name
+      const path = `${dataFolder}scraped/${faction.name
         .replaceAll(" ", "-")
         .toLowerCase()}.html`;
       const filePath = fs.createWriteStream(path);
@@ -131,7 +130,7 @@ async function scraper(readData) {
   }
 }
 
-fs.readFile(dataFolder, "utf8", (err, data) => {
+fs.readFile(`${dataFolder}wahaData.json`, "utf8", (err, data) => {
   if (err) {
     console.log(err);
   } else {
@@ -140,6 +139,10 @@ fs.readFile(dataFolder, "utf8", (err, data) => {
   }
 });
 
+/**
+ * @param {string} name of the Table
+ * @param {Array} columns Array of Strings, String holds Column Name and Type
+ */
 async function createTable(name, columns) {
   let insert = `CREATE TABLE IF NOT EXISTS ${name} (`;
   columns.forEach((key) => {
@@ -149,6 +152,12 @@ async function createTable(name, columns) {
   await db.run(insert);
 }
 
+/**
+ * Creates a Readstream, Builds Array for SQLInsert, Checks if SQlite Insert Limit is reached and Cuts Data into Chunks
+ * @param {string} name Name of the Table
+ * @param {string} file Path for CSV File
+ * @param {int} columns for the Table, used for InsertChunks
+ */
 async function getCSV(name, file, columns) {
   let limit = 30000;
   let parameters = [];
@@ -184,6 +193,12 @@ async function getCSV(name, file, columns) {
     });
 }
 
+/**
+ * Holds the SqlLite insert, to work around Input Limits
+ * @param {String} name Name of the Table
+ * @param {Array} parameters Array of Arrays needs to be flattend before insert
+ * @param {Array} placeholders Array of Strings, Placeholder Questionmarks
+ */
 async function insertChunk(name, parameters, placeholders) {
   let insert = `INSERT INTO ${name} VALUES `;
   placeholders.forEach((set) => {
