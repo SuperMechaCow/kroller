@@ -1,4 +1,5 @@
 const { getWahaDatasheet } = require("./../Connectors/SqliteConnector");
+const UnitRule = require("./unitrule");
 class Unit {
   constructor(data, faction) {
     this.bsData = data;
@@ -74,34 +75,40 @@ class Unit {
    * but there are two other places below
    */
   grabUnitRules() {
-    if (unit.rules && unit.rules != "") {
+    if (this.bsData.rules && unit.rules != "") {
       //If it's not a list, put it in one
-      if (!Array.isArray(unit.rules[0].rule))
-        unit.rules[0].rule = [unit.rules[0].rule];
+      if (!Array.isArray(this.bsData.rules[0].rule))
+        this.bsData.rules[0].rule = [this.bsData.rules[0].rule];
       //Loop through each rule
-      for (rule of unit.rules[0].rule) {
+      for (let rule of this.bsData.rules[0].rule) {
         // If the rule does not have a description then we can't make a tag from it. It's probably BS junk
         if (rule.description) {
-          //New blank object for the rules
-          let newRule = {
-            name: rule.$.name,
-            desc: rule.description[0],
-            subkeys: rule.description[0].match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
-            targets: rule.description[0].match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
-            phases: [],
-          };
-          //Grab customName
-          if (rule.$.customName) {
-            newRule.customName = rule.$.customName;
+          let newRule = new UnitRule();
+          newRule.grabBasicRules(rule);
+          this.rules.push(newRule);
+        }
+      }
+    }
+    //This is number two of the three stupid places you can store unit rules
+    if (unit.profiles && unit.profiles[0] != "") {
+      let profileParse = unit.profiles[0].profile;
+      if (!Array.isArray(profileParse)) profileParse = [profileParse];
+      for (let profile of profileParse) {
+        if (profile.$.typeName == "Abilities") {
+          let charaParse = profile.characteristics[0].characteristic;
+          if (!Array.isArray(charaParse)) charaParse = [charaParse];
+          for (let chara of charaParse) {
+            let newRule = new UnitRule();
+            newRule.grabAbilitRules(profile, chara);
+            this.rules.push(newRule);
           }
-          if (rule.customNotes) {
-            newRule.customNotes = rule.customNotes[0];
-          }
-          //Look for specific mentions of a phase
-          for (phase of phaseList) {
-            if (newRule.desc.includes(phase + " phase"))
-              newRule.phases.push(phase);
-          }
+        } else if (profile.$.typeName == "Psyker") {
+          let newRule = new UnitRule();
+          newRule.grabPsykerRules(profile.characteristics[0].characteristi);
+          this.rules.push(newRule);
+        } else if (profile.$.typeName == "Explosion") {
+          let newRule = new UnitRule();
+          newRule.grabExplodeRules(profile.characteristics[0].characteristic);
           newUnit.rules.push(newRule);
         }
       }
