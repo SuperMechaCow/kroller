@@ -36,14 +36,14 @@ const urls = [
 
 async function grabSheet(sheet) {
   return new Promise((resolve, reject) => {
-    console.log(urlPrefix + sheet + urlSuffix);
-    https.get(urlPrefix + sheet + urlSuffix, (res) => {
-      const path = `${dataFolder}${sheet}${urlSuffix}`;
+    console.log(urlPrefix + sheet);
+    https.get(urlPrefix + sheet, (res) => {
+      const path = `${dataFolder}${sheet}`;
       const filePath = fs.createWriteStream(path);
       res.pipe(filePath);
       filePath.on("finish", () => {
         filePath.close();
-        console.log(`Download Completed: ${sheet}${urlSuffix}`);
+        console.log(`Download Completed: ${sheet}`);
         resolve();
       });
     });
@@ -130,14 +130,14 @@ async function scraper(readData) {
   }
 }
 
-fs.readFile(`${dataFolder}wahaData.json`, "utf8", (err, data) => {
-  if (err) {
-    console.log(err);
-  } else {
-    let readData = JSON.parse(data);
-    scraper(readData);
-  }
-});
+// fs.readFile(`${dataFolder}wahaData.json`, "utf8", (err, data) => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     let readData = JSON.parse(data);
+//     scraper(readData);
+//   }
+// });
 
 /**
  * @param {string} name of the Table
@@ -208,6 +208,15 @@ async function insertChunk(name, parameters, placeholders) {
   db.run(insert, parameters.flat());
 }
 
+/**
+ * Mainly exist for the await
+ * @param {Object} table Object extracted from the db_ini
+ */
+async function collectWahaData(table) {
+  await grabSheet(table.path);
+  getCSV(table.name, dataFolder + table.path, table.columns.length);
+}
+
 fs.readFile(dataFolder + "db_init.json", (err, data) => {
   if (err) {
     console.log(err);
@@ -219,7 +228,7 @@ fs.readFile(dataFolder + "db_init.json", (err, data) => {
       if (!table.is_csv) {
         return;
       }
-      getCSV(table.name, dataFolder + table.path, table.columns.length);
+      collectWahaData(table);
     });
   }
 });
