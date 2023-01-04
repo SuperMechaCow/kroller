@@ -1193,6 +1193,7 @@ function parseBS(data) {
     force.initForce();
     force.grabDetachment();
     force.createDetachments();
+    force.grabForceMetaData();
 
     //Grab all of the detachment data
     let detachmentParse = data.roster.forces[0].force;

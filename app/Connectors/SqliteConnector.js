@@ -13,4 +13,27 @@ function getWahaFaction(factionname) {
   });
 }
 
+function getWahaSubFaction(subFaction) {
+  return new Promise((resolve) => {
+    db.get(
+      `SELECT name FROM factions WHERE name LIKE "%${subFaction}%" AND is_subfaction = "true"`,
+      (err, result) => {
+        resolve(result);
+      }
+    );
+  });
+}
+
+function getWahaSecondaries(gameName, faction) {
+  return new Promise((resolve) => {
+    db.get(
+      `SELECT name, category FROM secondaries WHERE game LIKE "%${gameName}%" AND (faction_name = "" OR faction_name = "${faction}")`,
+      (err, result) => {
+        resolve(result);
+      }
+    );
+  });
+}
 exports.getWahaFaction = getWahaFaction;
+exports.getWahaSubFaction = getWahaSubFaction;
+exports.getWahaSecondaries = getWahaSecondaries;
