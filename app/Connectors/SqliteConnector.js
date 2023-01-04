@@ -26,8 +26,19 @@ function getWahaSubFaction(subFaction) {
 
 function getWahaSecondaries(gameName, faction) {
   return new Promise((resolve) => {
-    db.get(
+    db.all(
       `SELECT name, category FROM secondaries WHERE game LIKE "%${gameName}%" AND (faction_name = "" OR faction_name = "${faction}")`,
+      (err, result) => {
+        resolve(result);
+      }
+    );
+  });
+}
+
+function getWahaDatasheet(unitName, factionId = "") {
+  return new Promise((resolve) => {
+    db.get(
+      `SELECT * FROM datasheets WHERE name LIKE "%${unitName}%" AND faction_id = "${factionId}"`,
       (err, result) => {
         resolve(result);
       }
@@ -37,3 +48,4 @@ function getWahaSecondaries(gameName, faction) {
 exports.getWahaFaction = getWahaFaction;
 exports.getWahaSubFaction = getWahaSubFaction;
 exports.getWahaSecondaries = getWahaSecondaries;
+exports.getWahaDatasheet = getWahaDatasheet;

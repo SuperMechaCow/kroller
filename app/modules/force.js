@@ -51,26 +51,27 @@ class Force {
     //Loop through every detachment in the list
     this.detachmentParse.forEach((data) => {
       let detachment = new Detachment(data);
-      detachment.setDetachmentFaction();
-      detachment.setCostum();
-      detachment.grabRules();
-      detachment.grabUnits();
+      detachment.buildDetachment();
       this.detachments.push(detachment);
     });
 
     // newDetachment.units = newDetachment.units;
   }
 
-  //TODO move this after all others are created to check what factions are present
+  /**
+   * sets Faction and GameTyp, if Gametype is found it grabs possible Secondaries
+   */
   async grabForceMetaData() {
     let unit;
     let unitData = this.detachmentParse[0].selections[0].selection;
+    //Loops all detechman to check if only one Faction exists
     this.detachments.forEach((deta) => {
       if (!this.faction) this.faction = deta.faction;
       if (this.faction != deta.faction) {
         this.faction = "Allied Forces";
       }
     });
+    // Try to determine game type
     for (unit of unitData) {
       if (unit.$.type != "upgrade") continue;
       if (unit.$.name != "Gametype") continue;

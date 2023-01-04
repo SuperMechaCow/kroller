@@ -1,3 +1,4 @@
+const fs = require("fs");
 const {
   getWahaFaction,
   getWahaSubFaction,
@@ -13,6 +14,13 @@ class Detachment {
     this.factionIcon = "";
     this.units = [];
     this.rules = [];
+  }
+
+  async buildDetachment() {
+    await this.setDetachmentFaction();
+    await this.setCostum();
+    await this.grabRules();
+    await this.grabUnits();
   }
 
   async setDetachmentFaction() {
@@ -67,13 +75,20 @@ class Detachment {
     //If it's not a list, put it in one so it can be looped through
     let unitData = this.detachment.selections[0].selection;
     if (!Array.isArray(unitData)) unitData = [unitData];
+    let bsUnit;
     //Loop through every unit in the list
-    unitData.forEach((bsUnit) => {
+    for (bsUnit of unitData) {
       if (bsUnit.$.type == "upgrade") {
         this.grabLastMetaData(bsUnit);
+        continue;
       }
-      let unit = new Unit();
-    });
+      if (bsUnit.$.type == "unit" || bsUnit.$.type == "model") {
+        let unit = new Unit(bsUnit, this.wahaFaction);
+        unit.buildUnit();
+        this.units.push(unit);
+        continue;
+      }
+    }
   }
 
   async grabLastMetaData(unit) {
@@ -84,41 +99,38 @@ class Detachment {
       for (var select of unit.selections[0].selection) {
         // Look through all of the selections
         this.findSubFaction(select.$.name);
-        // Try to determine game type
-
-        if (select.$.type == "unit") unitType = "unit";
       }
     if (unit.$.name.split(" - ")[0] == "Army of Renown")
       // Check for army variants
       this.variant = unit.$.name.split(" - ")[1];
     // Get icon link by faction
-    // if (this.faction)
-    //   if (
-    //     fs.existsSync(
-    //       `${__dirname}/public/img/factions/${this.faction
-    //         .replaceAll(" ", "")
-    //         .replaceAll("'", "_")
-    //         .toLowerCase()}.svg`
-    //     )
-    //   )
-    //     this.factionIcon = `img/factions/${this.faction
-    //       .replaceAll(" ", "")
-    //       .replaceAll("'", "_")
-    //       .toLowerCase()}.svg`;
-    // // Then try to overwrite with subfaction
-    // if (this.subfaction)
-    //   if (
-    //     fs.existsSync(
-    //       `${__dirname}/public/img/factions/${this.subfaction
-    //         .replaceAll(" ", "")
-    //         .replaceAll("'", "_")
-    //         .toLowerCase()}.svg`
-    //     )
-    //   )
-    //     this.factionIcon = `img/factions/${this.subfaction
-    //       .replaceAll(" ", "")
-    //       .replaceAll("'", "_")
-    //       .toLowerCase()}.svg`;
+    if (this.faction)
+      if (
+        fs.existsSync(
+          `${__dirname}/public/img/factions/${this.faction
+            .replaceAll(" ", "")
+            .replaceAll("'", "_")
+            .toLowerCase()}.svg`
+        )
+      )
+        this.factionIcon = `img/factions/${this.faction
+          .replaceAll(" ", "")
+          .replaceAll("'", "_")
+          .toLowerCase()}.svg`;
+    // Then try to overwrite with subfaction
+    if (this.subfaction)
+      if (
+        fs.existsSync(
+          `${__dirname}/public/img/factions/${this.subfaction
+            .replaceAll(" ", "")
+            .replaceAll("'", "_")
+            .toLowerCase()}.svg`
+        )
+      )
+        this.factionIcon = `img/factions/${this.subfaction
+          .replaceAll(" ", "")
+          .replaceAll("'", "_")
+          .toLowerCase()}.svg`;
   }
 
   async findSubFaction(possibleName) {
