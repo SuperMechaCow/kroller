@@ -1,4 +1,5 @@
 const { getWahaFaction } = require("./../Connectors/SqliteConnector");
+const Unit = require("./unit");
 class Detachment {
   constructor(data) {
     this.detachment = data;
@@ -47,6 +48,9 @@ class Detachment {
     }
   }
 
+  /**
+   * Grab army rules
+   */
   grabRules() {
     // Grab army rules (BattleScribe doesn't keep all of them in a rational place, so things like Armor of Contempt are missing)
     if (this.detachment.rules) {
@@ -58,6 +62,15 @@ class Detachment {
         });
       }
     }
+  }
+
+  grabUnits() {
+    //If it's not a list, put it in one so it can be looped through
+    let unitData = this.detachment.selections[0].selection;
+    if (!Array.isArray(unitData)) unitData = [unitData];
+    unitData.forEach((bsUnit) => {
+      let unit = new Unit();
+    });
   }
 }
 module.exports = Detachment;

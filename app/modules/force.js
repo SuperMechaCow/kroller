@@ -53,10 +53,11 @@ class Force {
       detachment.setDetachmentFaction();
       detachment.setCostum();
       detachment.grabRules();
+      detachment.grabUnits();
+      this.detachments.push(detachment);
     });
 
     // newDetachment.units = newDetachment.units;
-    // this.detachments.push(newDetachment);
   }
 }
 
