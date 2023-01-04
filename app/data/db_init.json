@@ -301,5 +301,21 @@
       "turn TEXT",
       "round INTEGER"
     ]
+  },
+  "21": {
+    "name": "secondaries",
+    "is_csv": true,
+    "path": "Secondaries.csv",
+    "columns": [
+      "game string",
+      "faction_type string",
+      "faction_id string",
+      "faction_name string",
+      "category string",
+      "name string",
+      "type string",
+      "legend string",
+      "description string"
+    ]
   }
 }

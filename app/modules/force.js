@@ -1,4 +1,5 @@
 const Detachment = require("./detachment");
+const { getWahaSecondaries } = require("./../Connectors/SqliteConnector");
 class Force {
   constructor(roster) {
     this.roster = roster;
@@ -58,6 +59,34 @@ class Force {
     });
 
     // newDetachment.units = newDetachment.units;
+  }
+
+  //TODO move this after all others are created to check what factions are present
+  async grabForceMetaData() {
+    let unit;
+    let unitData = this.detachmentParse[0].selections[0].selection;
+    this.detachments.forEach((deta) => {
+      if (!this.faction) this.faction = deta.faction;
+      if (this.faction != deta.faction) {
+        this.faction = "Allied Forces";
+      }
+    });
+    for (unit of unitData) {
+      if (unit.$.type != "upgrade") continue;
+      if (unit.$.name != "Gametype") continue;
+      let gameName = unit.selections[0].selection[0].$.name;
+      // gameName = gameName.replace('Chapter Approved', 'Grand Tournament');
+      let gameCheck = /(\d. )?(.*\: )?(.*$)/.exec(gameName);
+      if (gameCheck) {
+        this.gametype = gameCheck[3];
+        this.secondaries = await getWahaSecondaries(
+          this.gametype,
+          this.faction
+        );
+      } else {
+        this.gametype = gameName;
+      }
+    }
   }
 }
 
