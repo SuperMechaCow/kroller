@@ -33,6 +33,7 @@ var app = express();
 const server = http.createServer(app);
 const io = require("socket.io")(server);
 const calculator = require("./modules/calculator.js");
+const Force = require("./modules/force");
 
 const calc = new calculator.Calculator();
 
@@ -93,7 +94,7 @@ fs.readFile(__dirname + "/data/wahaData.json", "utf8", (err, data) => {
   wahaData = JSON.parse(data);
 });
 
-var URL = "http://40kroller.animetidd.is/";
+var URL = "http://localhost:4040/";
 var HOST = "192.168.1.103";
 var PORT = 4040;
 
@@ -1188,25 +1189,10 @@ function parseBS(data) {
   ];
   try {
     //Each "tier" in the list hierarchy  starts with an empty object
-    var force = {
-      name: data.roster.$.name,
-      faction: "",
-      detachments: [],
-      costs: {},
-    };
-
-    //Grab customName
-    if (data.roster.$.customName) {
-      force.customName = data.roster.$.customName;
-    }
-    if (data.roster.customNotes) {
-      force.customNotes = data.roster.customNotes[0];
-    }
-
-    //Grab all of the army costs
-    for (cost of data.roster.costs[0].cost) {
-      force.costs[cost.$.name.replace(/\s/g, "")] = parseInt(cost.$.value);
-    }
+    var force = new Force(data.roster);
+    force.initForce();
+    force.grabDetachment();
+    force.createDetachments();
 
     //Grab all of the detachment data
     let detachmentParse = data.roster.forces[0].force;
@@ -1287,8 +1273,8 @@ function parseBS(data) {
                   )
                 )
                   // If a subfaction name exists that matches this selection name
-                  newDetachment.subfaction =
-                    select.$.name; // Then you've found the subfaction
+                  newDetachment.subfaction = select.$.name;
+                // Then you've found the subfaction
                 else if (
                   wahaData.Subfactions.find(
                     (subfaction) =>
