@@ -245,7 +245,7 @@
     "name": "feedback",
     "is_csv": false,
     "columns": [
-      "uid INTEGER NOT NULL UNIQUE",
+      "uid INTEGER NOT NULL UNIQUE PRIMARY KEY",
       "user TEXT",
       "date TEXT",
       "gameCode TEXT",
@@ -257,7 +257,7 @@
     "name": "games",
     "is_csv": false,
     "columns": [
-      "uid INTEGER NOT NULL UNIQUE",
+      "uid INTEGER NOT NULL UNIQUE PRIMARY KEY",
       "atkrSecondaries BLOB",
       "dfdrSecondaries BLOB",
       "gameCode INTEGER NOT NULL",
@@ -272,7 +272,7 @@
     "name": "forces",
     "is_csv": false,
     "columns": [
-      "uid INTEGER NOT NULL UNIQUE",
+      "uid INTEGER NOT NULL UNIQUE PRIMARY KEY",
       "forceCode TEXT NOT NULL",
       "forceFile INTEGER",
       "forceName TEXT",
