@@ -3,6 +3,7 @@ const {
   getWahaUnitKeywords,
 } = require("./../Connectors/SqliteConnector");
 const UnitRule = require("./unitrule");
+const Model = require("./model");
 class Unit {
   constructor(data, faction) {
     this.bsData = data;
@@ -25,6 +26,7 @@ class Unit {
     this.waha = await this.grabDatasheet();
     await this.grabKeywords();
     await this.grabUnitRules();
+    await this.grabModels();
   }
 
   /**
@@ -52,13 +54,13 @@ class Unit {
     let datasheet = await getWahaDatasheet(this.name, this.wahaFaction);
     // If you couldn't find one, try again with first unit's name (Chapter Master -> )
     if (datasheet) return datasheet;
-    if (unit.profiles) {
-      let tempName = unit.profiles[0].profile[0].$.name;
+    if (this.bsData.profiles) {
+      let tempName = this.bsData.profiles[0].profile[0].$.name;
       datasheet = await getWahaDatasheet(tempName, this.wahaFaction);
     }
     if (datasheet) return datasheet;
     // If you couldn't find one, try again without the 's' at the end ofthe name
-    let tempName = unit.$.name.slice(0, -1);
+    let tempName = this.bsData.$.name.slice(0, -1);
     datasheet = await getWahaDatasheet(tempName, this.wahaFaction);
     // If there was more than one possible datasheet
     if (datasheet) return datasheet;
@@ -112,7 +114,7 @@ class Unit {
    * but there are two other places below
    */
   grabUnitRules() {
-    if (this.bsData.rules && unit.rules != "") {
+    if (this.bsData.rules && this.bsData.rules != "") {
       //If it's not a list, put it in one
       if (!Array.isArray(this.bsData.rules[0].rule))
         this.bsData.rules[0].rule = [this.bsData.rules[0].rule];
@@ -127,8 +129,8 @@ class Unit {
       }
     }
     //This is number two of the three stupid places you can store unit rules
-    if (unit.profiles && unit.profiles[0] != "") {
-      let profileParse = unit.profiles[0].profile;
+    if (this.bsData.profiles && this.bsData.profiles[0] != "") {
+      let profileParse = this.bsData.profiles[0].profile;
       if (!Array.isArray(profileParse)) profileParse = [profileParse];
       for (let profile of profileParse) {
         if (profile.$.typeName == "Abilities") {
@@ -149,6 +151,38 @@ class Unit {
           newUnit.rules.push(newRule);
         }
       }
+    }
+  }
+
+  /**
+   * Start collecting models
+   */
+  async grabModels() {
+    //The way this is handled is so whacky, leading to either
+    //Sometimes it loads as many weapons as there are models
+    //and sometimes is loads many models with one weapon
+    let selectionData = this.bsData.selections[0].selection;
+    if (!Array.isArray(selectionData)) selectionData = [selectionData];
+    if (this.bsData.profiles)
+      selectionData = selectionData.concat(this.bsData.profiles[0].profile);
+    //I know this next line seems weird, but single-model units'
+    //models and weapons are properties of the same object, so there is
+    //no model name for weapons in this case
+    //We'll throw all weapons without owners into a pile until it's
+    //done looping through all the profiles of the unit, then add them
+    //to every model found for single-model units
+    let unclaimedWeapons = [];
+    for (let selection of selectionData) {
+      //TODO different workflow for bsData.$.type == model
+      if (!selection) break;
+      let model = new Model(this);
+      if (this.bsData.$.type == "model") {
+        model.setModelData(this.bsData);
+      } else {
+        model.setModelData(selection);
+      }
+      if (!(await model.buildModelFromUnit())) continue;
+      this.models.push(model);
     }
   }
 }
