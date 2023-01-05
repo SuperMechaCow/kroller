@@ -1,4 +1,7 @@
-const { getWahaDatasheet } = require("./../Connectors/SqliteConnector");
+const {
+  getWahaDatasheet,
+  getWahaUnitKeywords,
+} = require("./../Connectors/SqliteConnector");
 const UnitRule = require("./unitrule");
 class Unit {
   constructor(data, faction) {
@@ -19,9 +22,9 @@ class Unit {
   async buildUnit() {
     await this.setCostum();
     await this.setCost();
-    await this.grabDatasheet();
+    this.waha = await this.grabDatasheet();
+    await this.grabKeywords();
     await this.grabUnitRules();
-    //TODO generate Keywords
   }
 
   /**
@@ -44,28 +47,62 @@ class Unit {
    * Find the datasheet in the wahaData
    */
   async grabDatasheet() {
-    let datasheet;
     // Some units (especially daemons and CSM marines) are in multiple factions
     // Find all possible datasheets
-    datasheet = await getWahaDatasheet(this.name, this.wahaFaction);
+    let datasheet = await getWahaDatasheet(this.name, this.wahaFaction);
     // If you couldn't find one, try again with first unit's name (Chapter Master -> )
-    if (datasheet) {
-      if (unit.profiles) {
-        let tempName = unit.profiles[0].profile[0].$.name;
-        datasheet = await getWahaDatasheet(tempName, this.wahaFaction);
-      }
-    }
-    if (datasheet) {
-      // If you couldn't find one, try again without the 's' at the end ofthe name
-      let tempName = unit.$.name.slice(0, -1);
+    if (datasheet) return datasheet;
+    if (unit.profiles) {
+      let tempName = unit.profiles[0].profile[0].$.name;
       datasheet = await getWahaDatasheet(tempName, this.wahaFaction);
     }
+    if (datasheet) return datasheet;
+    // If you couldn't find one, try again without the 's' at the end ofthe name
+    let tempName = unit.$.name.slice(0, -1);
+    datasheet = await getWahaDatasheet(tempName, this.wahaFaction);
     // If there was more than one possible datasheet
-    if (datasheet) {
-      this.waha = datasheet;
-    }
-    // Datasheet not found
+    if (datasheet) return datasheet;
+    // Datasheet not found ??
     else {
+    }
+  }
+
+  /**
+   * Start collecting keywords
+   */
+  async grabKeywords() {
+    //Try to pull from waha first
+    if (this.waha) {
+      let unitKeys = await getWahaUnitKeywords(this.waha.id);
+      for (var key of unitKeys) {
+        if (key.is_faction_keyword == "true") this.faction.push(key.keyword);
+        else this.keywords.push(key.keyword.toLowerCase());
+      }
+      this.slot = this.waha.role;
+    }
+    //Otherwise, pull from battlescribe
+    else {
+      if (this.bsData.categories) {
+        if (!Array.isArray(this.bsData.categories[0].category))
+          this.bsData.categories[0].category = [
+            this.bsData.categories[0].category,
+          ];
+        for (let category of this.bsData.categories[0].category) {
+          if (category.$.primary == "true") {
+            this.slot = category.$.name;
+          } else {
+            //BS factions format: "Faction: <faction name>".
+            //Try to Split by ": ", and if the first word is "Faction"
+            if (category.$.name.split(": ")[0] == "Faction") {
+              //Dump the "Faction" and keep the "<faction name>"
+              this.faction = category.$.name.split(":")[1].trim();
+            } else {
+              //Otherwise, dump the keyword straight to the list
+              this.keywords.push(category.$.name.toLowerCase());
+            }
+          }
+        }
+      }
     }
   }
 
