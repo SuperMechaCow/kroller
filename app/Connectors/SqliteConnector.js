@@ -57,10 +57,23 @@ function getWahaUnitKeywords(datasheetId) {
   });
 }
 
-function getWahaStratagems(datasheetId) {
+function getWahaStratagems(datasheetId, mainId, subId) {
   return new Promise((resolve) => {
     db.all(
-      `SELECT * FROM datasheet_to_stratagem WHERE ds.datasheet_id = "${datasheetId} AND ("`,
+      `SELECT * 
+      FROM datasheet_to_stratagem 
+      WHERE datasheet_id = "${datasheetId}" AND (subfaction_id = "${subId}" OR subfaction_id = "${mainId}" OR subfaction_id = "")`,
+      (err, result) => {
+        resolve(result);
+      }
+    );
+  });
+}
+
+function getWahaStratPhase(stratId) {
+  return new Promise((resolve) => {
+    db.all(
+      `SELECT phase FROM stratagemPhases  WHERE stratagem_id = "${stratId}"`,
       (err, result) => {
         resolve(result);
       }
@@ -73,3 +86,4 @@ exports.getWahaSecondaries = getWahaSecondaries;
 exports.getWahaDatasheet = getWahaDatasheet;
 exports.getWahaUnitKeywords = getWahaUnitKeywords;
 exports.getWahaStratagems = getWahaStratagems;
+exports.getWahaStratPhase = getWahaStratPhase;

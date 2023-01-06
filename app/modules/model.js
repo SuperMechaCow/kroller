@@ -1,9 +1,8 @@
 const UnitRule = require("./unitrule");
 const Weapon = require("./weapon");
 class Model {
-  constructor(parentUnit) {
+  constructor() {
     this.name = "";
-    this.parentUnit = parentUnit;
     this.faction = "";
     this.costs = {};
     this.keywords = [];
@@ -18,16 +17,16 @@ class Model {
     this.amount = Number(this.bsData.$.number);
   }
 
-  async buildModelFromUnit() {
+  async buildModelFromUnit(parentUnit) {
     await this.setCostum();
-    await this.grabCost();
-    await this.grabProfile();
+    await this.grabCost(parentUnit);
+    await this.grabProfile(parentUnit);
     if (!this.amount) {
-      await this.mergeWeaponToStats();
+      await this.mergeWeaponToStats(parentUnit);
       if (!this.amount) return false;
     }
     await this.grabWeapon();
-    await this.grabSpells();
+    await this.grabSpells(parentUnit);
     return true;
   }
   //TODO at weapongrab check for warlord trait
@@ -43,16 +42,16 @@ class Model {
   /**
    * Get all costs of models and upgrades
    */
-  grabCost() {
+  grabCost(parentUnit) {
     if (this.bsData.costs) {
       for (let cost of this.bsData.costs[0].cost) {
         this.costs[cost.$.name.trim().toLowerCase()] = Math.round(cost.$.value);
-        if (this.parentUnit.costs[cost.$.name.trim().toLowerCase()])
-          this.parentUnit.costs[cost.$.name.trim().toLowerCase()] += Math.round(
+        if (parentUnit.costs[cost.$.name.trim().toLowerCase()])
+          parentUnit.costs[cost.$.name.trim().toLowerCase()] += Math.round(
             cost.$.value
           );
         else
-          this.parentUnit.costs[cost.$.name.trim().toLowerCase()] = Math.round(
+          parentUnit.costs[cost.$.name.trim().toLowerCase()] = Math.round(
             cost.$.value
           );
       }
@@ -60,7 +59,7 @@ class Model {
     }
   }
 
-  grabProfile() {
+  grabProfile(parentUnit) {
     //flag to show its only statline without weapons
     let profileParse = [];
     if (this.amount) {
@@ -78,7 +77,7 @@ class Model {
     if (!Array.isArray(profileParse)) profileParse = [profileParse];
 
     //Grab the model's statline and unique abilities
-    for (profile of profileParse) {
+    for (let profile of profileParse) {
       if (!profile) break;
       if (profile.$.typeName == "Unit") {
         this.name = profile.$.name;
@@ -102,7 +101,7 @@ class Model {
         for (let chara of charaParse) {
           let newRule = new UnitRule();
           newRule.grabAbilitRules(profile, chara);
-          this.parentUnit.rules.push(newRule);
+          parentUnit.rules.push(newRule);
         }
       } else {
       }
@@ -116,9 +115,9 @@ class Model {
    * be the profile for custom named models
    * if not we assume it is a single model unit and add 1 to the amount to keep it
    */
-  mergeWeaponToStats() {
+  mergeWeaponToStats(parentUnit) {
     let count = 0;
-    this.parentUnit.models.forEach((model) => {
+    parentUnit.models.forEach((model) => {
       if (model.name.includes(this.name)) {
         count += 1;
         model.name = this.name;
@@ -190,7 +189,7 @@ class Model {
   /**
    * Start collecting spells
    */
-  grabSpells() {
+  grabSpells(parentUnit) {
     let spellGrab = [];
     if (this.bsData.selections) {
       spellGrab = this.bsData.selections[0].selection;
@@ -201,7 +200,7 @@ class Model {
       }
     }
     if (!Array.isArray(spellGrab)) spellGrab = [spellGrab];
-    for (spell of spellGrab) {
+    for (let spell of spellGrab) {
       if (!spell) break;
       let spellFound = {};
       if (spell.selections && spell.selections[0] != "") {
@@ -210,7 +209,7 @@ class Model {
         spellFound = spell.profiles[0].profile;
       }
       if (!Array.isArray(spellFound)) spellFound = [spellFound];
-      for (spellProf of spellFound) {
+      for (let spellProf of spellFound) {
         if (!Object.keys(spellProf).length) continue;
         if (spellProf.$.typeName != "Psychic Power") continue;
         let newSpell = {
@@ -230,9 +229,9 @@ class Model {
         for (let chara of spellChara) {
           newSpell[chara.$.name.toLowerCase().replace(/\s/g, "")] = chara._;
         }
-        if (this.parentUnit.name) {
+        if (parentUnit.name) {
           //Add it to the spells list for the Unit if it exists
-          this.parentUnit.spells.push(newSpell);
+          parentUnit.spells.push(newSpell);
         }
       }
     }

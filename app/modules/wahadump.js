@@ -231,7 +231,7 @@ fs.readFile(dataFolder + "db_init.json", (err, data) => {
       collectWahaData(table);
     });
     db.run(
-      `CREATE VIEW datasheet_to_stratagem AS SELECT ds.datasheet_id as datasheet_id , sg.id as stratagem_id , sg.description, sg.type as type, sp.phase as phase , sg.subfaction_id as subfaction_id  FROM datasheets_stratagems as ds LEFT JOIN stratagems as sg ON ds.stratagem_id = sg.id LEFT JOIN stratagemPhases as sp ON ds.stratagem_id = sp.stratagem_id`
+      `CREATE VIEW datasheet_to_stratagem AS SELECT ds.datasheet_id as datasheet_id , sg.id as stratagem_id, sg.name as name , sg.description, sg.type as type, sg.subfaction_id as subfaction_id  FROM datasheets_stratagems as ds LEFT JOIN stratagems as sg ON ds.stratagem_id = sg.id`
     );
   }
 });
