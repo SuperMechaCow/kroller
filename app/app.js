@@ -1190,11 +1190,7 @@ function parseBS(data) {
   try {
     //Each "tier" in the list hierarchy  starts with an empty object
     var force = new Force(data.roster);
-    force.initForce();
-    force.grabDetachment();
-    force.createDetachments();
-    force.grabForceMetaData();
-
+    force.buildForce();
     //Grab all of the detachment data
     let detachmentParse = data.roster.forces[0].force;
     //If it's not an array, put it in one so the for loop can work

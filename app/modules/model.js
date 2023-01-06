@@ -1,4 +1,5 @@
 const UnitRule = require("./unitrule");
+const Weapon = require("./weapon");
 class Model {
   constructor(parentUnit) {
     this.name = "";
@@ -25,6 +26,7 @@ class Model {
       await this.mergeWeaponToStats();
       return false;
     }
+    await this.grabWeapon();
     return true;
   }
   //TODO at weapongrab check for warlord trait
@@ -114,6 +116,65 @@ class Model {
         model.statlines = this.statlines;
       }
     });
+  }
+
+  /**
+   * Start collecting weapons
+   */
+  async grabWeapon() {
+    let weaponGrab = [];
+    if (this.bsData.selections) {
+      weaponGrab = this.bsData.selections[0].selection;
+    } else {
+      if (this.bsData.profiles) {
+        if (this.bsData.profiles[0].profile[0].$.typeName == "Weapon")
+          weaponGrab = this.bsData;
+      }
+    }
+
+    if (!Array.isArray(weaponGrab)) weaponGrab = [weaponGrab];
+    for (let weapon of weaponGrab) {
+      if (!weapon) break;
+      let weaponFound = [];
+      if (weapon.selections && weapon.selections[0] != "") {
+        for (let posWeap of weapon.selections[0].selection) {
+          weaponFound.push(posWeap.profiles[0].profile[0]);
+        }
+      } else if (weapon.profiles && weapon.profiles != "") {
+        weaponFound = weapon.profiles[0].profile;
+      }
+      // If it was a weapon
+      if (!Array.isArray(weaponFound)) weaponFound = [weaponFound];
+
+      for (let weapProf of weaponFound) {
+        if (!Object.keys(weapProf).length) continue;
+        if (weapProf.$.typeName != "Weapon") continue;
+        let charaParse = weapProf.characteristics[0].characteristic;
+        let newWeapon = new Weapon(
+          weapProf.$.name,
+          weapon.$.number,
+          charaParse
+        );
+        await newWeapon.setCustom(weapon);
+        await newWeapon.grabWeaponProfile();
+
+        //Add it to the weapons or wargear or unclaimed list
+        if (newWeapon.name) {
+          if (this.name) {
+            this.weapons.push(newWeapon);
+          } else if (newWargear.name) {
+            this.weapons.push(newWargear);
+          } else {
+            unclaimedWeapons.push(newWeapon);
+          }
+        }
+
+        //If it was a wargear/upgrade
+        else {
+          newWeapon.name = weapon.$.name;
+        }
+      }
+    }
   }
 }
 module.exports = Model;

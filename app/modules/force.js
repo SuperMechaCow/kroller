@@ -9,6 +9,13 @@ class Force {
     this.costs = {};
   }
 
+  async buildForce() {
+    await this.initForce();
+    await this.grabDetachment();
+    await this.createDetachments();
+    await this.grabForceMetaData();
+  }
+
   initForce() {
     this.setForceCustom();
     this.setForceCost();
@@ -47,14 +54,13 @@ class Force {
       this.detachmentParse = [this.detachmentParse];
   }
 
-  createDetachments() {
+  async createDetachments() {
     //Loop through every detachment in the list
-    this.detachmentParse.forEach((data) => {
-      let detachment = new Detachment(data);
-      detachment.buildDetachment();
+    for (let detach of this.detachmentParse) {
+      let detachment = new Detachment(detach);
+      await detachment.buildDetachment();
       this.detachments.push(detachment);
-    });
-
+    }
     // newDetachment.units = newDetachment.units;
   }
 
