@@ -143,7 +143,7 @@ class Unit {
           }
         } else if (profile.$.typeName == "Psyker") {
           let newRule = new UnitRule();
-          newRule.grabPsykerRules(profile.characteristics[0].characteristi);
+          newRule.grabPsykerRules(profile.characteristics[0].characteristic);
           this.rules.push(newRule);
         } else if (profile.$.typeName == "Explosion") {
           let newRule = new UnitRule();
@@ -175,6 +175,8 @@ class Unit {
     for (let selection of selectionData) {
       //TODO different workflow for bsData.$.type == model
       if (!selection) break;
+      if (selection.$.type != "model" && selection.$.typeName != "Unit")
+        continue;
       let model = new Model(this);
       if (this.bsData.$.type == "model") {
         model.setModelData(this.bsData);

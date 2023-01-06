@@ -24,9 +24,10 @@ class Model {
     await this.grabProfile();
     if (!this.amount) {
       await this.mergeWeaponToStats();
-      return false;
+      if (!this.amount) return false;
     }
     await this.grabWeapon();
+    await this.grabSpells();
     return true;
   }
   //TODO at weapongrab check for warlord trait
@@ -98,7 +99,7 @@ class Model {
       else if (profile.$.typeName == "Abilities") {
         let charaParse = profile.characteristics[0].characteristic;
         if (!Array.isArray(charaParse)) charaParse = [charaParse];
-        for (chara of charaParse) {
+        for (let chara of charaParse) {
           let newRule = new UnitRule();
           newRule.grabAbilitRules(profile, chara);
           this.parentUnit.rules.push(newRule);
@@ -109,13 +110,22 @@ class Model {
     return true;
   }
 
+  /**
+   * sometimes Models have a pseudo custom name with there weapons and one profile
+   * here we check if models name exists in other models name and then assume it has to
+   * be the profile for custom named models
+   * if not we assume it is a single model unit and add 1 to the amount to keep it
+   */
   mergeWeaponToStats() {
+    let count = 0;
     this.parentUnit.models.forEach((model) => {
       if (model.name.includes(this.name)) {
+        count += 1;
         model.name = this.name;
         model.statlines = this.statlines;
       }
     });
+    if (count == 0) this.amount = 1;
   }
 
   /**
@@ -131,11 +141,11 @@ class Model {
           weaponGrab = this.bsData;
       }
     }
-
     if (!Array.isArray(weaponGrab)) weaponGrab = [weaponGrab];
     for (let weapon of weaponGrab) {
       if (!weapon) break;
       let weaponFound = [];
+      //Weapons can have 2 places where they are hiding, here we check for them
       if (weapon.selections && weapon.selections[0] != "") {
         for (let posWeap of weapon.selections[0].selection) {
           weaponFound.push(posWeap.profiles[0].profile[0]);
@@ -173,6 +183,81 @@ class Model {
         else {
           newWeapon.name = weapon.$.name;
         }
+      }
+    }
+  }
+
+  /**
+   * Start collecting spells
+   */
+  grabSpells() {
+    let spellGrab = [];
+    if (this.bsData.selections) {
+      spellGrab = this.bsData.selections[0].selection;
+    } else {
+      if (this.bsData.profiles) {
+        if (this.bsData.profiles[0].profile[0].$.typeName == "Psychic Power")
+          spellGrab = this.bsData;
+      }
+    }
+
+    if (!Array.isArray(spellGrab)) spellGrab = [spellGrab];
+    for (spell of spellGrab) {
+      if (!spell) break;
+      let spellFound = {};
+      if (spell.selections && spell.selections[0] != "") {
+        spellFound = spell.selections[0].selection[0].profiles[0].profile[0];
+      } else if (spell.profiles && spell.profiles != "") {
+        spellFound = spell.profiles[0].profile;
+      }
+      if (!Array.isArray(spellFound)) spellFound = [spellFound];
+      for (spellProf of spellFound) {
+        if (!Object.keys(spellProf).length) continue;
+        if (spellProf.$.typeName != "Psychic Power") continue;
+        let newSpell = {
+          name: "",
+          warpcharge: 0,
+          range: 0,
+        };
+        newSpell.name = spellProf.$.name;
+        //Grab customName
+        if (spell.$.customName) {
+          newSpell.customName = spell.$.customName;
+        }
+        if (spell.customNotes) {
+          newSpell.customNotes = spell.customNotes[0];
+        }
+        let spellChara = spellProf.characteristics[0].characteristic;
+        for (let chara of spellChara) {
+          newSpell[chara.$.name.toLowerCase().replace(/\s/g, "")] = chara._;
+        }
+        if (this.parentUnit.name) {
+          //Add it to the spells list for the Unit if it exists
+          this.parentUnit.spells.push(newSpell);
+        }
+      }
+    }
+  }
+
+  mergeModels() {
+    //If it found a model
+    if (this.name) {
+      if (this.parentUnit.models.length) {
+        //Check to see if it matches the previous model
+        if (
+          matchModel(
+            this.parentUnit.models[this.parentUnit.models.length - 1],
+            this
+          )
+        ) {
+          if (this.parentUnit.models[this.parentUnit.models.length - 1].amount)
+            this.parentUnit.models[this.parentUnit.models.length - 1].amount++;
+          else this.parentUnit.models[this.parentUnit.models.length - 1] = 1;
+        } else {
+          this.parentUnit.models.push(this);
+        }
+      } else {
+        this.parentUnit.models.push(this);
       }
     }
   }
