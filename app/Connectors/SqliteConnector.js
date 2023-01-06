@@ -16,7 +16,7 @@ function getWahaFaction(factionname) {
 function getWahaSubFaction(subFaction) {
   return new Promise((resolve) => {
     db.get(
-      `SELECT name FROM factions WHERE name LIKE "%${subFaction}%" AND is_subfaction = "true"`,
+      `SELECT name, id FROM factions WHERE name LIKE "%${subFaction}%" AND is_subfaction = "true"`,
       (err, result) => {
         resolve(result);
       }
@@ -56,8 +56,20 @@ function getWahaUnitKeywords(datasheetId) {
     );
   });
 }
+
+function getWahaStratagems(datasheetId) {
+  return new Promise((resolve) => {
+    db.all(
+      `SELECT * FROM datasheet_to_stratagem WHERE ds.datasheet_id = "${datasheetId} AND ("`,
+      (err, result) => {
+        resolve(result);
+      }
+    );
+  });
+}
 exports.getWahaFaction = getWahaFaction;
 exports.getWahaSubFaction = getWahaSubFaction;
 exports.getWahaSecondaries = getWahaSecondaries;
 exports.getWahaDatasheet = getWahaDatasheet;
 exports.getWahaUnitKeywords = getWahaUnitKeywords;
+exports.getWahaStratagems = getWahaStratagems;

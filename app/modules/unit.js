@@ -1,16 +1,18 @@
 const {
   getWahaDatasheet,
   getWahaUnitKeywords,
+  getWahaStratagems,
 } = require("./../Connectors/SqliteConnector");
 const UnitRule = require("./unitrule");
 const Model = require("./model");
 class Unit {
-  constructor(data, faction) {
+  constructor(data, faction, subfaction) {
     this.bsData = data;
     this.name = this.bsData.$.name;
     this.costs = {};
     this.slot = "";
     this.wahaFaction = faction;
+    this.wahaSubFaction = subfaction;
     this.faction = [];
     this.keywords = [];
     this.models = [];
@@ -27,6 +29,7 @@ class Unit {
     await this.grabKeywords();
     await this.grabUnitRules();
     await this.grabModels();
+    await this.grabStratagems();
   }
 
   /**
@@ -185,6 +188,74 @@ class Unit {
       }
       if (!(await model.buildModelFromUnit())) continue;
       this.models.push(model);
+    }
+  }
+
+  //TODO rework so it works on unit base
+  mergeModels() {
+    //If it found a model
+    if (this.name) {
+      if (this.parentUnit.models.length) {
+        //Check to see if it matches the previous model
+        if (
+          matchModel(
+            this.parentUnit.models[this.parentUnit.models.length - 1],
+            this
+          )
+        ) {
+          if (this.parentUnit.models[this.parentUnit.models.length - 1].amount)
+            this.parentUnit.models[this.parentUnit.models.length - 1].amount++;
+          else this.parentUnit.models[this.parentUnit.models.length - 1] = 1;
+        } else {
+          this.parentUnit.models.push(this);
+        }
+      } else {
+        this.parentUnit.models.push(this);
+      }
+    }
+  }
+
+  async grabStratagems() {
+    if (!this.waha) return;
+    // Find all strat ID's on the datasheet
+    let stratIDfind = await getWahaStratagems();
+    for (let stratData of stratIDfind) {
+      let strat = stratData;
+      stratData.keys = [];
+      stratData.activate = [];
+      stratData.descText = stratData.description.replaceAll("<[^>]*>", "");
+      //Find all phases of stratagems
+      let stratPhasefind = wahaData.StratagemPhases.filter(
+        (strat) => strat.stratagem_id == stratData.id
+      );
+      for (var stratPhase of stratPhasefind) {
+        stratData.activate.push(stratPhase.phase);
+      }
+      // Search for all keywords in the waha description
+      // Find a group of words inside a span if those words are also in a span
+      let span = strat.description.replace(/<span [^>]+>/g, "ス");
+      span = span.replace(/<\/span>/g, "ミ");
+      span = span.matchAll(/スス.*?ミミ/g);
+      for (var sp of span) {
+        sp[0] = sp[0].replaceAll("ス", "");
+        sp[0] = sp[0].replaceAll("ミ", "");
+        sp[0] = sp[0].toLowerCase();
+        if (!stratData.keys.includes(sp[0])) stratData.keys.push(sp[0]);
+      }
+      for (var key of stratData.description.matchAll(
+        /<span [^>]+>([^<]+)<\/span>/g
+      )) {
+        if (!stratData.keys.includes(key[1]))
+          stratData.keys.push(key[1].toLowerCase());
+      }
+      let typeData = stratData.type.split(" – ");
+      if (typeData.length > 1) {
+        stratData.subfaction = typeData[0];
+        let subCheck = /(.*)+\((.*)\)/g.exec(stratData.subfaction);
+        if (subCheck) stratData.subfaction = subCheck[2];
+        stratData.type = typeData[1].replace(" Stratagem", "");
+      }
+      this.stratagems.push(stratData);
     }
   }
 }

@@ -76,14 +76,16 @@ class Detachment {
     let unitData = this.detachment.selections[0].selection;
     if (!Array.isArray(unitData)) unitData = [unitData];
     let bsUnit;
+    //Needs to Loop first to make sure Subfaction was already found
+    for (bsUnit of unitData) {
+      if (bsUnit.$.type != "upgrade") continue;
+      await this.grabLastMetaData(bsUnit);
+    }
     //Loop through every unit in the list
     for (bsUnit of unitData) {
-      if (bsUnit.$.type == "upgrade") {
-        this.grabLastMetaData(bsUnit);
-        continue;
-      }
+      if (bsUnit.$.type == "upgrade") continue;
       if (bsUnit.$.type == "unit" || bsUnit.$.type == "model") {
-        let unit = new Unit(bsUnit, this.wahaFaction);
+        let unit = new Unit(bsUnit, this.wahaFaction, this.wahaSubFaction);
         await unit.buildUnit();
         this.units.push(unit);
         continue;
@@ -98,7 +100,7 @@ class Detachment {
       // Will always have at least one selection
       for (var select of unit.selections[0].selection) {
         // Look through all of the selections
-        this.findSubFaction(select.$.name);
+        await this.findSubFaction(select.$.name);
       }
     if (unit.$.name.split(" - ")[0] == "Army of Renown")
       // Check for army variants
@@ -139,6 +141,7 @@ class Detachment {
     if (subFaction) {
       // If a subfaction name exists that matches this selection name
       this.subfaction = subFaction.name;
+      this.wahaSubFaction = subFaction.id;
       return;
       // Then you've found the subfaction
     }
@@ -146,12 +149,14 @@ class Detachment {
     if (subFaction) {
       // If a subfaction name exists that matches this selection name
       this.subfaction = subFaction.name;
+      this.wahaSubFaction = subFaction.id;
       return;
       // Then you've found the subfaction
     }
     subFaction = await getWahaSubFaction(possibleName.split(": ")[0]);
     if (subFaction) {
       this.subfaction = subFaction.name;
+      this.wahaSubFaction = subFaction.id;
       return;
     }
     if (!this.subfaction) {
