@@ -30,6 +30,7 @@ class Unit {
     await this.grabKeywords();
     await this.grabUnitRules();
     await this.grabModels();
+    await this.mergeModels();
     await this.grabStratagems();
   }
 
@@ -195,25 +196,39 @@ class Unit {
   //TODO rework so it works on unit base
   mergeModels() {
     //If it found a model
-    if (this.name) {
-      if (this.parentUnit.models.length) {
-        //Check to see if it matches the previous model
-        if (
-          matchModel(
-            this.parentUnit.models[this.parentUnit.models.length - 1],
-            this
-          )
-        ) {
-          if (this.parentUnit.models[this.parentUnit.models.length - 1].amount)
-            this.parentUnit.models[this.parentUnit.models.length - 1].amount++;
-          else this.parentUnit.models[this.parentUnit.models.length - 1] = 1;
-        } else {
-          this.parentUnit.models.push(this);
-        }
-      } else {
-        this.parentUnit.models.push(this);
+    let checkIndex;
+    let newModelsList = [];
+    if (this.models.length <= 1) return;
+    for (let index in this.models) {
+      let model = this.models[index];
+      if (!checkIndex) {
+        newModelsList.push(model);
+        checkIndex = index;
+        continue;
       }
+      let check = this.models[checkIndex];
+      if (check.name != model.name) {
+        newModelsList.push(model);
+        checkIndex = index;
+        continue;
+      }
+      for (let weapon of model.weapons) {
+        let weaponcheck;
+        check.weapons.forEach((keepWeapon) => {
+          if (keepWeapon.name == weapon.name) {
+            keepWeapon.amount =
+              Number(keepWeapon.amount) + Number(weapon.amount);
+            weaponcheck = true;
+          }
+        });
+        if (!weaponcheck) {
+          this.models[checkIndex].weapons.push(weapon);
+        }
+      }
+      this.models[checkIndex].amount += model.amount;
+      // copy.splice(index, 1);
     }
+    this.models = newModelsList;
   }
 
   async grabStratagems() {
