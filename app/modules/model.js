@@ -21,15 +21,31 @@ class Model {
     await this.setCostum();
     await this.grabCost(parentUnit);
     await this.grabProfile(parentUnit);
-    if (!this.amount) {
-      await this.mergeWeaponToStats(parentUnit);
-      if (!this.amount) return false;
+    if (this.bsData.$.type == "unit") {
+      if (await this.checkMainModel()) {
+        await this.mergeWeaponToStats(parentUnit);
+        return false;
+      }
     }
     await this.grabWeapon();
     await this.grabSpells(parentUnit);
     return true;
   }
   //TODO at weapongrab check for warlord trait
+
+  /**
+   * to check the top in selection is actualy a model
+   */
+  checkMainModel() {
+    for (let profile of this.bsData.profiles[0].profile) {
+      if (profile.$.typeName != "Unit") continue;
+      //its more an asumption that his model would have the same name as the unit
+      if (profile.$.name == this.bsData.$.name) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   /**
    * If the Model has custom names/notes
