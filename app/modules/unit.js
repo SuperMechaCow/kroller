@@ -2,6 +2,7 @@ const {
   getWahaDatasheet,
   getWahaUnitKeywords,
   getWahaStratagems,
+  getWahaStratPhase,
 } = require("./../Connectors/SqliteConnector");
 const UnitRule = require("./unitrule");
 const Model = require("./model");
@@ -180,13 +181,13 @@ class Unit {
       if (!selection) break;
       if (selection.$.type != "model" && selection.$.typeName != "Unit")
         continue;
-      let model = new Model(this);
+      let model = new Model();
       if (this.bsData.$.type == "model") {
         model.setModelData(this.bsData);
       } else {
         model.setModelData(selection);
       }
-      if (!(await model.buildModelFromUnit())) continue;
+      if (!(await model.buildModelFromUnit(this))) continue;
       this.models.push(model);
     }
   }
@@ -218,17 +219,19 @@ class Unit {
   async grabStratagems() {
     if (!this.waha) return;
     // Find all strat ID's on the datasheet
-    let stratIDfind = await getWahaStratagems();
+    let stratIDfind = await getWahaStratagems(
+      this.waha.id,
+      this.wahaFaction,
+      this.wahaSubFaction
+    );
     for (let stratData of stratIDfind) {
       let strat = stratData;
       stratData.keys = [];
       stratData.activate = [];
       stratData.descText = stratData.description.replaceAll("<[^>]*>", "");
       //Find all phases of stratagems
-      let stratPhasefind = wahaData.StratagemPhases.filter(
-        (strat) => strat.stratagem_id == stratData.id
-      );
-      for (var stratPhase of stratPhasefind) {
+      let stratPhasefind = await getWahaStratPhase(stratData.stratagem_id);
+      for (let stratPhase of stratPhasefind) {
         stratData.activate.push(stratPhase.phase);
       }
       // Search for all keywords in the waha description
@@ -236,13 +239,13 @@ class Unit {
       let span = strat.description.replace(/<span [^>]+>/g, "ス");
       span = span.replace(/<\/span>/g, "ミ");
       span = span.matchAll(/スス.*?ミミ/g);
-      for (var sp of span) {
+      for (let sp of span) {
         sp[0] = sp[0].replaceAll("ス", "");
         sp[0] = sp[0].replaceAll("ミ", "");
         sp[0] = sp[0].toLowerCase();
         if (!stratData.keys.includes(sp[0])) stratData.keys.push(sp[0]);
       }
-      for (var key of stratData.description.matchAll(
+      for (let key of stratData.description.matchAll(
         /<span [^>]+>([^<]+)<\/span>/g
       )) {
         if (!stratData.keys.includes(key[1]))
