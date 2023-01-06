@@ -200,7 +200,6 @@ class Model {
           spellGrab = this.bsData;
       }
     }
-
     if (!Array.isArray(spellGrab)) spellGrab = [spellGrab];
     for (spell of spellGrab) {
       if (!spell) break;
@@ -235,29 +234,6 @@ class Model {
           //Add it to the spells list for the Unit if it exists
           this.parentUnit.spells.push(newSpell);
         }
-      }
-    }
-  }
-
-  mergeModels() {
-    //If it found a model
-    if (this.name) {
-      if (this.parentUnit.models.length) {
-        //Check to see if it matches the previous model
-        if (
-          matchModel(
-            this.parentUnit.models[this.parentUnit.models.length - 1],
-            this
-          )
-        ) {
-          if (this.parentUnit.models[this.parentUnit.models.length - 1].amount)
-            this.parentUnit.models[this.parentUnit.models.length - 1].amount++;
-          else this.parentUnit.models[this.parentUnit.models.length - 1] = 1;
-        } else {
-          this.parentUnit.models.push(this);
-        }
-      } else {
-        this.parentUnit.models.push(this);
       }
     }
   }
