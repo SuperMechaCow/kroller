@@ -182,10 +182,10 @@ class Unit {
       if (selection.$.type != "model" && selection.$.typeName != "Unit")
         continue;
       let model = new Model();
-      if (this.bsData.$.type == "model") {
-        model.setModelData(this.bsData);
-      } else {
+      if (selection.$.type == "model") {
         model.setModelData(selection);
+      } else {
+        model.setModelData(this.bsData);
       }
       if (!(await model.buildModelFromUnit(this))) continue;
       this.models.push(model);
