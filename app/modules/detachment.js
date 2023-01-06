@@ -71,7 +71,7 @@ class Detachment {
     }
   }
 
-  grabUnits() {
+  async grabUnits() {
     //If it's not a list, put it in one so it can be looped through
     let unitData = this.detachment.selections[0].selection;
     if (!Array.isArray(unitData)) unitData = [unitData];
@@ -84,7 +84,7 @@ class Detachment {
       }
       if (bsUnit.$.type == "unit" || bsUnit.$.type == "model") {
         let unit = new Unit(bsUnit, this.wahaFaction);
-        unit.buildUnit();
+        await unit.buildUnit();
         this.units.push(unit);
         continue;
       }
