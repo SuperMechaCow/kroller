@@ -57,6 +57,17 @@ function getWahaUnitKeywords(datasheetId) {
   });
 }
 
+function getWahaDsheetAbilities(datasheetId) {
+  return new Promise((resolve) => {
+    db.all(
+      `SELECT * FROM datasheet_to_abilities WHERE datasheet_id = "${datasheetId}" AND is_other_wargear = "false"`,
+      (err, result) => {
+        resolve(result);
+      }
+    );
+  });
+}
+
 function getWahaStratagems(datasheetId, mainId, subId) {
   return new Promise((resolve) => {
     db.all(
@@ -85,5 +96,6 @@ exports.getWahaSubFaction = getWahaSubFaction;
 exports.getWahaSecondaries = getWahaSecondaries;
 exports.getWahaDatasheet = getWahaDatasheet;
 exports.getWahaUnitKeywords = getWahaUnitKeywords;
+exports.getWahaDsheetAbilities = getWahaDsheetAbilities;
 exports.getWahaStratagems = getWahaStratagems;
 exports.getWahaStratPhase = getWahaStratPhase;
