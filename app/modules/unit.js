@@ -164,7 +164,7 @@ class Unit {
         } else if (profile.$.typeName == "Explosion") {
           let newRule = new UnitRule();
           newRule.grabExplodeRules(profile.characteristics[0].characteristic);
-          newUnit.rules.push(newRule);
+          this.rules.push(newRule);
         }
       }
     }
@@ -195,7 +195,10 @@ class Unit {
         continue;
       let model = new Model();
       if (selection.$.type == "model") {
-        model.setModelData(selection);
+        if (!selection.selections) {
+          model.setModelData(this.bsData);
+          model.amount = selection.$.number;
+        } else model.setModelData(selection);
       } else {
         model.setModelData(this.bsData);
       }
@@ -273,6 +276,12 @@ class Unit {
       }
       for (let key of stratData.description.matchAll(
         /<span [^>]+>([^<]+)<\/span>/g
+      )) {
+        if (!stratData.keys.includes(key[1]))
+          stratData.keys.push(key[1].toLowerCase());
+      }
+      for (let key of stratData.description.matchAll(
+        /<a [^>]+>([^<]+)<\/a>/g
       )) {
         if (!stratData.keys.includes(key[1]))
           stratData.keys.push(key[1].toLowerCase());

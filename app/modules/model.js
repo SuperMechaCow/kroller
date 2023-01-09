@@ -37,6 +37,7 @@ class Model {
    * to check the top in selection is actualy a model
    */
   checkMainModel() {
+    if (!this.bsData.profiles) return false;
     for (let profile of this.bsData.profiles[0].profile) {
       if (profile.$.typeName != "Unit") continue;
       //its more an asumption that his model would have the same name as the unit
@@ -182,6 +183,7 @@ class Model {
         );
         await newWeapon.setCustom(weapon);
         await newWeapon.grabWeaponProfile();
+        await newWeapon.setKeywords();
 
         //Add it to the weapons or wargear or unclaimed list
         if (newWeapon.name) {

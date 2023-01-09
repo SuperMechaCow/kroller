@@ -21,6 +21,7 @@ class Detachment {
     await this.setCostum();
     await this.grabRules();
     await this.grabUnits();
+    await this.filterStratagems();
   }
 
   async setDetachmentFaction() {
@@ -163,6 +164,43 @@ class Detachment {
       // if nothing worked, lets hope for the best here
       this.subfaction = possibleName.split(": ")[0];
     }
+  }
+
+  /**
+   * try to filter Stratagems that are possible to use cause weapon or units are missing
+   */
+  filterStratagems() {
+    for (let unit of this.units) {
+      let newStrats = [];
+      // console.log(unit);
+      for (let stratagem of unit.stratagems) {
+        if (stratagem.description.toLowerCase().includes("weapon")) {
+          if (this.checkWeaponStratagems(stratagem, unit.models)) {
+            newStrats.push(stratagem);
+            continue;
+          }
+        } else {
+          newStrats.push(stratagem);
+        }
+      }
+      unit.stratagems = newStrats;
+    }
+  }
+
+  checkWeaponStratagems(stratagem, models) {
+    for (let model of models) {
+      for (let weapon of model.weapons) {
+        //first check if Keywords are in the desc text
+        for (let word of weapon.keyWords) {
+          if (stratagem.description.toLowerCase().includes(word.toLowerCase()))
+            return true;
+          for (let key of stratagem.keys) {
+            if (key == word) return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }
 module.exports = Detachment;
