@@ -14,26 +14,28 @@ https://www.battlescribe.net/
 */
 
 // const parser = require('xml2json'); //Convert ros files (as xml) to json
-const xml2js = require('xml2js');
-const fs = require('fs'); //for reading file systems
-const https = require('https');
-const multer = require('multer'); //
-const express = require('express');
+const sqlite3 = require('sqlite3').verbose(); //for database
+const fs = require('fs'); //reading file systems
 const path = require('path');
-const unzip = require('adm-zip');
 const url = require('url');
-const qrcode = require('qrcode');
-const crypto = require('crypto');
-const Fuse = require('fuse.js');
-const request = require('request');
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./data/database.db');
-const http = require('http');
-var app = express()
-const server = http.createServer(app);
-const io = require('socket.io')(server);
+const https = require('https'); //secure http requests
+const http = require('http'); //For socketio later
+const request = require('request'); //Really wish I had left better documentation for these choices
+const multer = require('multer'); //ingesting multiple files from form data
+const express = require('express'); //http server middleware
+const xml2js = require('xml2js'); //converting .ros XML to JSON
+const unzip = require('adm-zip'); //unzipping .rosz and extracting .ros
+const qrcode = require('qrcode'); //creating QR codes for sharing
+const crypto = require('crypto'); //randomizing identifer Codes
+const Fuse = require('fuse.js'); //for wahadata fuzzy search
+
+//Local Modules
 const calculator = require('./modules/calculator.js');
 
+const db = new sqlite3.Database('./data/database.db');
+var app = express();
+const server = http.createServer(app); //for socketio
+const io = require('socket.io')(server); //websockets server
 const calc = new calculator.Calculator();
 
 /*
@@ -93,7 +95,7 @@ fs.readFile(__dirname + '/data/wahaData.json', 'utf8', (err, data) => {
 	wahaData = JSON.parse(data);
 });
 
-var URL = 'http://40kroller.animetidd.is/'
+var URL = 'https://40kroller.animetidd.is/'
 var HOST = '192.168.1.103';
 var PORT = 4040;
 
@@ -552,6 +554,7 @@ io.on('connection', (socket) => {
 		socket.gameCode = message.gameCode;
 		socket.join(message.gameCode);
 	});
+
 	socket.on('updateScoreboard', message => {
 		if (message.gameCode && message.score) {
 			let scores = []
@@ -567,6 +570,15 @@ io.on('connection', (socket) => {
 		}
 		socket.to(message.gameCode).emit('score', message.score);
 	});
+
+	socket.on('updateSecondaries', message => {
+		if (message.gameCode && message.secondaries) {
+			db.run(`UPDATE scoreboard SET atkrSecondaries = ?, dfdrSecondaries = ? WHERE gameCode = ?`,
+				message.secondaries.atkr,	message.secondaries.atkr, message.gameCode);
+		}
+		socket.to(message.gameCode).emit('secondaries', message.secondaries);
+	});
+
 	socket.on('disconnect', function() {
 		console.log('User disconnected: ' + socket.id);
 	});
@@ -670,44 +682,44 @@ async function resolveRoster() {
 	}
 }
 
-disclient.on('messageCreate', message => {
-	if (message.content.startsWith('!!')) {
-		let command = message.content.split('!!')[1]
-		let args = command.split(' ')
-		switch (args[0]) {
-			case 'ping':
-				message.reply(`I'm alive!`)
-				break;
-			case 'calc':
-				let results = calc.rollCalc(args[1]);
-				console.log(results);
-				message.reply(`
-					${((results.o.total) ? '**Total:** ' + results.o.total + '\n' : '')}${((results.o.s) ? '**Succ:** ' + results.o.s + '\n**Fail:** ' + results.o.f : '')}
-					`);
-				break;
-			case 'unit':
-				let searchResults = fuzzysearch(command, wahaData.Datasheets, 5);
-				let descString = `Searching for: ${command.replace(args[0] + ' ', '')}`;
-				for (var result of searchResults) {
-					descString += `\n[${result.item.name}](${result.item.link})`
-				}
-				const embed = new Discord.MessageEmbed()
-					.setTitle('40kroller Fuzzy Search')
-					.setColor('RED')
-					.setDescription(descString)
-				message.channel.send({
-					embeds: [embed]
-				});
-				break;
-			default:
+// disclient.on('messageCreate', message => {
+// 	if (message.content.startsWith('!!')) {
+// 		let command = message.content.split('!!')[1]
+// 		let args = command.split(' ')
+// 		switch (args[0]) {
+// 			case 'ping':
+// 				message.reply(`I'm alive!`)
+// 				break;
+// 			case 'calc':
+// 				let results = calc.rollCalc(args[1]);
+// 				console.log(results);
+// 				message.reply(`
+// 					${((results.o.total) ? '**Total:** ' + results.o.total + '\n' : '')}${((results.o.s) ? '**Succ:** ' + results.o.s + '\n**Fail:** ' + results.o.f : '')}
+// 					`);
+// 				break;
+// 			case 'unit':
+// 				let searchResults = fuzzysearch(command, wahaData.Datasheets, 5);
+// 				let descString = `Searching for: ${command.replace(args[0] + ' ', '')}`;
+// 				for (var result of searchResults) {
+// 					descString += `\n[${result.item.name}](${result.item.link})`
+// 				}
+// 				const embed = new Discord.MessageEmbed()
+// 					.setTitle('40kroller Fuzzy Search')
+// 					.setColor('RED')
+// 					.setDescription(descString)
+// 				message.channel.send({
+// 					embeds: [embed]
+// 				});
+// 				break;
+// 			default:
 
-				break;
-		}
-	} else {
-		//	resolveRoster();
-	}
+// 				break;
+// 		}
+// 	} else {
+// 		//	resolveRoster();
+// 	}
 
-});
+// });
 
 const discordtoken = require('./discordtoken');
 
@@ -1117,6 +1129,7 @@ function parseBS(data) {
 									let gameCheck = /(\d. )?(.*\: )?(.*$)/.exec(gameName);
 									if (gameCheck) {
 										force.gametype = gameCheck[3];
+										force.selectedSecondaries = [];
 										force.secondaries = wahaData.Secondaries.filter(second => second.game.includes(gameCheck[3]));
 										force.secondaries = force.secondaries.filter(second => second.faction_name == force.faction || second.faction_name == '');
 									} else {
@@ -1381,7 +1394,8 @@ function parseBS(data) {
 							keywords: [],
 							weapons: [],
 							wargear: [],
-							amount: 0
+							amount: 0,
+							marker: ''
 						}
 						if (selection.$.name == "Warlord") newUnit.warlord = true;
 						newModel.amount = Number(selection.$.number)
@@ -1633,6 +1647,7 @@ function parseBS(data) {
 								stratData.keys = [];
 								stratData.activate = [];
 								stratData.descText = stratData.description.replaceAll("<[^>]*>", "");
+								stratData.description = stratData.description.replaceAll('href="/', 'href="https://wahapedia.ru/');
 								//Find all phases of stratagems
 								let stratPhasefind = wahaData.StratagemPhases.filter(strat => strat.stratagem_id == stratData.id);
 								for (var stratPhase of stratPhasefind) {

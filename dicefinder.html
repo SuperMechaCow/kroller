@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice</title>
+    <script>
+        function recurseDice(block) {
+            let s = 0;
+            let t = 0;
+            for (let i = 0; i < block.dice; i++) {
+                for (let j = 1; j <= block.faces; j++) {
+                    if (block.dice - 1) {
+                        // console.log('Checking a face: ' + j);
+                        let upstream = recurseDice({ dice: block.dice - 1, faces: block.faces, target: block.target, previous: block.previous + j, modifier: block.modifier})
+                        s += upstream.s
+                        t += upstream.t
+                    }
+                    else {
+                        t++;
+                        if (block.previous + j + block.modifier >= block.target) {
+                            // console.log('Met the target! ', block.previous, j, block.target);
+                            s++
+                        }
+                    }
+                    // console.log('Handled roll number: ' + t);
+                }
+                return {s: s, t: t, p: s / t}
+            }
+        }
+        for (let i = 1; i <= 12; i++) {
+            console.log(i, recurseDice({ dice: 2, faces: 6, target: i, previous: 0, modifier: 2 }));
+        }
+
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>

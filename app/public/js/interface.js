@@ -138,9 +138,9 @@ function openTab(title, all) {
 		if (header.classList.contains('isOpen'))
 			if (all)
 				toggleAccordion(header)
-		else
-		if (header.parentNode.id == 'content')
-			toggleAccordion(header)
+			else
+				if (header.parentNode.id == 'content')
+					toggleAccordion(header)
 		if (window.innerWidth <= 635) {
 			closeNav(toggleatkr);
 			closeNav(toggledfdr);
@@ -160,7 +160,7 @@ function buildAccordions() {
 	var titles = document.getElementsByClassName('accordion-header');
 	// Set up accordions
 	for (var title of titles) {
-		title.onclick = function() {
+		title.onclick = function () {
 			this.classList.remove('newTag')
 			toggleAccordion(this);
 		}
@@ -233,7 +233,7 @@ function toggleAccordion(el) {
 
 function wahaLinks() {
 	for (var wahaIcon of document.getElementsByClassName('linkImg')) {
-		wahaIcon.addEventListener("click", function(e) {
+		wahaIcon.addEventListener("click", function (e) {
 			//stackoverflow fix for onlick in an onclick
 			if (!e) var e = window.event;
 			e.cancelBubble = true;
@@ -301,7 +301,7 @@ function weaponSelect() {
 					ioList.sim_atkr_d.value = weapon.d;
 				}
 			}
-			openTab('Attack Roll');
+			openTab('Calculator');
 		});
 	}
 }
@@ -416,6 +416,61 @@ function updatePhaseTags() {
 	}
 }
 
+function buildSecondaries(secondaries, listIndex, edit) {
+	if (edit && secondaries.length) {
+		let returnMenu = document.createElement('div');
+		returnMenu.id = "secondPicker" + listIndex
+		returnMenu.classList.add('bg3', 'wide');
+		//Secondaries
+		let secondList = {}
+		//find all unique
+		for (var secondCat of secondaries.map(item => item.category).filter((value, index, self) => self.indexOf(value) === index)) {
+			// Sort by category
+			for (var second of secondaries) {
+				if (secondCat == second.category) {
+					if (secondList[secondCat])
+						secondList[secondCat].push(second);
+					else secondList[secondCat] = [second];
+				}
+			}
+		}
+		for (var secondCat of Object.keys(secondList)) {
+			let secondHeader = document.createElement('h3');
+			secondHeader.innerText = secondCat;
+			returnMenu.append(secondHeader);
+			let secondMenu = document.createElement('select');
+			returnMenu.append(secondMenu);
+			let appendOption = document.createElement('option');
+			appendOption.innerText = "[ None ]";
+			appendOption.value = undefined;
+			secondMenu.append(appendOption);
+			for (var second of secondList[secondCat]) {
+				appendOption = document.createElement('option');
+				let secondParse = second.name;
+				let secondName = '';
+				secondParse = secondParse.split(" ");
+				for (let i = 0; i < secondParse.length; i++) {
+					secondParse[i] = secondParse[i].toLowerCase();
+					secondName += secondParse[i][0].toUpperCase() + secondParse[i].substr(1) + " ";
+				}
+				appendOption.innerText = secondName;
+				appendOption.value = second.name
+				secondMenu.append(appendOption);
+			}
+			secondMenu.onclick = function () {
+				console.log('ur mum');
+				// if (forceData[listIndex].force.selectedSecondaries.length < 3) {
+				// 	forceData[listIndex].force.selectedSecondaries.push(this.value);
+				// } else {
+				//
+				// }
+			}
+		}
+		console.log(returnMenu);
+		return returnMenu
+	}
+}
+
 function sortBySlot(units) {
 	let tempLists = {};
 	let newOrder = [];
@@ -433,7 +488,7 @@ function sortBySlot(units) {
 		}
 	}
 	for (slot of Object.keys(tempLists)) {
-		tempLists[slot].sort(function(a, b) {
+		tempLists[slot].sort(function (a, b) {
 			var textA = a.name.toUpperCase();
 			var textB = b.name.toUpperCase();
 			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
@@ -451,7 +506,7 @@ function sortBySlot(units) {
 }
 
 function sortByProperty(units, property) {
-	units.sort(function(a, b) {
+	units.sort(function (a, b) {
 		var nameA = a[property].toUpperCase();
 		var nameB = b[property].toUpperCase();
 		return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
@@ -460,7 +515,7 @@ function sortByProperty(units, property) {
 }
 
 function sortByCost(units, property) {
-	units.sort(function(a, b) {
+	units.sort(function (a, b) {
 		var nameA = a.costs[property];
 		var nameB = b.costs[property];
 		return (nameA > nameB) ? -1 : (nameA < nameB) ? 1 : 0;
@@ -568,7 +623,7 @@ function customMarkdown(notesString) {
 ███████  ██████   ██████ ██   ██ ███████ ████████ ███████
 ██      ██    ██ ██      ██  ██  ██         ██    ██
 ███████ ██    ██ ██      █████   █████      ██    ███████
-     ██ ██    ██ ██      ██  ██  ██         ██         ██
+	 ██ ██    ██ ██      ██  ██  ██         ██         ██
 ███████  ██████   ██████ ██   ██ ███████    ██    ███████
 */
 const socket = io();
@@ -606,7 +661,7 @@ function init(mode) {
 
 		// Set up vp trackers
 		for (var tracker of document.getElementsByClassName('vptracker')) {
-			tracker.onchange = function() {
+			tracker.onchange = function () {
 				// This must be set here and on the spinnerUp() function
 				setTrackers(true);
 			}
@@ -635,7 +690,7 @@ function init(mode) {
 
 		for (phaseBox of document.getElementById('phaser').getElementsByClassName('phaseTag')) {
 			let thisPhase = phaseBox;
-			thisPhase.addEventListener("click", function(e) {
+			thisPhase.addEventListener("click", function (e) {
 				for (nestedPhase of document.getElementById('phaser').getElementsByClassName('phaseTag')) {
 					nestedPhase.classList.remove('isActive');
 				}
@@ -666,7 +721,7 @@ function init(mode) {
 		}
 	}
 
-	changeKolor(['classico', 'greyknight', 'morphG', 'morphP', 'pitchblack', 'starkwhite'][Math.floor(Math.random() * 4)])
+	// changeKolor(['classico', 'greyknight', 'morphG', 'morphP', 'pitchblack', 'starkwhite'][Math.floor(Math.random() * 4)])
 	// changeKolor('greyknight')
 
 }
@@ -724,50 +779,9 @@ function listBuild() {
 				appendList = document.createElement('h3');
 				appendList.innerText = force.force.gametype;
 				forceContent.append(appendList);
-
-				// Uncomment to return secondaries to listbuild
-				/*
-				if (force.force.secondaries.length) {
-					let secondList = {}
-					//find all unique
-					for (var secondCat of force.force.secondaries.map(item => item.category).filter((value, index, self) => self.indexOf(value) === index)) {
-						// Sort by category
-						for (var second of force.force.secondaries) {
-							if (secondCat == second.category) {
-								if (secondList[secondCat])
-								secondList[secondCat].push(second);
-								else secondList[secondCat] = [second];
-							}
-						}
-					}
-					//
-					for (var secondCat of Object.keys(secondList)) {
-						appendList = document.createElement('h3');
-						appendList.innerText = secondCat;
-						thisList.append(appendList);
-						appendList = document.createElement('select');
-						thisList.append(appendList);
-						appendOption = document.createElement('option');
-						appendOption.innerText = "[ None ]";
-						appendOption.value = undefined;
-						appendList.append(appendOption);
-						for (var second of secondList[secondCat]) {
-							appendOption = document.createElement('option');
-							let secondParse = second.name;
-							let secondName = '';
-							secondParse = secondParse.split(" ");
-							for (let i = 0; i < secondParse.length; i++) {
-								secondParse[i] = secondParse[i].toLowerCase();
-								secondName += secondParse[i][0].toUpperCase() + secondParse[i].substr(1) + " ";
-							}
-							appendOption.innerText = secondName;
-							appendOption.value = second.name
-							appendList.append(appendOption);
-						}
-					}
-				}
-				*/
+				// forceContent.append(buildSecondaries(force.force.secondaries, thisListIndex, true));
 			}
+
 			// Add costs
 			appendList = document.createElement('div');
 			appendList.classList.add('statRow', 'noBorder');
@@ -776,8 +790,7 @@ function listBuild() {
                 <div class="statTag" title="">
                   <label for="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}" class="bg4">${cost.toUpperCase()}</label>
                   <span class="bg7" id="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}">${force.force.costs[cost]}</span>
-                </div>
-                `
+                </div>`
 			}
 			forceContent.append(appendList);
 
@@ -933,6 +946,19 @@ function listBuild() {
 						appendModel.innerHTML += tempName;
 						if (model.amount)
 							appendModel.innerHTML += " x " + model.amount;
+						if (model.customNotes) {
+							let headerColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/.exec(model.customNotes[0]);
+							if (headerColor) {
+								model.customNotes[0] = model.customNotes[0].replace(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g, '');
+								model.marker = headerColor[0]
+							}
+						}
+						if (model.marker) {
+							// modelHeader.style.background = `linear-gradient(#000000 0%, #000000 80%, ${model.marker} 100%)`;
+							appendModel.style.borderBottomWidth = `3px`;
+							appendModel.style.borderBottomColor = model.marker;
+							appendModel.style.color = model.marker;
+						}
 						if (model.customNotes) appendModel.innerHTML += `<p class='textSmall'>${model.customNotes[0]}</p>`;
 						// Statline in header
 						for (var statline of model.statlines) {
@@ -1031,7 +1057,7 @@ function listBuild() {
 										weaponDiv.innerHTML += `<img src='img/icons/weapon_abils/plague.png' title='Plague Weapon: Each time an attack is made with this weapon, re-roll a wound roll of 1.' class='weaponIcon_abil'>`;
 									}
 									if (abilText.includes('Each time an attack is made with this weapon, that attack automatically hits the target')) {
-										abilText = abilText.replaceAll(/Each time an attack is made with this weapon, that attack automatically hits the target[.]?/, '').trim();
+										abilText = abilText.replaceAll(/Each time an attack is made with this weapon, that attack automatically hits the target[.]?/g, '').trim();
 										weaponDiv.innerHTML += `<img src='img/icons/weapon_abils/flamer.png' title='Flamer: Each time an attack is made with this weapon, that attack automatically hits the target.' class='weaponIcon_abil'>`;
 									}
 									if (abilText.includes('Each time an attack is made with this weapon profile, make')) {
@@ -1078,7 +1104,7 @@ function listBuild() {
 					███████ ██████  ███████ ██      ██      ███████
 					██      ██   ██ ██      ██      ██      ██
 					███████ ██████  █████   ██      ██      ███████
-					     ██ ██      ██      ██      ██           ██
+						 ██ ██      ██      ██      ██           ██
 					███████ ██      ███████ ███████ ███████ ███████
 					*/
 					// unitContent.innerHTML += `<h2>Spells</h2>`;
@@ -1166,7 +1192,7 @@ function listBuild() {
 					███████ ████████ ██████   █████  ████████  █████   ██████  ███████ ███    ███ ███████
 					██         ██    ██   ██ ██   ██    ██    ██   ██ ██       ██      ████  ████ ██
 					███████    ██    ██████  ███████    ██    ███████ ██   ███ █████   ██ ████ ██ ███████
-					     ██    ██    ██   ██ ██   ██    ██    ██   ██ ██    ██ ██      ██  ██  ██      ██
+						 ██    ██    ██   ██ ██   ██    ██    ██   ██ ██    ██ ██      ██  ██  ██      ██
 					███████    ██    ██   ██ ██   ██    ██    ██   ██  ██████  ███████ ██      ██ ███████
 					*/
 					if (settings.stratagems) {
@@ -1195,9 +1221,9 @@ function listBuild() {
 								let newStratagemContent = document.createElement('div');
 								newStratagemContent.classList.add('accordion-content', 'hide', 'bg6', 'hlSome');
 								newStratagemContent.innerHTML += `
-								<p class="textSmall textSans">${stratagem.subfaction} - ${stratagem.type}</p>
-		            <p class="textSmall cLeft textSans">${stratagem.description}</p>
-		          	`;
+									<p class="textSmall textSans">${stratagem.subfaction} - ${stratagem.type}</p>
+		            				<p class="textSmall cLeft textSans">${stratagem.description}</p>
+		          					`;
 								for (phase of Object.keys(phaseList)) {
 									if (makeUseTag(stratagem.description, phase)) newStratagem.classList.add(phase);
 								}
