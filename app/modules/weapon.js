@@ -10,6 +10,7 @@ class Weapon {
     this.amount = number;
     this.cantrips = [];
     this.charaParse = charaParse;
+    this.keyWords = [];
   }
 
   setCustom(weapon) {
@@ -36,6 +37,17 @@ class Weapon {
           }
         }
       }
+    }
+  }
+
+  /**
+   * used to check Stratagems against it
+   */
+  setKeywords() {
+    this.keyWords.push(this.type.replace(/[0-9]/g, "").toLowerCase().trim());
+    this.keyWords.push(this.name.toLowerCase());
+    for (let word of this.name.split(" ")) {
+      this.keyWords.push(word);
     }
   }
 }
