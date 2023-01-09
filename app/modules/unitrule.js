@@ -31,6 +31,16 @@ class UnitRule {
     this.setPhases();
   }
 
+  buildWahaRules(rule) {
+    this.name = rule.name;
+    this.desc = rule.description;
+    this.wahaId = rule.ability_id;
+    this.subkeys = this.setSubKeys(rule.description);
+    this.targets = this.setTargets(rule.description);
+    this.phases = [];
+    this.setPhases();
+  }
+
   grabAbilitRules(profile, chara) {
     this.name = profile.$.name;
     this.desc = chara._;

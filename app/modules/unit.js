@@ -3,6 +3,7 @@ const {
   getWahaUnitKeywords,
   getWahaStratagems,
   getWahaStratPhase,
+  getWahaDsheetAbilities,
 } = require("./../Connectors/SqliteConnector");
 const UnitRule = require("./unitrule");
 const Model = require("./model");
@@ -32,6 +33,7 @@ class Unit {
     await this.grabModels();
     await this.mergeModels();
     await this.grabStratagems();
+    await this.cleanUpRules();
   }
 
   /**
@@ -118,7 +120,16 @@ class Unit {
    * This is the most obvious place to put all of the rules for the entire unit,
    * but there are two other places below
    */
-  grabUnitRules() {
+  async grabUnitRules() {
+    //first try get Abilities from Waha
+    if (this.waha) {
+      let abilities = await getWahaDsheetAbilities(this.waha.id);
+      for (let abilitie of abilities) {
+        let newRule = new UnitRule();
+        newRule.buildWahaRules(abilitie);
+        this.rules.push(newRule);
+      }
+    }
     if (this.bsData.rules && this.bsData.rules != "") {
       //If it's not a list, put it in one
       if (!Array.isArray(this.bsData.rules[0].rule))
@@ -275,6 +286,21 @@ class Unit {
       }
       this.stratagems.push(stratData);
     }
+  }
+
+  /**
+   * Waha has a nicer Layout for the rules but now we have all rules 2times
+   * but Waha has not all abilities for example ObSec
+   */
+  cleanUpRules() {
+    let newRule = [];
+    for (let rule of this.rules) {
+      let filter = newRule.filter(
+        (el) => el.name.toLowerCase() == rule.name.toLowerCase()
+      );
+      if (filter.length == 0) newRule.push(rule);
+    }
+    this.rules = newRule;
   }
 }
 module.exports = Unit;
