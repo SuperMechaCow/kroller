@@ -16,7 +16,7 @@ https://www.battlescribe.net/
 // const parser = require('xml2json'); //Convert ros files (as xml) to json
 const xml2js = require("xml2js");
 const fs = require("fs"); //for reading file systems
-const https = require("https");
+require("dotenv").config();
 const multer = require("multer"); //
 const express = require("express");
 const path = require("path");
@@ -25,7 +25,6 @@ const url = require("url");
 const qrcode = require("qrcode");
 const crypto = require("crypto");
 const Fuse = require("fuse.js");
-const request = require("request");
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database("./data/database.db");
 const http = require("http");
@@ -98,9 +97,9 @@ fs.readFile(__dirname + "/data/wahaData.json", "utf8", (err, data) => {
   wahaData = JSON.parse(data);
 });
 
-var URL = "http://localhost:4040/";
-var HOST = "192.168.1.103";
-var PORT = 4040;
+const URL = process.env.URL;
+const HOST = process.env.HOST;
+const PORT = parseInt(process.env.PORT);
 
 app.set("view engine", "ejs");
 
