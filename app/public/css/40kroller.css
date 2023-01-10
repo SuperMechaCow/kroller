@@ -3,6 +3,10 @@
   color: #ffffff;
 }
 
+#scoreboard {
+  display: inherit;
+}
+
 body {
   background-color: #000000;
 }
@@ -20,6 +24,11 @@ input:focus+.slider {
 }
 
 .accordion-header {
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.accordion-button {
   color: #ffffff;
   border-color: #000000;
 }
@@ -213,7 +222,7 @@ pre {
   font-size: 16px;
   min-width: 500px;
   max-width: 500px;
-  transition: 0.25s;
+  /* transition: 0.25s; */
   padding: 5px;
   margin: auto;
   border-radius: 5px;
@@ -228,6 +237,10 @@ pre {
   padding: 5px;
 }
 
+#output .noGap {
+  margin: 0px;
+}
+
 #qrshare {
   margin: auto;
 }
@@ -236,6 +249,7 @@ pre {
   width: 64px;
   display: inline;
 }
+
 
 /* .importForm {
   position: absolute;
@@ -294,6 +308,21 @@ pre {
   font-weight: 700;
 }
 
+.accordion-button {
+  cursor: pointer;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 10px 10px 10px 10px;
+  padding: 5px;
+  display: inline-block;
+  margin: 5px;
+  transition: border-radius 0.25s;
+  font-weight: 700;
+  flex-grow: 1;
+  text-align: center;
+  display: block;
+}
+
 .accordion-header.banner {
   text-align: center;
   display: block;
@@ -315,7 +344,7 @@ pre {
 
 .accordion-content {
   display: none;
-  transition: 0.25s;
+  /* transition: 0.25s; */
   margin: 0px;
   padding: 0px;
   max-height: 0px;
@@ -578,7 +607,7 @@ input:checked+.slider:before {
   margin: 1px;
   font-weight: 1000;
   min-width: 22px;
-  transition: 0.5s;
+  /* transition: 0.5s; */
   border-style: solid;
   border-width: 1px;
   border-radius: 5px 5px 5px 5px;
@@ -668,7 +697,7 @@ input:checked+.slider:before {
 
 .listView {
   width: 0px;
-  transition: 0.25s;
+  /* transition: 0.25s; */
   padding: 0px;
   margin: 0px;
   overflow-x: hidden;

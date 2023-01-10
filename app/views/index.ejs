@@ -11,10 +11,13 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/calculator.js" charset="utf-8"></script>
   <script src="js/interface.js" charset="utf-8"></script>
+  <script>
+    var calc = new Calculator();
+  </script>
   <title>40kroller</title>
   <link rel="stylesheet" href="css/40kroller.css">
   <link id="40kolor" rel="stylesheet" href="">
-  <!-- <link id="40kolor" rel="stylesheet" href="css/40kolor_classico.css"> -->
+  <link id="40kolor" rel="stylesheet" href="css/40kolor_classico.css">
   <!-- <link id="40kolor" rel="stylesheet" href="css/40kolor_greyknight.css"> -->
   <!-- <link id="40kolor" rel="stylesheet" href="css/40kolor_pitchblack.css"> -->
   <!-- <link id="40kolor" rel="stylesheet" href="css/40kolor_morphG.css"> -->
@@ -24,18 +27,18 @@
 <body onload="init()">
   <div id="atkrList" class="listView bg1 cCenter">
     <% if (locals.gameCode) { %>
-    <div class="form-group bg5 block cCenter importForm">
-      <form action="/upload" enctype="multipart/form-data" method="post">
-        <label for="atkr_file">Attacker File</label>
-        <input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
-        <label for="dfdr_file">Defender File</label>
-        <input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
-        <input type="hidden" name="gameCode" id="gameCode" value='<%- gameCode %>'>
-        <input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
-        <!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
-      </form>
-    </div>
-    <% } %>
+      <div class="form-group bg5 block cCenter importForm">
+        <form action="/upload" enctype="multipart/form-data" method="post">
+          <label for="atkr_file">Attacker File</label>
+          <input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
+          <label for="dfdr_file">Defender File</label>
+          <input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
+          <input type="hidden" name="gameCode" id="gameCode" value='<%- gameCode %>'>
+          <input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
+          <!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
+        </form>
+      </div>
+      <% } %>
   </div>
   <div id="centerBlock">
     <span id="toggleatkr" class="openNav" onclick="toggleNav(this)">&#9776;</span>
@@ -67,58 +70,60 @@
             <span class="tag phaseTag clickable">Morale</span>
           </div>
         </div>
-        <h2 class="cCenter" title="">Attacker Score</h2>
-        <div id="atkr_score" class="statRow bg5 vpbox">
-          <div class="statTag" title="">
-            <label for="atkr_cp" class="bg2">CP</label>
-            <input id="atkr_cp" name="atkr_cp" class="spinner io bg7" type="number" size=2 value="-1">
+        <div id="scoreboard">
+          <h2 class="cCenter" title="">Attacker Score</h2>
+          <div id="atkr_score" class="statRow bg5 vpbox">
+            <div class="statTag" title="">
+              <label for="atkr_cp" class="bg2">CP</label>
+              <input id="atkr_cp" name="atkr_cp" class="spinner io bg7" type="number" size=2 value="-1">
+            </div>
+            <div class="statTag" title="Primary Victory Points">
+              <label for="atkr_pvp" class="bg4">P.VP</label>
+              <input id="atkr_pvp" name="atkr_pvp" class="spinner vptracker io bg7" type="number" size=2 value=0>
+            </div>
+            <div class="statTag" title="">
+              <label for="atkr_s1vp" class="bg4">S1VP</label>
+              <input id="atkr_s1vp" name="atkr_s1vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
+            </div>
+            <div class="statTag" title="">
+              <label for="atkr_s2vp" class="bg4">S2VP</label>
+              <input id="atkr_s2vp" name="atkr_s2vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
+            </div>
+            <div class="statTag" title="">
+              <label for="atkr_s3vp" class="bg4">S3VP</label>
+              <input id="atkr_s3vp" name="atkr_s3vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
+            </div>
+            <div class="statTag" title="Total Victory Points">
+              <label for="atkr_tvp" class="bg2">TTL</label>
+              <span class="io bg7 vptotal" id="atkr_tvp"></span>
+            </div>
           </div>
-          <div class="statTag" title="Primary Victory Points">
-            <label for="atkr_pvp" class="bg4">P.VP</label>
-            <input id="atkr_pvp" name="atkr_pvp" class="spinner vptracker io bg7" type="number" size=2 value=0>
-          </div>
-          <div class="statTag" title="">
-            <label for="atkr_s1vp" class="bg4">S1VP</label>
-            <input id="atkr_s1vp" name="atkr_s1vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
-          </div>
-          <div class="statTag" title="">
-            <label for="atkr_s2vp" class="bg4">S2VP</label>
-            <input id="atkr_s2vp" name="atkr_s2vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
-          </div>
-          <div class="statTag" title="">
-            <label for="atkr_s3vp" class="bg4">S3VP</label>
-            <input id="atkr_s3vp" name="atkr_s3vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
-          </div>
-          <div class="statTag" title="Total Victory Points">
-            <label for="atkr_tvp" class="bg2">TTL</label>
-            <span class="io bg7 vptotal" id="atkr_tvp"></span>
-          </div>
-        </div>
-        <h2 class="cCenter" title="">Defender Score</h2>
-        <div id="dfdr_score" class="statRow bg5 vpbox">
-          <div class="statTag" title="">
-            <label for="dfdr_cp" class="bg2">CP</label>
-            <input id="dfdr_cp" name="dfdr_cp" class="spinner io bg7" type="number" size=2 value="-1">
-          </div>
-          <div class="statTag" title="Primary Victory Points">
-            <label for="dfdr_pvp" class="bg4">P.VP</label>
-            <input id="dfdr_pvp" name="dfdr_pvp" class="spinner vptracker io bg7" type="number" size=2 value=0>
-          </div>
-          <div class="statTag" title="">
-            <label for="dfdr_s1vp" class="bg4">S1VP</label>
-            <input id="dfdr_s1vp" name="dfdr_s1vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
-          </div>
-          <div class="statTag" title="">
-            <label for="dfdr_s2vp" class="bg4">S2VP</label>
-            <input id="dfdr_s2vp" name="dfdr_s2vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
-          </div>
-          <div class="statTag" title="">
-            <label for="dfdr_s3vp" class="bg4">S3VP</label>
-            <input id="dfdr_s3vp" name="dfdr_s3vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
-          </div>
-          <div class="statTag" title="Total Victory Points">
-            <label for="dfdr_tvp" class="bg2">TTL</label>
-            <span class="io bg7 vptotal" id="dfdr_tvp"></span>
+          <h2 class="cCenter" title="">Defender Score</h2>
+          <div id="dfdr_score" class="statRow bg5 vpbox">
+            <div class="statTag" title="">
+              <label for="dfdr_cp" class="bg2">CP</label>
+              <input id="dfdr_cp" name="dfdr_cp" class="spinner io bg7" type="number" size=2 value="-1">
+            </div>
+            <div class="statTag" title="Primary Victory Points">
+              <label for="dfdr_pvp" class="bg4">P.VP</label>
+              <input id="dfdr_pvp" name="dfdr_pvp" class="spinner vptracker io bg7" type="number" size=2 value=0>
+            </div>
+            <div class="statTag" title="">
+              <label for="dfdr_s1vp" class="bg4">S1VP</label>
+              <input id="dfdr_s1vp" name="dfdr_s1vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
+            </div>
+            <div class="statTag" title="">
+              <label for="dfdr_s2vp" class="bg4">S2VP</label>
+              <input id="dfdr_s2vp" name="dfdr_s2vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
+            </div>
+            <div class="statTag" title="">
+              <label for="dfdr_s3vp" class="bg4">S3VP</label>
+              <input id="dfdr_s3vp" name="dfdr_s3vp" class="spinner vptracker io bg7" type="number" size=2 value=0>
+            </div>
+            <div class="statTag" title="Total Victory Points">
+              <label for="dfdr_tvp" class="bg2">TTL</label>
+              <span class="io bg7 vptotal" id="dfdr_tvp"></span>
+            </div>
           </div>
         </div>
       </div>
@@ -131,20 +136,20 @@
        ██████ ██   ██ ███████  ██████  ██████  ███████ ██   ██    ██     ██████  ██   ██
       -->
       <a href="#calculator"></a>
-      <div class="accordion-header bg0 banner" style="display: none;">Calculator</div>
+      <!-- <div class="accordion-header bg0 banner" style="display: none;">Calculator</div> -->
+      <div class="accordion-header bg0 banner">Calculator</div>
       <!-- Attacker -->
-      <div class="accordion-content bg4" style="display: none;">
-        <div class="bg5 block cCenter">
-          <p>Most of this feature is non-functional as it is being overhauled. This message will be removed when the feature is complete.</p>
-          <p>Please leave any feedback with the feedback form in the 'Import - Game' tab.</p>
-        </div>
-        <h2 id="attackerName" class="cCenter io" title="Abilities will show here if they are detected.">Attacker's Stats</h2>
+      <!-- <div class="accordion-content bg4" style="display: none;"> -->
+      <div class="accordion-content bg4">
+        <h2 id="attackerName" class="cCenter io" title="Abilities will show here if they are detected.">Attacker's Stats
+        </h2>
         <div class="statRow bg5">
           <div class="statTag" id="attackerModels" title="The number of models in the attacking unit.">
             <label for="sim_atkr_mdls" class="bg4">Mdls</label>
-            <input type="number" class="spinner io bg7" name="sim_atkr_mdls" id="sim_atkr_mdls" size=2 value=10>
+            <input type="number" class="spinner io bg7" name="sim_atkr_mdls" id="sim_atkr_mdls" size=2 value=12>
           </div>
-          <div class="statTag" id="attackerA" title="The number of attacks each model can make. [For random attacks, see 'Hit Modifiers' tab]">
+          <div class="statTag" id="attackerA"
+            title="The number of attacks each model can make. [For random attacks, see 'Hit Modifiers' tab]">
             <label for="sim_atkr_a" class="bg4">A</label>
             <input type="number" class="spinner io bg7" name="sim_atkr_a" id="sim_atkr_a" size=1 value=1>
           </div>
@@ -187,6 +192,11 @@
           </div>
         </div>
         <h2 id="defenderName" class="cCenter io">Defender's Stats</h2>
+        <div class="accordion-button bg0" onclick="output(calc.calculate(ioList));">Calculate</div>
+        <!-- <div style="display: flex;">
+          <div class="accordion-button bg0" onclick="output(calc.calculate(ioList));">Simulate 1</div>
+          <div class="accordion-button bg0" onclick="output(calc.calculate(ioList));">Simul. 10k</div>
+        </div> -->
         <!--
         ██   ██ ██ ████████     ███    ███  ██████  ██████  ███████
         ██   ██ ██    ██        ████  ████ ██    ██ ██   ██ ██
@@ -197,26 +207,35 @@
         <div class="accordion-header bg1 banner">Hit</div>
         <div class="accordion-content bg2">
           <div class="block bg6" title="Add this to the die roll.">
-            Add <input type="number" class="spinner io bg7" name="sim_hit_mod" id="sim_hit_mod" size=1 value=0> to the hit roll
+            Add <input type="number" class="spinner io bg7" name="sim_hit_mod" id="sim_hit_mod" size=1 value=0> to the
+            hit roll
           </div>
           <div class="block bg6" title="Roll xDy+z attacks for each model instead of the flat Attack characteristic.">
             <input type="checkbox" class="selectMod io" id="sim_hit_attacks"> Random number of attacks:<br>
-            <input type="number" class="spinner io bg7" name="sim_hit_attacks_dice" id="sim_hit_attacks_dice" size=1 value=1> D
-            <input type="number" class="spinner io bg7" name="sim_hit_attacks_faces" id="sim_hit_attacks_faces" size=1 value=6> +
-            <input type="number" class="spinner io bg7" name="sim_hit_attacks_mod" id="sim_hit_attacks_mod" size=1 value=0>
+            <input type="number" class="spinner io bg7" name="sim_hit_attacks_dice" id="sim_hit_attacks_dice" size=1
+              value=1> D
+            <input type="number" class="spinner io bg7" name="sim_hit_attacks_faces" id="sim_hit_attacks_faces" size=1
+              value=6> +
+            <input type="number" class="spinner io bg7" name="sim_hit_attacks_mod" id="sim_hit_attacks_mod" size=1
+              value=0>
           </div>
           <div class="block bg6" title="These attacks always hit. Do not roll.">
             <input type="checkbox" class="selectMod io" id="sim_hit_autohit"> Auto-hit without rolling
           </div>
           <div class="block bg6" title="Reroll the hit roll if it's lower than this number.">
             <input type="checkbox" class="selectMod io" id="sim_hit_reroll"> Re-roll
-            <input type="number" class="spinner io bg7" name="sim_hit_reroll_target" id="sim_hit_reroll_target" size=1 value=1> or lower
+            <br><input type="radio" name="sim_hit_reroll_type" id="sim_hit_reroll_less" value="less" checked><input type="number" class="spinner io bg7" name="sim_hit_reroll_target" id="sim_hit_reroll_target" size=1 value=1> or lower <br><input type="radio" name="sim_hit_reroll_type" id="sim_hit_reroll_all" value="all"> all failures
+            <!-- <input type="number" class="spinner io bg7" name="sim_hit_reroll_target" id="sim_hit_reroll_target" size=1 value=1> or lower -->
           </div>
-          <div class="block bg6" title="Attack again if you roll a higher than the provided number">
+          <!-- HIDDEN! -->
+          <div class="block bg6" style="display: none;" title="Attack again if you roll a higher than the provided number">
             <input type="checkbox" class="selectMod io" id="sim_hit_exploding">
-            <input type="number" class="spinner io bg7" name="sim_hit_exploding_amount" id="sim_hit_exploding_amount" size=1 value=1> bonus Attacks on
-            <input type="number" class="spinner io bg7" name="sim_hit_exploding_target" id="sim_hit_exploding_target" size=1 value=6> +
+            <input type="number" class="spinner io bg7" name="sim_hit_exploding_amount" id="sim_hit_exploding_amount"
+              size=1 value=1> bonus Attacks on
+            <input type="number" class="spinner io bg7" name="sim_hit_exploding_target" id="sim_hit_exploding_target"
+              size=1 value=6> +
           </div>
+          <!-- Extra hits on natural-->
           <!-- <div class="block bg6" title="This hit always hits on this number or higher">
             <input type="checkbox" class="selectMod io" id="sim_hit_extrahit">
             <input type="number" class="spinner io bg7" name="sim_hit_extrahit_amount" id="sim_hit_extrahit_amount" size=1 value=1> bonus Hits on
@@ -224,12 +243,15 @@
           </div> -->
           <div class="block bg6" title="This hit automatically hits and wounds on this number or higher">
             <input type="checkbox" class="selectMod io" id="sim_hit_autowound"> Auto-wound on
-            <input type="number" class="spinner io bg7" name="sim_hit_autowound_target" id="sim_hit_autowound_target" size=1 value=6> +
+            <input type="number" class="spinner io bg7" name="sim_hit_autowound_target" id="sim_hit_autowound_target"
+              size=1 value=6> +
           </div>
-          <div class="block bg6" title="Inflict a Mortal Wound on a wound roll greater than this number">
-            <input type="checkbox" class="selectMod io" id="sim_hit_mortals"> Mortals on
-            <input type="number" class="spinner io bg7" name="sim_hit_mortals_target" id="sim_hit_mortals_target" size=1 value=6> +
-          </div>
+          <!-- <div class="block bg6" title="Inflict a Mortal Wound on a wound roll greater than this number">
+              <input type="checkbox" class="selectMod io" id="sim_hit_mortals"> Mortals on
+              <input type="number" class="spinner io bg7" name="sim_hit_mortals_target" id="sim_hit_mortals_target" size=1
+              value=6> + 
+              <input type="checkbox" class="selectMod io" id="sim_hit_endattack"> end attack
+          </div> -->
         </div>
         <!--
           ██     ██  ██████  ██    ██ ███    ██ ██████      ███    ███  ██████  ██████  ███████
@@ -241,30 +263,37 @@
         <div class="accordion-header bg1 banner">Wound</div>
         <div class="accordion-content bg2">
           <div class="block bg6" title="Add this to the die roll.">
-            Add <input type="number" class="spinner io bg7" name="sim_wound_mod" id="sim_wound_mod" size=1 value=0> to the wound roll
+            Add <input type="number" class="spinner io bg7" name="sim_wound_mod" id="sim_wound_mod" size=1 value=0> to
+            the wound roll
           </div>
           <div class="block bg6" title="Reroll the wound roll if it\'s lower than this number.">
             <input type="checkbox" class="selectMod io" id="sim_wound_reroll"> Re-roll
-            <input type="number" class="spinner io bg7" name="sim_wound_reroll_target" id="sim_wound_reroll_target" size=1 value=1> or less
+            <input type="number" class="spinner io bg7" name="sim_wound_reroll_target" id="sim_wound_reroll_target"
+              size=1 value=1> or less
           </div>
           <div class="block bg6" title="Ignore all wound rolls at or below this number (like Transhuman Physiology)">
-            <input type="checkbox" class="selectMod io" id="sim_wound_ignore"> Ignore rolls below
-            <input type="number" class="spinner io bg7" name="sim_wound_ignore_target" id="sim_wound_ignore_target" size=1 value=4>
+            <input type="checkbox" class="selectMod io" id="sim_wound_ignore"> Ignore rolls 
+            <input type="number" class="spinner io bg7" name="sim_wound_ignore_target" id="sim_wound_ignore_target"
+              size=1 value=3> or below
           </div>
           <div class="block bg6" title="Hit with additional AP on this number or higher">
             <input type="checkbox" class="selectMod io" id="sim_wound_bonusap">
-            <input type="number" class="spinner io bg7" name="sim_wound_bonusap_amount" id="sim_wound_bonusap_amount" size=1 value=1> Bonus AP on
-            <input type="number" class="spinner io bg7" name="sim_wound_bonusap_target" id="sim_wound_bonusap_target" size=1 value=6> +
+            <input type="number" class="spinner io bg7" name="sim_wound_bonusap_amount" id="sim_wound_bonusap_amount"
+              size=1 value=1> Bonus AP on
+            <input type="number" class="spinner io bg7" name="sim_wound_bonusap_target" id="sim_wound_bonusap_target"
+              size=1 value=6> +
           </div>
-          <div class="block bg6" title="This wound automatically damages the target on this number or higher">
-            <input type="checkbox" class="selectMod io" id="sim_wound_autodamage"> Auto-damage on
-            <input type="number" class="spinner io bg7" name="sim_wound_autodamage_target" id="sim_wound_autodamage_target" size=1 value=6> +
+          <div class="block bg6" title="Target cannot use their invuln save against this">
+            <input type="checkbox" class="selectMod io" id="sim_wound_noinvuln"> Target can't use invulnerable saves
           </div>
-          <div class="block bg6" title="Inflict a Mortal Wound on a wound roll greater than this number">
+          <!-- <div class="block bg6" title="Inflict a Mortal Wound on a wound roll greater than this number">
             <input type="checkbox" class="selectMod io" id="sim_wound_mortals">
-            <input type="number" class="spinner io bg7" name="sim_wound_mortals_amount" id="sim_wound_mortals_amount" size=1 value=1> Mortals on
-            <input type="number" class="spinner io bg7" name="sim_wound_mortals_target" id="sim_wound_mortals_target" size=1 value=6> +
-          </div>
+            <input type="number" class="spinner io bg7" name="sim_wound_mortals_amount" id="sim_wound_mortals_amount"
+              size=1 value=1> Mortals on
+            <input type="number" class="spinner io bg7" name="sim_wound_mortals_target" id="sim_wound_mortals_target"
+              size=1 value=6> +
+            <input type="checkbox" class="selectMod io" id="sim_hit_endattack"> end attack
+          </div> -->
         </div>
         <!--
           ███████  █████  ██    ██ ███████     ███    ███  ██████  ██████  ███████
@@ -276,15 +305,14 @@
         <div class="accordion-header bg1 banner">Save</div>
         <div class="accordion-content bg2">
           <div class="block bg6" title="Add this to the die roll.">
-            Add <input type="number" class="spinner io bg7" name="SvMod" id="SvMod" size=1 value=0> to the Save roll
+            Add <input type="number" class="spinner io bg7" name="SvMod" id="sim_save_mod" size=1 value=0> to the Save roll
           </div>
           <div class="block bg6" title="Defender has an Invulnerable save.">
-            <input type="checkbox" class="selectMod io" id="invuln"> Invulnerable Save
-            <input type="number" class="spinner io bg7" name="invuln_target" id="invuln_target" size=1 value=5>
+            <input type="checkbox" class="selectMod io" id="sim_save_invuln"> Invulnerable Save
+            <input type="number" class="spinner io bg7" name="invuln_target" id="sim_save_invuln_target" size=1 value=5>
           </div>
-          <div class="block bg6" title="Roll a D6 for each point of damage. If it's higher than this number remove that point of damage.">
-            <input type="checkbox" class="selectMod io" id="fnp"> Feel No Pain
-            <input type="number" class="spinner io bg7" name="fnp_target" id="fnp_target" size=1 value=6>
+          <div class="block bg6" title="You have the Space Marine Band-aids.">
+            <input type="checkbox" class="selectMod io" id="sim_save_aoc"> Armor of Contemp
           </div>
         </div>
         <!--
@@ -298,13 +326,19 @@
         <div class="accordion-content bg2">
           <div class="block bg6" title="Roll xDy+z attacks for each model instead of the flat Damage characteristic.">
             <input type="checkbox" class="selectMod io" id="sim_damage_random"> Random number of damage:<br>
-            <input type="number" class="spinner io bg7" name="sim_damage_random_dice" id="sim_damage_random_dice" size=1 value=1> D
-            <input type="number" class="spinner io bg7" name="sim_damage_random_faces" id="sim_damage_random_faces" size=1 value=6> +
-            <input type="number" class="spinner io bg7" name="sim_damage_random_mod" id="sim_damage_random_mod" size=1 value=0>
+            <input type="number" class="spinner io bg7" name="sim_damage_random_dice" id="sim_damage_random_dice" size=1
+              value=1> D
+            <input type="number" class="spinner io bg7" name="sim_damage_random_faces" id="sim_damage_random_faces"
+              size=1 value=6> +
+            <input type="number" class="spinner io bg7" name="sim_damage_random_mod" id="sim_damage_random_mod" size=1
+              value=0>
           </div>
-
+          <div class="block bg6" title="Roll a D6 for each point of damage. If it's higher than this number remove that point of damage.">
+            <input type="checkbox" class="selectMod io" id="fnp"> Feel No Pain
+            <input type="number" class="spinner io bg7" name="fnp_target" id="fnp_target" size=1 value=6>
+          </div>
           <div class="block bg6" title="Reduce damage by this much, to a minimum of 1. (Serpent Shield or Disgustingly Resilient)">
-            Shield Reduction <input type="number" class="spinner io bg7" name="sim_damage_reduction" id="sim_damage_reduction" size=1 value=0>
+             Reduce Damge by <input type="number" class="spinner io bg7" name="sim_damage_reduction" id="sim_damage_reduction" size=1 value=0>
           </div>
           <!-- <div class="block bg6" title="Model can fight back if killed if they roll this number or higher on a D6.">
             <input type="checkbox" class="selectMod io" id="sim_damage_fightback_check"> Fight on death on
@@ -329,46 +363,36 @@
       <div class="accordion-header bg0 banner isOpen">Output</div>
       <div id="output" class="accordion-content isOpen io textSans">
         <% if (locals.outputPretty) { %>
-        <%- outputPretty %>
-        <% } else { %>
-        <p>
-          <span class='oB' title=''>40kroller</span> is a tiny, lightweight list viewer, game tracker, and calculator for <span class='oG' title='The miniatures war game.'>Warhammer 40,000</span>.
-        </p>
-        <b>How to use:</b>
-        <ul>
-          <li>Tap the <span class='oG' title='Hamburger Icon'>&#9776;</span> in the top corners -- <span class='oG' title='Tap/click and drag from the edge of the screen to the center. Swipe backwards to close a roster.'>swipe</span> left or right
-            from the edge of a screen -- to access a roster.</li>
-          <li>Import a Battlescribe <span class='oG' title='This is the file extension for BattleScribe roster files.'>.rosz</span> file for the <span class='oB' title='Left side of the screen.'>Attacker</span> and <span class='oB' title='Right side of the screen.'>Defender</span></li>
-          <li>Select the current phase in the <span class='oG' title='First tool in the list.'>Tracker</span> tool to highlight units that have abilities that can be used in that phase.</li>
-          <li>If no phase is selected in the <span class='oG' title='First tool in the list.'>Tracker</span>, all <span class='oB' title='This is per detachment.'>subfaction</span> specific <span class='oG' title='Stratagems are scanned from Wahapedia and matched to your unit if found.'>Stratagems</span>
-            will be highlighted.</li>
-          <li><span class='oG' title='Desktop users can click and drag.'>Swipe</span> a number up or down to increase or decrease that number.</li>
-          <!-- <li>Desktop Users: Hover over <span class='oG' title='You are seeing this tooltip because you followed the instructions.'>colored text</span> or labels to get more information about them. </li> -->
-          <!-- <li>You can also share up to two BattleScribe roster files in a Discord server with a kroller bot to start a game.</li> -->
-          <!-- <li>Be sure to use <span class='oG' title='You can right-click or use the three dots to create custome notes and names for anything in Battlescribe.'>custom notes</span> in your BattleScribe roster!</li> -->
-        </ul>
-        <hr>
-        <b>Update September 17th, 2022:</b>
-        <ul>
-          <li>You can now sort your forces by Name, Role, Costs, and by Squad Marker in the Force Settings tab in your force.</li>
-          <li>To mark a squad, put a html hexidecimal color code as the beginning text in the Custom Notes of the unit you wish to mark (example: '#ff0000' will mark the unit in red).</li>
-          <li>40kroller converts your BattleScribe roster to a "kfon" data structure. You can download this file in the Force Settings tab in your Force. I don't know whay you would use this for, but it's there.</li>
-          <li><span class='oR' title='Feedback is the second most effective way of getting your issue fixed. The first is joining the Discord channel and complaining.'>Please leave feedback</span> in the Game tab if something is not working for
-            you! You can now also upload the problem roster file as well.</li>
-        </ul>
-        <hr>
-        <p class="cCenter">
-          Powered by:<br><br>
-          <a href="https://wahapedia.ru/"><img class="outputIcon" src="img/icons/wahapedia.png" alt=""></a>
-          <a href="https://battlescribe.net/"><img class="outputIcon" src="img/icons/battlescribe.png" alt=""></a>
-        </p>
-        <p class="cCenter">
-          Participate:<br><br>
-          <a href="https://github.com/SuperMechaCow/kroller"><img class="outputIcon" src="img/icons/github.png" alt=""></a>
-          <a href="https://discord.gg/UmC5VwZNZt"><img class="outputIcon" src="img/icons/discord.png" alt=""></a>
-        </p>
-        <p class="cCenter">Feel free to host, contribute, and share!</p>
-        <% } %>
+          <%- outputPretty %>
+            <% } else { %>
+              <p class="cCenter">Do you play <span class="oG">Warhammer 40,000</span>?</p>
+              <p class="cCenter">Do you use <span class="oB">BattleScribe</span>?</p>
+              <p class="cCenter">Do you constantly <span class="oR">forget</span> all of your army's rules?</p>
+              <p class="cCenter">Then <span class="oB">40kroller</span> is for you. </p>
+              <p class="cCenter">Just press the <span class="oG">&#9776;</span> icons in the top corners to upload yours
+                and a "friend's" BattleScribe Roster.</p>
+              <p class="cCenter">Then just <span class="oG">poke</span> anything that looks like a button. If I have to
+                explain it more than that then I am just a bad techpriest.</p>
+              <p class="cCenter"><a href="/?gameCode=6b3cbf9f">Click for example Army</a></p>
+              <p class="cCenter"><span class="oR">Something missing or broken?</span> Please leave <span
+                  class="oG">FEEDBACK</span> in the <span class="oG">Game</span> tab!</p>
+              </ul>
+              <p class="cCenter" style="display: flex; justify-content: space-between;">
+                <hr>
+              <div style="float: left;">
+                <p class="cCenter">Powered by:</p>
+                <a href="https://wahapedia.ru/"><img class="outputIcon" src="img/icons/wahapedia.png" alt=""></a>
+                <a href="https://battlescribe.net/"><img class="outputIcon" src="img/icons/battlescribe.png" alt=""></a>
+              </div>
+              <div style="float: right;">
+                <p class="cCenter">Participate:</p>
+                <a href="https://github.com/SuperMechaCow/kroller"><img class="outputIcon" src="img/icons/github.png"
+                    alt=""></a>
+                <a href="https://discord.gg/UmC5VwZNZt"><img class="outputIcon" src="img/icons/discord.png" alt=""></a>
+              </div>
+              </p>
+              <p class="cCenter">Feel free to host, contribute, and share!</p>
+              <% } %>
       </div>
 
       <!--
@@ -379,115 +403,127 @@
        ██████  ██   ██ ██      ██ ███████
      -->
       <% if (locals.gameCode) { %>
-      <a href="#game"></a>
-      <div class="accordion-header bg0 banner">Game</div>
-      <div class="accordion-content bg4 cCenter">
-        <button type="button" onclick="window.location='/'" title="">Start a New Game</button>
-        <h2 class="cCenter">Game Code:</h2>
-        <h1 class="cCenter bg1 hlAll" style="margin-top: 0px;">
-          <%- gameCode %>
-        </h1>
-        <img id="qrshare" src="shares/<%- gameCode %>.png" alt="Have your friend scan this QR code to join your game session">
-        <div class="bg5 block cCenter">
-          <button type="button" onclick="navigator.clipboard.writeText('http://40kroller.animetidd.is/>gameCode=<%- gameCode %>'); output('Code copied!')" title="">Copy Link</button>
-          <button type="button" onclick="navigator.clipboard.writeText('<%- gameCode %>'); output('Code copied!')" title="">Copy Code</button>
-          <button type="button" onclick="navigator.clipboard.writeText(ioList.output.innerText)" title="">Copy Output</button>
+        <a href="#game"></a>
+        <div class="accordion-header bg0 banner">Game</div>
+        <div class="accordion-content bg4 cCenter">
+          <button type="button" onclick="window.location='/'" title="">Start a New Game</button>
+          <h2 class="cCenter">Game Code:</h2>
+          <h1 class="cCenter bg1 hlAll" style="margin-top: 0px;">
+            <%- gameCode %>
+          </h1>
+          <img id="qrshare" src="shares/<%- gameCode %>.png"
+            alt="Have your friend scan this QR code to join your game session">
+          <div class="bg5 block cCenter">
+            <button type="button"
+              onclick="navigator.clipboard.writeText('https://40kroller.animetidd.is/?gameCode=<%- gameCode %>'); output('Code copied!')"
+              title="">Copy Link</button>
+            <button type="button" onclick="navigator.clipboard.writeText('<%- gameCode %>'); output('Code copied!')"
+              title="">Copy Code</button>
+            <button type="button" onclick="navigator.clipboard.writeText(ioList.output.innerText)" title="">Copy
+              Output</button>
+          </div>
+          <h2 class="cCenter">Go to Game:</h2>
+          <div class="bg5 block cCenter">
+            <input type="text" name="gotoCode" id="gotoCode" value="" placeholder="Friend's gameCode">
+            <button type="button" onclick="window.location='/?gameCode='+document.getElementById('gotoCode').value;"
+              title="">Go</button>
+          </div>
+          <div class="accordion-header bg1 banner">Feedback</div>
+          <div class="accordion-content bg5 feedbackwrapper">
+            <form action="/feedback" method="post" enctype="multipart/form-data">
+              <textarea name="feedback" id="feedback" rows="8" cols="30"
+                placeholder="You only need to submit your feedback once. Yes, I know it doesn't give any confirmation that I got it, but I did. I am working on this."></textarea>
+              <input type="hidden" name="gameCode" id="gameCode" value='<%- gameCode %>'>
+              <label for="atkr_file">Attach Broken Roster List:</label>
+              <input type="file" class="fileSpot fileWidget bg7" name="broken_file" id="broken_file" accept="rosz"><br>
+              <input type="submit" value="Submit">
+            </form>
+          </div>
         </div>
-        <h2 class="cCenter">Go to Game:</h2>
-        <div class="bg5 block cCenter">
-          <input type="text" name="gotoCode" id="gotoCode" value="" placeholder="Friend's gameCode">
-          <button type="button" onclick="window.location='/?gameCode='+document.getElementById('gotoCode').value;" title="">Go</button>
-        </div>
-        <div class="accordion-header bg1 banner">Feedback</div>
-        <div class="accordion-content bg5 feedbackwrapper">
-          <form action="/feedback" method="post" enctype="multipart/form-data">
-            <textarea name="feedback" id="feedback" rows="8" cols="30" placeholder="You only need to submit your feedback once. Yes, I know it doesn't give any confirmation that I got it, but I did. I am working on this."></textarea>
-            <input type="hidden" name="gameCode" id="gameCode" value='<%- gameCode %>'>
-            <label for="atkr_file">Attach Broken Roster List:</label>
-            <input type="file" class="fileSpot fileWidget bg7" name="broken_file" id="broken_file" accept="rosz"><br>
-            <input type="submit" value="Submit">
-          </form>
-        </div>
-      </div>
 
-      <!--
+        <!--
       ███████ ███████ ████████ ██    ██ ██████
       ██      ██         ██    ██    ██ ██   ██
       ███████ █████      ██    ██    ██ ██████
            ██ ██         ██    ██    ██ ██
       ███████ ███████    ██     ██████  ██
     -->
-      <a href="#settings"></a>
-      <div class="accordion-header bg0 banner">Settings</div>
-      <div class="accordion-content bg4">
-        <div class="settingBox bg3">
-          <p class="textFull">Auto-open all phase abilities</p>
-          <label class="switch">
-            <input id="setAutoOpen" type="checkbox" class="io" onchange="settings.autoOpen = !settings.autoOpen; reload();">
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div class="settingBox bg3">
-          <p class="textFull">Close other tabs when opening new tab</p>
-          <label class="switch">
-            <input id="setAutoClose" type="checkbox" class="io" onchange="settings.autoClose = !settings.autoClose; reload();" checked>
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div class="settingBox bg3">
-          <p class="textFull">Show stat icons</p>
-          <label class="switch">
-            <input id="setStatIcons" type="checkbox" class="io" onchange="settings.statIcons = !settings.statIcons; reload();" checked>
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div class="settingBox bg3">
-          <p class="textFull">Show role icons</p>
-          <label class="switch">
-            <input id="setStatIcons" type="checkbox" class="io" onchange="settings.slotIcons = !settings.slotIcons; reload();" checked>
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div class="settingBox bg3">
-          <p class="textFull">Show Stratagems</p>
-          <label class="switch">
-            <input id="setStratagems" type="checkbox" class="io" onchange="settings.stratagems = !settings.stratagems; reload();" checked>
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div class="settingBox bg3">
-          <p class="textFull">Kolor Scheme</p>
-          <select onchange="changeKolor(this.value)" style="float: left;">
-            <option value="classico">Classico</option>
-            <option value="greyknight">Grey Knight</option>
-            <option value="morphG">Xeno Morph G</option>
-            <option value="morphP">Xeno Morph P</option>
-            <option value="starkwhite">Stark White</option>
-            <option value="pitchblack">Pitch Black</option>
-            <!-- <option value="pitchblack">Pitch Black</option> -->
-          </select>
-        </div>
-        <!-- <div class="accordion-header bg1 banner">Button Maker</div>
+        <a href="#settings"></a>
+        <div class="accordion-header bg0 banner">Settings</div>
+        <div class="accordion-content bg4">
+          <div class="settingBox bg3">
+            <p class="textFull">Auto-open all phase abilities</p>
+            <label class="switch">
+              <input id="setAutoOpen" type="checkbox" class="io"
+                onchange="settings.autoOpen = !settings.autoOpen; reload();">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="settingBox bg3">
+            <p class="textFull">Close other tabs when opening new tab</p>
+            <label class="switch">
+              <input id="setAutoClose" type="checkbox" class="io"
+                onchange="settings.autoClose = !settings.autoClose; reload();" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="settingBox bg3">
+            <p class="textFull">Show stat icons</p>
+            <label class="switch">
+              <input id="setStatIcons" type="checkbox" class="io"
+                onchange="settings.statIcons = !settings.statIcons; reload();" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="settingBox bg3">
+            <p class="textFull">Show role icons</p>
+            <label class="switch">
+              <input id="setStatIcons" type="checkbox" class="io"
+                onchange="settings.slotIcons = !settings.slotIcons; reload();" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="settingBox bg3">
+            <p class="textFull">Show Stratagems</p>
+            <label class="switch">
+              <input id="setStratagems" type="checkbox" class="io"
+                onchange="settings.stratagems = !settings.stratagems; reload();" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="settingBox bg3">
+            <p class="textFull">Kolor Scheme</p>
+            <select onchange="changeKolor(this.value)" style="float: left;">
+              <option value="classico">Classico</option>
+              <option value="greyknight">Grey Knight</option>
+              <option value="morphG">Xeno Morph G</option>
+              <option value="morphP">Xeno Morph P</option>
+              <option value="starkwhite">Stark White</option>
+              <option value="pitchblack">Pitch Black</option>
+              <!-- <option value="pitchblack">Pitch Black</option> -->
+            </select>
+          </div>
+          <!-- <div class="accordion-header bg1 banner">Button Maker</div>
         <div class="accordion-content bg5 cCenter">
 
         </div> -->
-      </div>
-      <% } %>
+        </div>
+        <% } %>
     </div>
   </div>
   <div id="dfdrList" class="listView bg1 cCenter">
     <% if (locals.gameCode) { %>
-    <div class="form-group bg5 block cCenter importForm">
-      <form action="/upload" enctype="multipart/form-data" method="post">
-        <label for="atkr_file">Attacker File</label>
-        <input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
-        <label for="dfdr_file">Defender File</label>
-        <input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
-        <input type="hidden" name="gameCode" id="gameCode" value="<%- gameCode %>">
-        <input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
-      </form>
-    </div>
-    <% } %>
+      <div class="form-group bg5 block cCenter importForm">
+        <form action="/upload" enctype="multipart/form-data" method="post">
+          <label for="atkr_file">Attacker File</label>
+          <input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>
+          <label for="dfdr_file">Defender File</label>
+          <input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>
+          <input type="hidden" name="gameCode" id="gameCode" value="<%- gameCode %>">
+          <input type="submit" value="Upload BattleScribe Rosters" class="fileBtn fileWidget">
+        </form>
+      </div>
+      <% } %>
   </div>
 </body>
 
@@ -495,19 +531,19 @@
 
 <script type="text/javascript">
   <% if (locals.gameCode) { %>
-  gameCode = '<%- gameCode %>';
-  console.log(gameCode);
-  socket.emit('connectGame', {
-    gameCode: gameCode
-  });
+    gameCode = '<%- gameCode %>';
+    console.log(gameCode);
+    socket.emit('connectGame', {
+      gameCode: gameCode
+    });
   <% } %>
   <% if (locals.forceData) { %>
-  forceData = <%- JSON.stringify(forceData) %>;
-  console.log(forceData);
+    forceData = <%- JSON.stringify(forceData) %>;
+    console.log(forceData);
   <% } %>
   <% if (locals.scoreboard) { %>
-  console.log(<%- scoreboard %>);
-  getTrackers(<%- scoreboard %>);
+    console.log(<%- scoreboard %>);
+    getTrackers(<%- scoreboard %>);
   <% } %>
 </script>
 

@@ -34,6 +34,10 @@ const io = require("socket.io")(server);
 const calculator = require("./modules/calculator.js");
 const Force = require("./modules/force");
 
+const db = new sqlite3.Database('./data/database.db');
+var app = express();
+const server = http.createServer(app); //for socketio
+const io = require('socket.io')(server); //websockets server
 const calc = new calculator.Calculator();
 
 /*

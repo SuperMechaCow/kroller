@@ -1,4 +1,8 @@
 ## Bugs:
+- Plague marines don't show all weapons in squad
+- Plague marines no strats
+- Tau bracketing models with drones (see armiger bug)
+- Tau model bracket in [] and not ()
 - Costs of upgrades is not 100% accurate
 - No Force Org Slot / Warglaives have redundant rules tags
 - fix wahalinks (some 'http' and some '/who40ken')
@@ -21,6 +25,9 @@
 * copy link/code/output
 
 ## To Do:
+
+
+FIX WAHALINKS TO CORE RULES DINGUS!
 
 data[8] isn't getting anything for rollCalc
 1 Finish calculator/simulator MVP
