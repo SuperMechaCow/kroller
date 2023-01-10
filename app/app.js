@@ -29,15 +29,10 @@ const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database("./data/database.db");
 const http = require("http");
 var app = express();
-const server = http.createServer(app);
-const io = require("socket.io")(server);
+const server = http.createServer(app); //for socketio
+const io = require("socket.io")(server); //websockets server
 const calculator = require("./modules/calculator.js");
 const Force = require("./modules/force");
-
-const db = new sqlite3.Database('./data/database.db');
-var app = express();
-const server = http.createServer(app); //for socketio
-const io = require('socket.io')(server); //websockets server
 const calc = new calculator.Calculator();
 
 /*
