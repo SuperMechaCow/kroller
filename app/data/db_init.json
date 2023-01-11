@@ -44,8 +44,8 @@
       "open_play_only boolean",
       "crusade_only boolean",
       "virtual string",
-      "Cost string",
-      "cost_per_unit boolean"
+      "cost_per_unit boolean",
+      "Cost string"
     ]
   },
   "3": {
@@ -132,8 +132,8 @@
       "datasheet_id string",
       "line string",
       "wargear_id string",
-      "cost string",
       "is_index_wargear boolean",
+      "cost string",
       "model string",
       "is_upgrade boolean"
     ]
@@ -181,15 +181,15 @@
     "is_csv": true,
     "path": "Stratagems.csv",
     "columns": [
+      "id string",
       "faction_id string",
       "name string",
       "type string",
       "cp_cost string",
+      "description string",
       "legend string",
       "source_id string",
-      "subfaction_id string",
-      "description string",
-      "id string"
+      "subfaction_id string"
     ]
   },
   "13": {
@@ -231,14 +231,14 @@
     "is_csv": true,
     "path": "PsychicPowers.csv",
     "columns": [
+      "id string",
       "roll string",
       "name string",
       "faction_id string",
       "faction_name string",
       "legend string",
       "type string",
-      "description string",
-      "id string"
+      "description string"
     ]
   },
   "17": {
@@ -300,22 +300,6 @@
       "dfdr_ttl INTEGER",
       "turn TEXT",
       "round INTEGER"
-    ]
-  },
-  "21": {
-    "name": "secondaries",
-    "is_csv": true,
-    "path": "Secondaries.csv",
-    "columns": [
-      "game string",
-      "faction_type string",
-      "faction_id string",
-      "faction_name string",
-      "category string",
-      "name string",
-      "type string",
-      "legend string",
-      "description string"
     ]
   }
 }
