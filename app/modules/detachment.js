@@ -32,7 +32,11 @@ class Detachment {
     //Start building the detachment object
     this.faction = faction;
     //Some factions have multiple names
-    if (faction == "Adeptus Astartes") this.faction = "Space Marines";
+    if (faction == "Adeptus Astartes") {
+      this.faction = "Space Marines";
+      if (this.detachment.$.catalogueName.split(" - ")[2])
+        this.subfaction = this.detachment.$.catalogueName.split(" - ")[2];
+    }
     if (faction == "Craftworlds") {
       this.faction = "Aeldari";
     }
