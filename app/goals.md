@@ -1,5 +1,4 @@
 ## Bugs:
-
 - Plague marines don't show all weapons in squad
 - Plague marines no strats
 - Tau bracketing models with drones (see armiger bug)
@@ -14,9 +13,10 @@
 - Not parsing Plagueburst crawlers (listed as upgrade and not unit) (check to see if "upgrade profile has statline characteristic")
 - Greyknights doesn't show built-in spell
 - <brotherhood></brotherhood> in Greyknights
+- black templars subfaction not found
+- Necron subfaction not found
 - can't copy output/gamecode by button on android
-  ~ Plural Unit names not matching Singular unit names (bs/waha names)
-
+~ Plural Unit names not matching Singular unit names (bs/waha names)
 * aeldari subfaction not found
 * Eldar lists are putting HQ at the bottom? Out of order?
 * SM character upgrades change unit name and cannot find on waha
@@ -25,6 +25,7 @@
 * copy link/code/output
 
 ## To Do:
+
 
 FIX WAHALINKS TO CORE RULES DINGUS!
 
@@ -70,15 +71,14 @@ data[8] isn't getting anything for rollCalc
 - Daily download/cleaning
 - Battlescribe ingestor (with classes/constructors)
 - Battlescribe read direct or search on wahapedia
-  ~ [Reference] Rules (some still not showing)
-  ~ Weapon Ability icons (Blast. Plague Weapon.) Need more
-  ~ tech priest control panel (needs more tools/logger)
-  ~ Game tracker
-  ~ MARKDOWN IN CUSTOM NOTES (only does basic markdown?!)
-  ~ Wahapedia Codex scraper
-  ~ Wahapedia download/ingestor (automated)
-  ~ Logger for debug (Doesn't show complete sql errors)
-
+~ [Reference] Rules (some still not showing)
+~ Weapon Ability icons (Blast. Plague Weapon.) Need more
+~ tech priest control panel (needs more tools/logger)
+~ Game tracker
+~ MARKDOWN IN CUSTOM NOTES (only does basic markdown?!)
+~ Wahapedia Codex scraper
+~ Wahapedia download/ingestor (automated)
+~ Logger for debug (Doesn't show complete sql errors)
 * Sort units by categories (costs, name, marker, role, etc.)
 * Weapon Type Icons
 * paste game code to go to game
@@ -94,7 +94,6 @@ data[8] isn't getting anything for rollCalc
 * UI without jquery
 
 ## Maybe?
-
 - bullet points are custom/faction icons instead
 - Add admin lock
 - stream overlay view

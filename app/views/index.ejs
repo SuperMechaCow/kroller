@@ -491,16 +491,6 @@
               <span class="slider round"></span>
             </label>
           </div>
-          <% if (!settings.stratagems) { %>
-            <div class="settingBox bg3">
-              <p class="textFull">Filter Stratagems (WIP)</p>
-              <label class="switch">
-                <input id="setStratagems" type="checkbox" class="io"
-                  onchange="settings.filterstrata = !settings.filterstrata; reload();" checked>
-                <span class="slider round"></span>
-              </label>
-            </div>
-            <% } %>
           <div class="settingBox bg3">
             <p class="textFull">Kolor Scheme</p>
             <select onchange="changeKolor(this.value)" style="float: left;">
