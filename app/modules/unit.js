@@ -86,8 +86,11 @@ class Unit {
     if (this.waha) {
       let unitKeys = await getWahaUnitKeywords(this.waha.id);
       for (var key of unitKeys) {
-        if (key.is_faction_keyword == "true") this.faction.push(key.keyword);
-        else this.keywords.push(key.keyword.toLowerCase());
+        if (key.is_faction_keyword == "true") {
+          this.faction.push(key.keyword);
+          if (!key.keyword.includes("<") && key.keyword != this.fact)
+            this.keywords.push(key.keyword.toLowerCase());
+        } else this.keywords.push(key.keyword.toLowerCase());
       }
       this.slot = this.waha.role;
     }
