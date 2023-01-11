@@ -1393,7 +1393,10 @@ function listBuild() {
 					███████    ██    ██   ██ ██   ██    ██    ██   ██  ██████  ███████ ██      ██ ███████
 					*/
           if (settings.stratagems) {
-            for (var stratagem of unit.stratagems) {
+            if (settings.filterstrata)
+              unit.usestratagems = unit.filterSratagems;
+            else unit.usestratagems = unit.stratagems;
+            for (var stratagem of unit.usestratagems) {
               // Filter by faction, subfaction, and army of renown / variant
               if (
                 stratagem.type != "Requisition" &&

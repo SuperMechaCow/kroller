@@ -183,7 +183,7 @@ class Detachment {
           newStrats.push(stratagem);
         }
       }
-      unit.stratagems = newStrats;
+      unit.filterSratagems = newStrats;
     }
   }
 
