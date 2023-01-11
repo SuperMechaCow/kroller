@@ -8,13 +8,15 @@ const {
 const UnitRule = require("./unitrule");
 const Model = require("./model");
 class Unit {
-  constructor(data, faction, subfaction) {
+  constructor(data, faction, factionId, subfaction, subfactionId) {
     this.bsData = data;
     this.name = this.bsData.$.name;
     this.costs = {};
     this.slot = "";
-    this.wahaFaction = faction;
-    this.wahaSubFaction = subfaction;
+    this.fact = faction;
+    this.subFaction = subfaction;
+    this.wahaFaction = factionId;
+    this.wahaSubFaction = subfactionId;
     this.faction = [];
     this.keywords = [];
     this.models = [];
@@ -200,10 +202,31 @@ class Unit {
           model.amount = selection.$.number;
         } else model.setModelData(selection);
       } else {
+        //most Likely this is only a Profile for Models
+        // if (selection.characteristics) {
+        //   this.mergeProfiles(
+        //     selection.$.name,
+        //     selection.characteristics[0].characteristic,
+        //     model
+        //   );
+        //   continue;
+        // }
         model.setModelData(this.bsData);
       }
       if (!(await model.buildModelFromUnit(this))) continue;
       this.models.push(model);
+    }
+  }
+
+  /**
+   * builds on the assumptiopn that this isnt a real model;
+   */
+  mergeProfiles(name, charaParse, helper) {
+    let statline = helper.grabStatLine(charaParse);
+    for (let model of this.models) {
+      if (name == model.name) {
+        model.statlines.push(statline);
+      }
     }
   }
 
@@ -287,10 +310,13 @@ class Unit {
           stratData.keys.push(key[1].toLowerCase());
       }
       let typeData = stratData.type.split(" – ");
+      if (
+        stratData.subfaction_id &&
+        stratData.subfaction_id == this.wahaSubFaction
+      )
+        stratData.subfaction = this.subFaction;
+      else stratData.subfaction = this.fact;
       if (typeData.length > 1) {
-        stratData.subfaction = typeData[0];
-        let subCheck = /(.*)+\((.*)\)/g.exec(stratData.subfaction);
-        if (subCheck) stratData.subfaction = subCheck[2];
         stratData.type = typeData[1].replace(" Stratagem", "");
       }
       this.stratagems.push(stratData);

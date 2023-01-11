@@ -46,6 +46,11 @@ class Detachment {
       this.factionLink = wahaFaction.link;
       this.wahaFaction = wahaFaction.id;
     }
+    //thanks to the spacemarine, since we need for stratagems the subfaction
+    //and spacemarine only hide it in there name, here seems a good place to grab it the wahaid
+    if (this.subfaction) {
+      await this.findSubFaction(this.subfaction);
+    }
   }
 
   /**
@@ -90,7 +95,13 @@ class Detachment {
     for (bsUnit of unitData) {
       if (bsUnit.$.type == "upgrade") continue;
       if (bsUnit.$.type == "unit" || bsUnit.$.type == "model") {
-        let unit = new Unit(bsUnit, this.wahaFaction, this.wahaSubFaction);
+        let unit = new Unit(
+          bsUnit,
+          this.faction,
+          this.wahaFaction,
+          this.subfaction,
+          this.wahaSubFaction
+        );
         await unit.buildUnit();
         this.units.push(unit);
         continue;

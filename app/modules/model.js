@@ -99,17 +99,7 @@ class Model {
       if (profile.$.typeName == "Unit") {
         this.name = profile.$.name;
         let charaParse = profile.characteristics[0].characteristic;
-        let statline = {};
-        for (let chara of charaParse) {
-          let statname = chara.$.name;
-          if (statname == "Save") statname = "Sv";
-          let stattext = chara._;
-          stattext = stattext.replace("+", "");
-          stattext = stattext.replace('"', "");
-          if (stattext == "N/A") stattext = "*";
-          statline[statname] = stattext;
-        }
-        this.statlines.push(statline);
+        this.statlines.push(this.grabStatLine(charaParse));
       }
       //This is number three of the three stupid places you can store unit rules
       else if (profile.$.typeName == "Abilities") {
@@ -124,6 +114,25 @@ class Model {
       }
     }
     return true;
+  }
+
+  /**
+   * Mostly exists as sperate function to grab Statlines from non Model Data
+   * @param {Array} charaParse needs an Array
+   * @returns statline
+   */
+  grabStatLine(charaParse) {
+    let statline = {};
+    for (let chara of charaParse) {
+      let statname = chara.$.name;
+      if (statname == "Save") statname = "Sv";
+      let stattext = chara._;
+      stattext = stattext.replace("+", "");
+      stattext = stattext.replace('"', "");
+      if (stattext == "N/A") stattext = "*";
+      statline[statname] = stattext;
+    }
+    return statline;
   }
 
   /**
