@@ -89,9 +89,23 @@ class Model {
             statline.W = chara.name.split("-")[1].substr(0, 1);
           }
           this.statlines.push(statline);
+          continue;
         }
       }
-      if (chara.name == this.name) this.statlines = chara.statlines;
+      if (chara.name == this.name) {
+        this.statlines = chara.statlines;
+        continue;
+      }
+      //in some cases the model and there character dont fully share names...
+      if (chara.name.includes(this.name)) {
+        this.statlines = chara.statlines;
+        continue;
+      }
+      //same as above
+      if (this.name.includes(chara.name)) {
+        this.statlines = chara.statlines;
+        continue;
+      }
     }
     return true;
   }
