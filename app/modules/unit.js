@@ -1,3 +1,4 @@
+const jp = require("jsonpath");
 const {
   getWahaDatasheet,
   getWahaUnitKeywords,
@@ -29,7 +30,7 @@ class Unit {
   async buildUnit() {
     await this.setCostum();
     await this.setCost();
-    this.waha = await this.grabDatasheet();
+    // this.waha = await this.grabDatasheet();
     await this.grabKeywords();
     await this.grabUnitRules();
     await this.grabModels();
@@ -135,44 +136,58 @@ class Unit {
         this.rules.push(newRule);
       }
     }
-    if (this.bsData.rules && this.bsData.rules != "") {
-      //If it's not a list, put it in one
-      if (!Array.isArray(this.bsData.rules[0].rule))
-        this.bsData.rules[0].rule = [this.bsData.rules[0].rule];
-      //Loop through each rule
-      for (let rule of this.bsData.rules[0].rule) {
-        // If the rule does not have a description then we can't make a tag from it. It's probably BS junk
-        if (rule.description) {
-          let newRule = new UnitRule();
-          newRule.grabBasicRules(rule);
-          this.rules.push(newRule);
-        }
+    let nodes = jp.paths(this.bsData, "$.rules..name");
+    for (let node of nodes) {
+      let rule = jp.query(
+        this.bsData,
+        jp.stringify(node.slice(0, node.length - 2))
+      )[0];
+      // If the rule does not have a description then we can't make a tag from it. It's probably BS junk
+      if (rule.description) {
+        let newRule = new UnitRule();
+        newRule.grabBasicRules(rule);
+        this.rules.push(newRule);
       }
     }
-    //This is number two of the three stupid places you can store unit rules
-    if (this.bsData.profiles && this.bsData.profiles[0] != "") {
-      let profileParse = this.bsData.profiles[0].profile;
-      if (!Array.isArray(profileParse)) profileParse = [profileParse];
-      for (let profile of profileParse) {
-        if (profile.$.typeName == "Abilities") {
-          let charaParse = profile.characteristics[0].characteristic;
-          if (!Array.isArray(charaParse)) charaParse = [charaParse];
-          for (let chara of charaParse) {
-            let newRule = new UnitRule();
-            newRule.grabAbilitRules(profile, chara);
-            this.rules.push(newRule);
-          }
-        } else if (profile.$.typeName == "Psyker") {
-          let newRule = new UnitRule();
-          newRule.grabPsykerRules(profile.characteristics[0].characteristic);
-          this.rules.push(newRule);
-        } else if (profile.$.typeName == "Explosion") {
-          let newRule = new UnitRule();
-          newRule.grabExplodeRules(profile.characteristics[0].characteristic);
-          this.rules.push(newRule);
-        }
+    //The Path searches the whole json tree for every type, that should catch all Abilities
+    let abNodes = this.helperGrabRules("Abilities");
+    for (let rule of abNodes) {
+      let charaParse = rule.characteristics[0].characteristic;
+      if (!Array.isArray(charaParse)) charaParse = [charaParse];
+      for (let chara of charaParse) {
+        let newRule = new UnitRule();
+        newRule.grabAbilitRules(rule, chara);
+        this.rules.push(newRule);
       }
     }
+    let pyNodes = this.helperGrabRules("Psyker");
+    for (let rule of pyNodes) {
+      let newRule = new UnitRule();
+      newRule.grabPsykerRules(rule.characteristics[0].characteristic);
+      this.rules.push(newRule);
+    }
+    //not realy sure when this ever triggers?
+    let exNodes = this.helperGrabRules("Explosion");
+    for (let rule of exNodes) {
+      let newRule = new UnitRule();
+      newRule.grabExplodeRules(rule.characteristics[0].characteristic);
+      this.rules.push(newRule);
+    }
+  }
+
+  /**
+   * small Helper if search term type exists this should return the datanode
+   * @param {String} type what we want to search
+   * @returns an array of found DataNodes
+   */
+  helperGrabRules(type) {
+    let nodes = jp.paths(this.bsData, `$..[?(@.typeName=="${type}")]`);
+    let foundNodes = [];
+    for (let node of nodes) {
+      node.pop();
+      foundNodes.push(jp.query(this.bsData, jp.stringify(node))[0]);
+    }
+    return foundNodes;
   }
 
   /**
