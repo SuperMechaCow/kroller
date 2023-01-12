@@ -198,9 +198,9 @@ class Unit {
     let unclaimedWeapons = [];
     for (let modelNode of modelNodes) {
       let model = new Model();
-      model.setModelData(modelNode);
-      model.grabProfile(charaParse);
-      model.buildModelFromUnit(this);
+      await model.setModelData(modelNode);
+      await model.grabProfile(charaParse);
+      await model.buildModelFromUnit(this);
       this.models.push(model);
     }
   }
@@ -239,38 +239,31 @@ class Unit {
   //TODO rework so it works on unit base
   mergeModels() {
     //If it found a model
-    let checkIndex;
     let newModelsList = [];
-    if (this.models.length <= 1) return;
-    for (let index in this.models) {
-      
-      let model = this.models[index];
-      if (!checkIndex) {
-        newModelsList.push(model);
-        checkIndex = index;
-        continue;
-      }
-      let check = this.models[checkIndex];
-      if (check.name != model.name) {
-        newModelsList.push(model);
-        checkIndex = index;
-        continue;
-      }
-      for (let weapon of model.weapons) {
-        let weaponcheck;
-        check.weapons.forEach((keepWeapon) => {
-          if (keepWeapon.name == weapon.name) {
-            keepWeapon.amount =
-              Number(keepWeapon.amount) + Number(weapon.amount);
-            weaponcheck = true;
+    for (let model of this.models) {
+      if (model.sorted) continue;
+      let modelNodes = jp.query(this.models, `$..[?(@.name=="${model.name}")]`);
+      for (let modelIndex in modelNodes) {
+        if (modelIndex == 0) continue; //the first should be the one in the model var
+        if (!modelNodes[modelIndex].bsData) continue; //its possible that we battlescribe data so lets skip it
+        let double = modelNodes[modelIndex];
+        for (let weapon of double.weapons) {
+          let weaponcheck;
+          model.weapons.forEach((keepWeapon) => {
+            if (keepWeapon.name == weapon.name) {
+              keepWeapon.amount =
+                Number(keepWeapon.amount) + Number(weapon.amount);
+              weaponcheck = true;
+            }
+          });
+          if (!weaponcheck) {
+            model.weapons.push(weapon);
           }
-        });
-        if (!weaponcheck) {
-          this.models[checkIndex].weapons.push(weapon);
         }
+        model.amount += double.amount;
+        double.sorted = true;
       }
-      this.models[checkIndex].amount += model.amount;
-      // copy.splice(index, 1);
+      newModelsList.push(model);
     }
     this.models = newModelsList;
   }
