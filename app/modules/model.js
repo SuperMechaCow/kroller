@@ -80,6 +80,17 @@ class Model {
     if (this.name.includes("(")) this.name = this.name.split("(")[0].trim();
     //search statline with model name
     for (let chara of charaNodes) {
+      //first check for degrading profiles
+      if (chara.name.includes("[")) {
+        if (chara.name.split("[")[0].trim() == this.name) {
+          let statline = chara.statlines[0];
+          //just to replace in the degrading statline the * with a number
+          if (statline.W == "*") {
+            statline.W = chara.name.split("-")[1].substr(0, 1);
+          }
+          this.statlines.push(statline);
+        }
+      }
       if (chara.name == this.name) this.statlines = chara.statlines;
     }
     return true;
