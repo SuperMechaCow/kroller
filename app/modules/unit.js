@@ -1,4 +1,5 @@
 const jp = require("jsonpath");
+const { helperGrabRules } = require("./pathhelper");
 const {
   getWahaDatasheet,
   getWahaUnitKeywords,
@@ -150,7 +151,7 @@ class Unit {
       }
     }
     //The Path searches the whole json tree for every type, that should catch all Abilities
-    let abNodes = this.helperGrabRules("Abilities");
+    let abNodes = helperGrabRules(this.bsData, 'typeName=="Abilities"');
     for (let rule of abNodes) {
       let charaParse = rule.characteristics[0].characteristic;
       if (!Array.isArray(charaParse)) charaParse = [charaParse];
@@ -160,34 +161,19 @@ class Unit {
         this.rules.push(newRule);
       }
     }
-    let pyNodes = this.helperGrabRules("Psyker");
+    let pyNodes = helperGrabRules(this.bsData, 'typeName=="Psyker"');
     for (let rule of pyNodes) {
       let newRule = new UnitRule();
       newRule.grabPsykerRules(rule.characteristics[0].characteristic);
       this.rules.push(newRule);
     }
     //not realy sure when this ever triggers?
-    let exNodes = this.helperGrabRules("Explosion");
+    let exNodes = helperGrabRules(this.bsData, 'typeName=="Explosion"');
     for (let rule of exNodes) {
       let newRule = new UnitRule();
       newRule.grabExplodeRules(rule.characteristics[0].characteristic);
       this.rules.push(newRule);
     }
-  }
-
-  /**
-   * small Helper if search term type exists this should return the datanode
-   * @param {String} type what we want to search
-   * @returns an array of found DataNodes
-   */
-  helperGrabRules(type) {
-    let nodes = jp.paths(this.bsData, `$..[?(@.typeName=="${type}")]`);
-    let foundNodes = [];
-    for (let node of nodes) {
-      node.pop();
-      foundNodes.push(jp.query(this.bsData, jp.stringify(node))[0]);
-    }
-    return foundNodes;
   }
 
   /**
@@ -201,6 +187,8 @@ class Unit {
     if (!Array.isArray(selectionData)) selectionData = [selectionData];
     if (this.bsData.profiles)
       selectionData = selectionData.concat(this.bsData.profiles[0].profile);
+    let modelNodes = helperGrabRules(this.bsData, 'type=="model"');
+    let charaParse = this.grabStatLine();
     //I know this next line seems weird, but single-model units'
     //models and weapons are properties of the same object, so there is
     //no model name for weapons in this case
@@ -208,44 +196,44 @@ class Unit {
     //done looping through all the profiles of the unit, then add them
     //to every model found for single-model units
     let unclaimedWeapons = [];
-    for (let selection of selectionData) {
-      //TODO different workflow for bsData.$.type == model
-      if (!selection) break;
-      if (selection.$.type != "model" && selection.$.typeName != "Unit")
-        continue;
+    for (let modelNode of modelNodes) {
       let model = new Model();
-      if (selection.$.type == "model") {
-        if (!selection.selections) {
-          model.setModelData(this.bsData);
-          model.amount = selection.$.number;
-        } else model.setModelData(selection);
-      } else {
-        //most Likely this is only a Profile for Models
-        // if (selection.characteristics) {
-        //   this.mergeProfiles(
-        //     selection.$.name,
-        //     selection.characteristics[0].characteristic,
-        //     model
-        //   );
-        //   continue;
-        // }
-        model.setModelData(this.bsData);
-      }
-      if (!(await model.buildModelFromUnit(this))) continue;
+      model.setModelData(modelNode);
+      model.grabProfile(charaParse);
+      model.buildModelFromUnit(this);
       this.models.push(model);
     }
   }
 
   /**
-   * builds on the assumptiopn that this isnt a real model;
+   * Mostly exists as sperate function to grab Statlines from non Model Data
+   * @returns statline
    */
-  mergeProfiles(name, charaParse, helper) {
-    let statline = helper.grabStatLine(charaParse);
-    for (let model of this.models) {
-      if (name == model.name) {
-        model.statlines.push(statline);
+  grabStatLine() {
+    let charaNodes = helperGrabRules(this.bsData, 'typeName=="Unit"');
+    let charaParse = [];
+    for (let charaNode of charaNodes) {
+      let chara = {};
+      let statlines = [];
+      let statline = {};
+      for (let chara of charaNode.characteristics[0].characteristic) {
+        let statname = chara.$.name;
+        if (statname == "Save") statname = "Sv";
+        let stattext = chara._;
+        stattext = stattext.replace("+", "");
+        stattext = stattext.replace('"', "");
+        if (stattext == "N/A") stattext = "*";
+        statline[statname] = stattext;
       }
+      statlines.push(statline);
+      chara = {
+        statlines: statlines,
+        name: charaNode.$.name,
+      };
+      charaParse.push(chara);
     }
+
+    return charaParse;
   }
 
   //TODO rework so it works on unit base
@@ -255,6 +243,7 @@ class Unit {
     let newModelsList = [];
     if (this.models.length <= 1) return;
     for (let index in this.models) {
+      
       let model = this.models[index];
       if (!checkIndex) {
         newModelsList.push(model);
