@@ -41,6 +41,7 @@ function getWahaSecondaries(gameName, faction) {
 
 function getWahaDatasheet(unitName, factionId = "") {
   return new Promise((resolve) => {
+    if (unitName) unitName = unitName.replace("'", "’");
     db.get(
       `SELECT * FROM datasheets WHERE name = "${unitName}" AND faction_id = "${factionId}"`,
       (err, result) => {
