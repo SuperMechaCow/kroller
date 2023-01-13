@@ -174,6 +174,10 @@ class Unit {
       newRule.grabExplodeRules(rule.characteristics[0].characteristic);
       this.rules.push(newRule);
     }
+    let warlord = helperGrabRules(this.bsData, 'name=="Warlord"');
+    if (warlord.length) {
+      this.warlord = true;
+    }
   }
 
   /**
