@@ -176,6 +176,15 @@ class Unit {
     }
     let warlord = helperGrabRules(this.bsData, 'name=="Warlord"');
     if (warlord.length) {
+      let warNodes = helperGrabRules(this.bsData, 'typeName=="Warlord Trait"');
+      for (let rule of warNodes) {
+        let newRule = new UnitRule();
+        newRule.grabAbilitRules(
+          rule,
+          rule.characteristics[0].characteristic[0]
+        );
+        this.rules.push(newRule);
+      }
       this.warlord = true;
     }
   }

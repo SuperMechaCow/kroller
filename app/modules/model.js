@@ -25,7 +25,6 @@ class Model {
     await this.grabSpells(parentUnit);
     return true;
   }
-  //TODO at weapongrab check for warlord trait
 
   /**
    * to check the top in selection is actualy a model
