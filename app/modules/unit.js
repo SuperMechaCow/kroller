@@ -1,3 +1,5 @@
+const jp = require("jsonpath");
+const { helperGrabRules } = require("./pathhelper");
 const {
   getWahaDatasheet,
   getWahaUnitKeywords,
@@ -29,7 +31,7 @@ class Unit {
   async buildUnit() {
     await this.setCostum();
     await this.setCost();
-    this.waha = await this.grabDatasheet();
+    // this.waha = await this.grabDatasheet();
     await this.grabKeywords();
     await this.grabUnitRules();
     await this.grabModels();
@@ -86,8 +88,11 @@ class Unit {
     if (this.waha) {
       let unitKeys = await getWahaUnitKeywords(this.waha.id);
       for (var key of unitKeys) {
-        if (key.is_faction_keyword == "true") this.faction.push(key.keyword);
-        else this.keywords.push(key.keyword.toLowerCase());
+        if (key.is_faction_keyword == "true") {
+          this.faction.push(key.keyword);
+          if (!key.keyword.includes("<") && key.keyword != this.fact)
+            this.keywords.push(key.keyword.toLowerCase());
+        } else this.keywords.push(key.keyword.toLowerCase());
       }
       this.slot = this.waha.role;
     }
@@ -132,43 +137,55 @@ class Unit {
         this.rules.push(newRule);
       }
     }
-    if (this.bsData.rules && this.bsData.rules != "") {
-      //If it's not a list, put it in one
-      if (!Array.isArray(this.bsData.rules[0].rule))
-        this.bsData.rules[0].rule = [this.bsData.rules[0].rule];
-      //Loop through each rule
-      for (let rule of this.bsData.rules[0].rule) {
-        // If the rule does not have a description then we can't make a tag from it. It's probably BS junk
-        if (rule.description) {
-          let newRule = new UnitRule();
-          newRule.grabBasicRules(rule);
-          this.rules.push(newRule);
-        }
+    let nodes = jp.paths(this.bsData, "$.rules..name");
+    for (let node of nodes) {
+      let rule = jp.query(
+        this.bsData,
+        jp.stringify(node.slice(0, node.length - 2))
+      )[0];
+      // If the rule does not have a description then we can't make a tag from it. It's probably BS junk
+      if (rule.description) {
+        let newRule = new UnitRule();
+        newRule.grabBasicRules(rule);
+        this.rules.push(newRule);
       }
     }
-    //This is number two of the three stupid places you can store unit rules
-    if (this.bsData.profiles && this.bsData.profiles[0] != "") {
-      let profileParse = this.bsData.profiles[0].profile;
-      if (!Array.isArray(profileParse)) profileParse = [profileParse];
-      for (let profile of profileParse) {
-        if (profile.$.typeName == "Abilities") {
-          let charaParse = profile.characteristics[0].characteristic;
-          if (!Array.isArray(charaParse)) charaParse = [charaParse];
-          for (let chara of charaParse) {
-            let newRule = new UnitRule();
-            newRule.grabAbilitRules(profile, chara);
-            this.rules.push(newRule);
-          }
-        } else if (profile.$.typeName == "Psyker") {
-          let newRule = new UnitRule();
-          newRule.grabPsykerRules(profile.characteristics[0].characteristic);
-          this.rules.push(newRule);
-        } else if (profile.$.typeName == "Explosion") {
-          let newRule = new UnitRule();
-          newRule.grabExplodeRules(profile.characteristics[0].characteristic);
-          this.rules.push(newRule);
-        }
+    //The Path searches the whole json tree for every type, that should catch all Abilities
+    let abNodes = helperGrabRules(this.bsData, 'typeName=="Abilities"');
+    for (let rule of abNodes) {
+      let charaParse = rule.characteristics[0].characteristic;
+      if (!Array.isArray(charaParse)) charaParse = [charaParse];
+      for (let chara of charaParse) {
+        let newRule = new UnitRule();
+        newRule.grabAbilitRules(rule, chara);
+        this.rules.push(newRule);
       }
+    }
+    let pyNodes = helperGrabRules(this.bsData, 'typeName=="Psyker"');
+    for (let rule of pyNodes) {
+      let newRule = new UnitRule();
+      newRule.grabPsykerRules(rule.characteristics[0].characteristic);
+      this.rules.push(newRule);
+    }
+    //not realy sure when this ever triggers?
+    let exNodes = helperGrabRules(this.bsData, 'typeName=="Explosion"');
+    for (let rule of exNodes) {
+      let newRule = new UnitRule();
+      newRule.grabExplodeRules(rule.characteristics[0].characteristic);
+      this.rules.push(newRule);
+    }
+    let warlord = helperGrabRules(this.bsData, 'name=="Warlord"');
+    if (warlord.length) {
+      let warNodes = helperGrabRules(this.bsData, 'typeName=="Warlord Trait"');
+      for (let rule of warNodes) {
+        let newRule = new UnitRule();
+        newRule.grabAbilitRules(
+          rule,
+          rule.characteristics[0].characteristic[0]
+        );
+        this.rules.push(newRule);
+      }
+      this.warlord = true;
     }
   }
 
@@ -183,6 +200,8 @@ class Unit {
     if (!Array.isArray(selectionData)) selectionData = [selectionData];
     if (this.bsData.profiles)
       selectionData = selectionData.concat(this.bsData.profiles[0].profile);
+    let modelNodes = helperGrabRules(this.bsData, 'type=="model"');
+    let charaParse = this.grabStatLine();
     //I know this next line seems weird, but single-model units'
     //models and weapons are properties of the same object, so there is
     //no model name for weapons in this case
@@ -190,80 +209,74 @@ class Unit {
     //done looping through all the profiles of the unit, then add them
     //to every model found for single-model units
     let unclaimedWeapons = [];
-    for (let selection of selectionData) {
-      //TODO different workflow for bsData.$.type == model
-      if (!selection) break;
-      if (selection.$.type != "model" && selection.$.typeName != "Unit")
-        continue;
+    for (let modelNode of modelNodes) {
       let model = new Model();
-      if (selection.$.type == "model") {
-        if (!selection.selections) {
-          model.setModelData(this.bsData);
-          model.amount = selection.$.number;
-        } else model.setModelData(selection);
-      } else {
-        //most Likely this is only a Profile for Models
-        // if (selection.characteristics) {
-        //   this.mergeProfiles(
-        //     selection.$.name,
-        //     selection.characteristics[0].characteristic,
-        //     model
-        //   );
-        //   continue;
-        // }
-        model.setModelData(this.bsData);
-      }
-      if (!(await model.buildModelFromUnit(this))) continue;
+      await model.setModelData(modelNode);
+      await model.grabProfile(charaParse);
+      await model.buildModelFromUnit(this);
       this.models.push(model);
     }
   }
 
   /**
-   * builds on the assumptiopn that this isnt a real model;
+   * Mostly exists as sperate function to grab Statlines from non Model Data
+   * @returns statline
    */
-  mergeProfiles(name, charaParse, helper) {
-    let statline = helper.grabStatLine(charaParse);
-    for (let model of this.models) {
-      if (name == model.name) {
-        model.statlines.push(statline);
+  grabStatLine() {
+    let charaNodes = helperGrabRules(this.bsData, 'typeName=="Unit"');
+    let charaParse = [];
+    for (let charaNode of charaNodes) {
+      let chara = {};
+      let statlines = [];
+      let statline = {};
+      for (let chara of charaNode.characteristics[0].characteristic) {
+        let statname = chara.$.name;
+        if (statname == "Save") statname = "Sv";
+        let stattext = chara._;
+        stattext = stattext.replace("+", "");
+        stattext = stattext.replace('"', "");
+        if (stattext == "N/A") stattext = "*";
+        statline[statname] = stattext;
       }
+      statlines.push(statline);
+      chara = {
+        statlines: statlines,
+        name: charaNode.$.name,
+      };
+      charaParse.push(chara);
     }
+
+    return charaParse;
   }
 
   //TODO rework so it works on unit base
   mergeModels() {
     //If it found a model
-    let checkIndex;
     let newModelsList = [];
-    if (this.models.length <= 1) return;
-    for (let index in this.models) {
-      let model = this.models[index];
-      if (!checkIndex) {
-        newModelsList.push(model);
-        checkIndex = index;
-        continue;
-      }
-      let check = this.models[checkIndex];
-      if (check.name != model.name) {
-        newModelsList.push(model);
-        checkIndex = index;
-        continue;
-      }
-      for (let weapon of model.weapons) {
-        let weaponcheck;
-        check.weapons.forEach((keepWeapon) => {
-          if (keepWeapon.name == weapon.name) {
-            keepWeapon.amount =
-              Number(keepWeapon.amount) + Number(weapon.amount);
-            weaponcheck = true;
+    for (let model of this.models) {
+      if (model.sorted) continue;
+      let modelNodes = jp.query(this.models, `$..[?(@.name=="${model.name}")]`);
+      for (let modelIndex in modelNodes) {
+        if (modelIndex == 0) continue; //the first should be the one in the model var
+        if (!modelNodes[modelIndex].bsData) continue; //its possible that we battlescribe data so lets skip it
+        let double = modelNodes[modelIndex];
+        for (let weapon of double.weapons) {
+          let weaponcheck;
+          model.weapons.forEach((keepWeapon) => {
+            if (keepWeapon.name == weapon.name) {
+              keepWeapon.amount =
+                Number(keepWeapon.amount) + Number(weapon.amount);
+              weaponcheck = true;
+            }
+          });
+          if (!weaponcheck) {
+            model.weapons.push(weapon);
           }
-        });
-        if (!weaponcheck) {
-          this.models[checkIndex].weapons.push(weapon);
         }
+        model.amount += double.amount;
+        double.sorted = true;
       }
-      this.models[checkIndex].amount += model.amount;
-      // copy.splice(index, 1);
+      newModelsList.push(model);
     }
     this.models = newModelsList;
   }

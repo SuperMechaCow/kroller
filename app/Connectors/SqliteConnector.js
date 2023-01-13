@@ -3,9 +3,10 @@ const db = new sqlite3.Database("./data/database.db");
 
 function getWahaFaction(factionname) {
   return new Promise((resolve) => {
+    //only exists for Tau congratz
+    if (factionname) factionname = factionname.replace("'", "’");
     db.get(
-      `SELECT link , id  FROM factions WHERE name = (?)`,
-      [factionname],
+      `SELECT link , id  FROM factions WHERE name = "${factionname}" AND is_subfaction = "false"`,
       (err, result) => {
         resolve(result);
       }
@@ -15,6 +16,9 @@ function getWahaFaction(factionname) {
 
 function getWahaSubFaction(subFaction) {
   return new Promise((resolve) => {
+    //since there a couple of ways to end up here
+    //this seems the best place to replace this cause tau <.<
+    if (subFaction) subFaction = subFaction.replace("'", "’");
     db.get(
       `SELECT name, id FROM factions WHERE name LIKE "%${subFaction}%" AND is_subfaction = "true"`,
       (err, result) => {
@@ -37,6 +41,7 @@ function getWahaSecondaries(gameName, faction) {
 
 function getWahaDatasheet(unitName, factionId = "") {
   return new Promise((resolve) => {
+    if (unitName) unitName = unitName.replace("'", "’");
     db.get(
       `SELECT * FROM datasheets WHERE name = "${unitName}" AND faction_id = "${factionId}"`,
       (err, result) => {
