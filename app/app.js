@@ -16,8 +16,8 @@ https://www.battlescribe.net/
 // const parser = require('xml2json'); //Convert ros files (as xml) to json
 const xml2js = require("xml2js");
 const fs = require("fs"); //for reading file systems
-const https = require("https");
-const multer = require("multer"); //
+require("dotenv").config();
+const multer = require("multer");
 const express = require("express");
 const path = require("path");
 const unzip = require("adm-zip");

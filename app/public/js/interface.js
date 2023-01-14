@@ -906,22 +906,25 @@ function listBuild() {
 						unitHeader.innerHTML += `
 						<img src="img/roles/${unit.slot.replaceAll(' ', '').toLowerCase()}.png" class="roleImg">
 						`;
-					}
-					// Unit name
-					let tempName = ((unit.customName) ? unit.customName : unit.name)
-					if (tempName.length >= 22) tempName = tempName.substring(0, 20) + " ...";
-					unitHeader.innerHTML += tempName;
-					// Warlord icon on right side
-					if (settings.slotIcons && unit.warlord) unitHeader.innerHTML += `<img src="img/roles/warlord.png" class="warlordImg">`;
-					let unitContent = document.createElement('div');
-					unitContent.classList.add('accordion-content', 'bg4', 'unitBox');
-					if (unit.customNotes) unitContent.innerHTML += `<p class='textSmall unitNotes textSans'>${customMarkdown(unit.customNotes)}</p>`
-					if (settings.forceSort == 'pts' || settings.forceSort == 'pl') {
-						// Add costs
-						let costDiv = document.createElement('div');
-						costDiv.classList.add('statRow', 'noBorder');
-						for (var cost of Object.keys(unit.costs)) {
-							costDiv.innerHTML += `
+          }
+          // Unit name
+          let tempName = unit.customName ? unit.customName : unit.name;
+          if (tempName.length >= 22)
+            tempName = tempName.substring(0, 20) + " ...";
+          unitHeader.innerHTML += tempName;
+          // Warlord icon on right side
+          if (settings.slotIcons && unit.warlord)
+            unitHeader.innerHTML += `<img src="img/roles/warlord.png" class="warlordImg">`;
+          let unitContent = document.createElement("div");
+          unitContent.classList.add("accordion-content", "bg4", "unitBox");
+          if (unit.customNotes)
+            unitContent.innerHTML += `<p class='textSmall unitNotes textSans'>${customMarkdown(unit.customNotes)}</p>`;
+          if (settings.forceSort == "pts" || settings.forceSort == "pl") {
+            // Add costs
+            let costDiv = document.createElement("div");
+            costDiv.classList.add("statRow", "noBorder");
+            for (var cost of Object.keys(unit.costs)) {
+              costDiv.innerHTML += `
 			                <div class="statTag" title="">
 			                  <label for="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}" class="bg4">${cost.toUpperCase()}</label>
 			                  <span class="bg7" id="${((thisListIndex) ? 'dfdr' : 'atkr')}_${cost}">${unit.costs[cost]}</span>
@@ -937,54 +940,59 @@ function listBuild() {
 					██  ██  ██ ██    ██ ██   ██ ██      ██           ██
 					██      ██  ██████  ██████  ███████ ███████ ███████
 					*/
-					// Start listing models in this unit
-					for (var model of unit.models) {
-						let appendModel = document.createElement('div');
-						appendModel.classList.add('accordion-header', 'bg1', 'banner');
-						let tempName = ((model.customName) ? model.customName : model.name);
-						if (tempName.length >= 22) tempName = tempName.substring(0, 22) + "...";
-						appendModel.innerHTML += tempName;
-						if (model.amount)
-							appendModel.innerHTML += " x " + model.amount;
-						if (model.customNotes) {
-							let headerColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/.exec(model.customNotes[0]);
-							if (headerColor) {
-								model.customNotes[0] = model.customNotes[0].replace(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g, '');
-								model.marker = headerColor[0]
-							}
-						}
-						if (model.marker) {
-							// modelHeader.style.background = `linear-gradient(#000000 0%, #000000 80%, ${model.marker} 100%)`;
-							appendModel.style.borderBottomWidth = `3px`;
-							appendModel.style.borderBottomColor = model.marker;
-							appendModel.style.color = model.marker;
-						}
-						if (model.customNotes) appendModel.innerHTML += `<p class='textSmall'>${model.customNotes[0]}</p>`;
-						// Statline in header
-						for (var statline of model.statlines) {
-							let modelStatRow = document.createElement('div');
-							modelStatRow.classList.add('statRow', 'noBorder');
-							for (var stat of Object.keys(statline)) {
-								let modelStatTag = document.createElement('div');
-								modelStatTag.classList.add('statTag', 'naked');
-								let modelStatLbl = document.createElement('label');
-								modelStatLbl.classList.add('bg3', 'mini', 'naked', 'growy');
-								if (settings.statIcons)
-									modelStatLbl.innerHTML += `<img src="img/rules/statlines/${stat}.svg" class="modelStatIcon" title="${stat.toUpperCase()}">`;
-								else
-									modelStatLbl.innerHTML += stat;
-								modelStatTag.append(modelStatLbl);
-								let modelStatVl = document.createElement('span');
-								modelStatVl.classList.add('bg5', 'mini', 'naked');
-								modelStatVl.innerHTML += statline[stat]
-								modelStatTag.append(modelStatVl);
-								modelStatRow.append(modelStatTag);
-							}
-							appendModel.append(modelStatRow);
-						}
-						let modelContent = document.createElement('div');
-						modelContent.classList.add('accordion-content', 'bg2', 'cCenter');
-						/*
+          // Start listing models in this unit
+          for (var model of unit.models) {
+            let appendModel = document.createElement("div");
+            appendModel.classList.add("accordion-header", "bg1", "banner");
+            let tempName = model.customName ? model.customName : model.name;
+            if (tempName.length >= 22)
+              tempName = tempName.substring(0, 22) + "...";
+            appendModel.innerHTML += tempName;
+            if (model.amount) appendModel.innerHTML += " x " + model.amount;
+            if (model.customNotes) {
+              let headerColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/.exec(
+                model.customNotes[0]
+              );
+              if (headerColor) {
+                model.customNotes[0] = model.customNotes[0].replace(
+                  /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g,
+                  ""
+                );
+                model.marker = headerColor[0];
+              }
+            }
+            if (model.marker) {
+              // modelHeader.style.background = `linear-gradient(#000000 0%, #000000 80%, ${model.marker} 100%)`;
+              appendModel.style.borderBottomWidth = `3px`;
+              appendModel.style.borderBottomColor = model.marker;
+              appendModel.style.color = model.marker;
+            }
+            if (model.customNotes)
+              appendModel.innerHTML += `<p class='textSmall'>${customMarkdown(model.customNotes[0])}</p>`;
+            // Statline in header
+            for (var statline of model.statlines) {
+              let modelStatRow = document.createElement("div");
+              modelStatRow.classList.add("statRow", "noBorder");
+              for (var stat of Object.keys(statline)) {
+                let modelStatTag = document.createElement("div");
+                modelStatTag.classList.add("statTag", "naked");
+                let modelStatLbl = document.createElement("label");
+                modelStatLbl.classList.add("bg3", "mini", "naked", "growy");
+                if (settings.statIcons)
+                  modelStatLbl.innerHTML += `<img src="img/rules/statlines/${stat}.svg" class="modelStatIcon" title="${stat.toUpperCase()}">`;
+                else modelStatLbl.innerHTML += stat;
+                modelStatTag.append(modelStatLbl);
+                let modelStatVl = document.createElement("span");
+                modelStatVl.classList.add("bg5", "mini", "naked");
+                modelStatVl.innerHTML += statline[stat];
+                modelStatTag.append(modelStatVl);
+                modelStatRow.append(modelStatTag);
+              }
+              appendModel.append(modelStatRow);
+            }
+            let modelContent = document.createElement("div");
+            modelContent.classList.add("accordion-content", "bg2", "cCenter");
+            /*
 						██     ██ ███████  █████  ██████   ██████  ███    ██ ███████
 						██     ██ ██      ██   ██ ██   ██ ██    ██ ████   ██ ██
 						██  █  ██ █████   ███████ ██████  ██    ██ ██ ██  ██ ███████

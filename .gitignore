@@ -5,7 +5,6 @@ tomeapp/uploads*
 app/node_modules/*
 app/discordtoken.js
 app/public/shares*
-app/public/img/factions*
 app/data/scraped/*
 app/data/*.csv
 app/data/*.xlsx
