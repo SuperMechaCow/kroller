@@ -121,10 +121,6 @@ class Detachment {
       // Check for army variants
       this.variant = unit.$.name.split(" - ")[1];
     // Get icon link by faction
-    console.log(`${__dirname}/../public/img/factions/${this.faction
-      .replaceAll(" ", "")
-      .replaceAll("'", "_")
-      .toLowerCase()}.svg`);
     if (this.faction)
       if (
         fs.existsSync(
