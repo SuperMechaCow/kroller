@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { helperGrabRules } = require("./pathhelper");
 
 const {
   getWahaFaction,
@@ -94,6 +95,8 @@ class Detachment {
     }
     //Loop through every unit in the list
     for (bsUnit of unitData) {
+      let unitTest = helperGrabRules(bsUnit, 'typeName=="Unit"');
+      if (!unitTest.length) continue;
       let unit = new Unit(
         bsUnit,
         this.faction,
