@@ -17,7 +17,7 @@ https://www.battlescribe.net/
 const xml2js = require("xml2js");
 const fs = require("fs"); //for reading file systems
 require("dotenv").config();
-const multer = require("multer"); //
+const multer = require("multer");
 const express = require("express");
 const path = require("path");
 const unzip = require("adm-zip");

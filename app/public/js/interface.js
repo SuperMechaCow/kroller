@@ -1025,9 +1025,7 @@ function listBuild() {
           let unitContent = document.createElement("div");
           unitContent.classList.add("accordion-content", "bg4", "unitBox");
           if (unit.customNotes)
-            unitContent.innerHTML += `<p class='textSmall unitNotes textSans'>${customMarkdown(
-              unit.customNotes
-            )}</p>`;
+            unitContent.innerHTML += `<p class='textSmall unitNotes textSans'>${customMarkdown(unit.customNotes)}</p>`;
           if (settings.forceSort == "pts" || settings.forceSort == "pl") {
             // Add costs
             let costDiv = document.createElement("div");
@@ -1081,7 +1079,7 @@ function listBuild() {
               appendModel.style.color = model.marker;
             }
             if (model.customNotes)
-              appendModel.innerHTML += `<p class='textSmall'>${model.customNotes[0]}</p>`;
+              appendModel.innerHTML += `<p class='textSmall'>${customMarkdown(model.customNotes[0])}</p>`;
             // Statline in header
             for (var statline of model.statlines) {
               let modelStatRow = document.createElement("div");
