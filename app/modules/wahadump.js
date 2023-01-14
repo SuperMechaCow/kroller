@@ -270,7 +270,7 @@ fs.readFile(dataFolder + "db_init.json", (err, data) => {
       wrapDBInit(context[key]);
     });
     db.run(
-      `CREATE VIEW IF NOT EXISTS datasheet_to_stratagem AS SELECT ds.datasheet_id as datasheet_id , sg.id as stratagem_id, sg.name as name , sg.description, sg.type as type, sg.subfaction_id as subfaction_id  FROM datasheets_stratagems as ds LEFT JOIN stratagems as sg ON ds.stratagem_id = sg.id`
+      `CREATE VIEW IF NOT EXISTS datasheet_to_stratagem AS SELECT ds.datasheet_id as datasheet_id , sg.id as stratagem_id, sg.name as name , sg.description, sg.type as type, sg.subfaction_id as subfaction_id, sg.cp_cost as cp_cost  FROM datasheets_stratagems as ds LEFT JOIN stratagems as sg ON ds.stratagem_id = sg.id`
     );
     db.run(
       `CREATE VIEW IF NOT EXISTS datasheet_to_abilities AS SELECT ds.datasheet_id as datasheet_id , ab.id as ability_id, ab.name as name , ab.description, ab.type as type, ab.is_other_wargear as is_other_wargear  FROM datasheets_abilities as ds LEFT JOIN abilities as ab ON ds.ability_id = ab.id`

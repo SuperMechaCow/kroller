@@ -1,7 +1,5 @@
 ## Bugs:
 
-- Plague marines don't show all weapons in squad
-- Plague marines no strats
 - Tau bracketing models with drones (see armiger bug)
 - Tau model bracket in [] and not ()
 - Costs of upgrades is not 100% accurate

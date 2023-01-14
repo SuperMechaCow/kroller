@@ -1,4 +1,5 @@
 const fs = require("fs");
+
 const {
   getWahaFaction,
   getWahaSubFaction,
@@ -93,19 +94,17 @@ class Detachment {
     }
     //Loop through every unit in the list
     for (bsUnit of unitData) {
-      if (bsUnit.$.type == "upgrade") continue;
-      if (bsUnit.$.type == "unit" || bsUnit.$.type == "model") {
-        let unit = new Unit(
-          bsUnit,
-          this.faction,
-          this.wahaFaction,
-          this.subfaction,
-          this.wahaSubFaction
-        );
-        await unit.buildUnit();
-        this.units.push(unit);
-        continue;
-      }
+      let unit = new Unit(
+        bsUnit,
+        this.faction,
+        this.wahaFaction,
+        this.subfaction,
+        this.wahaSubFaction
+      );
+      unit.waha = await unit.grabDatasheet();
+      if (!unit.waha) continue;
+      await unit.buildUnit();
+      this.units.push(unit);
     }
   }
 

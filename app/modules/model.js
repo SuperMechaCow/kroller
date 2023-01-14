@@ -1,4 +1,5 @@
-const UnitRule = require("./unitrule");
+const jp = require("jsonpath");
+const { helperGrabRules } = require("./pathhelper");
 const Weapon = require("./weapon");
 class Model {
   constructor() {
@@ -20,18 +21,10 @@ class Model {
   async buildModelFromUnit(parentUnit) {
     await this.setCostum();
     await this.grabCost(parentUnit);
-    await this.grabProfile(parentUnit);
-    if (this.bsData.$.type == "unit") {
-      if (await this.checkMainModel()) {
-        await this.mergeWeaponToStats(parentUnit);
-        return false;
-      }
-    }
     await this.grabWeapon();
     await this.grabSpells(parentUnit);
     return true;
   }
-  //TODO at weapongrab check for warlord trait
 
   /**
    * to check the top in selection is actualy a model
@@ -60,155 +53,100 @@ class Model {
    * Get all costs of models and upgrades
    */
   grabCost(parentUnit) {
-    if (this.bsData.costs) {
-      for (let cost of this.bsData.costs[0].cost) {
-        this.costs[cost.$.name.trim().toLowerCase()] = Math.round(cost.$.value);
-        if (parentUnit.costs[cost.$.name.trim().toLowerCase()])
-          parentUnit.costs[cost.$.name.trim().toLowerCase()] += Math.round(
-            cost.$.value
-          );
-        else
-          parentUnit.costs[cost.$.name.trim().toLowerCase()] = Math.round(
-            cost.$.value
-          );
-      }
+    let costsNode = jp.query(this.bsData, "$..cost")[0];
+    for (let cost of costsNode) {
+      this.costs[cost.$.name.trim().toLowerCase()] = Math.round(cost.$.value);
+      if (parentUnit.costs[cost.$.name.trim().toLowerCase()])
+        parentUnit.costs[cost.$.name.trim().toLowerCase()] += Math.round(
+          cost.$.value
+        );
+      else
+        parentUnit.costs[cost.$.name.trim().toLowerCase()] = Math.round(
+          cost.$.value
+        );
+
       this.costs.pts = Math.round(this.costs.pts / this.amount);
     }
   }
 
-  grabProfile(parentUnit) {
-    //flag to show its only statline without weapons
-    let profileParse = [];
-    if (this.amount) {
-      if (this.bsData.profiles) {
-        profileParse = this.bsData.profiles[0].profile;
-      }
-    } else if (this.bsData.$.typeName == "Unit") {
-      {
-        profileParse = this.bsData;
-      }
-    }
+  grabProfile(charaNodes) {
+    //grab the name of the Dataset
     this.name = this.bsData.$.name;
 
-    //If it's not an array, put it in one so the for loop can work
-    if (!Array.isArray(profileParse)) profileParse = [profileParse];
-
-    //Grab the model's statline and unique abilities
-    for (let profile of profileParse) {
-      if (!profile) break;
-      if (profile.$.typeName == "Unit") {
-        this.name = profile.$.name;
-        let charaParse = profile.characteristics[0].characteristic;
-        this.statlines.push(this.grabStatLine(charaParse));
-      }
-      //This is number three of the three stupid places you can store unit rules
-      else if (profile.$.typeName == "Abilities") {
-        let charaParse = profile.characteristics[0].characteristic;
-        if (!Array.isArray(charaParse)) charaParse = [charaParse];
-        for (let chara of charaParse) {
-          let newRule = new UnitRule();
-          newRule.grabAbilitRules(profile, chara);
-          parentUnit.rules.push(newRule);
+    //lets check if the Model name includes WeaponOption
+    //there is surely a better way to do this, send help
+    if (this.name.includes("w/")) this.name = this.name.split("w/")[0].trim();
+    if (this.name.includes("(")) this.name = this.name.split("(")[0].trim();
+    //search statline with model name
+    for (let chara of charaNodes) {
+      //first check for degrading profiles
+      if (chara.name.includes("[")) {
+        if (chara.name.split("[")[0].trim() == this.name) {
+          let statline = chara.statlines[0];
+          //just to replace in the degrading statline the * with a number
+          if (statline.W == "*") {
+            statline.W = chara.name.split("-")[1].substr(0, 1);
+          }
+          this.statlines.push(statline);
+          continue;
         }
-      } else {
+      }
+      if (chara.name == this.name) {
+        this.statlines = chara.statlines;
+        continue;
+      }
+      //in some cases the model and there character dont fully share names...
+      if (chara.name.includes(this.name)) {
+        this.statlines = chara.statlines;
+        continue;
+      }
+      //same as above
+      if (this.name.includes(chara.name)) {
+        this.statlines = chara.statlines;
+        continue;
       }
     }
     return true;
   }
 
   /**
-   * Mostly exists as sperate function to grab Statlines from non Model Data
-   * @param {Array} charaParse needs an Array
-   * @returns statline
-   */
-  grabStatLine(charaParse) {
-    let statline = {};
-    for (let chara of charaParse) {
-      let statname = chara.$.name;
-      if (statname == "Save") statname = "Sv";
-      let stattext = chara._;
-      stattext = stattext.replace("+", "");
-      stattext = stattext.replace('"', "");
-      if (stattext == "N/A") stattext = "*";
-      statline[statname] = stattext;
-    }
-    return statline;
-  }
-
-  /**
-   * sometimes Models have a pseudo custom name with there weapons and one profile
-   * here we check if models name exists in other models name and then assume it has to
-   * be the profile for custom named models
-   * if not we assume it is a single model unit and add 1 to the amount to keep it
-   */
-  mergeWeaponToStats(parentUnit) {
-    let count = 0;
-    parentUnit.models.forEach((model) => {
-      if (model.name.includes(this.name)) {
-        count += 1;
-        model.name = this.name;
-        model.statlines = this.statlines;
-      }
-    });
-    if (count == 0) this.amount = 1;
-  }
-
-  /**
    * Start collecting weapons
    */
   async grabWeapon() {
-    let weaponGrab = [];
-    if (this.bsData.selections) {
-      weaponGrab = this.bsData.selections[0].selection;
-    } else {
-      if (this.bsData.profiles) {
-        if (this.bsData.profiles[0].profile[0].$.typeName == "Weapon")
-          weaponGrab = this.bsData;
-      }
+    let weaponNode = helperGrabRules(this.bsData, 'typeName=="Weapon"');
+    let amount;
+    //that part is only here to grab the correct amount
+    for (let node of weaponNode) {
+      let name = node.$.name;
+      //for weapons that shoot and poke
+      if (name.includes("(")) name = name.split("(")[0].trim();
+      let nodeUp = jp.query(
+        this.bsData,
+        `$..[?(@.type=="upgrade" && @.name=="${name}")]`
+      )[0];
+      if (nodeUp) amount = nodeUp.number;
     }
-    if (!Array.isArray(weaponGrab)) weaponGrab = [weaponGrab];
-    for (let weapon of weaponGrab) {
-      if (!weapon) break;
-      let weaponFound = [];
-      //Weapons can have 2 places where they are hiding, here we check for them
-      if (weapon.selections && weapon.selections[0] != "") {
-        for (let posWeap of weapon.selections[0].selection) {
-          weaponFound.push(posWeap.profiles[0].profile[0]);
+
+    for (let weapon of weaponNode) {
+      let charaParse = weapon.characteristics[0].characteristic;
+      let newWeapon = new Weapon(weapon.$.name, amount, charaParse);
+      await newWeapon.setCustom(weapon);
+      await newWeapon.grabWeaponProfile();
+      await newWeapon.setKeywords();
+
+      //Add it to the weapons or wargear or unclaimed list
+      if (newWeapon.name) {
+        if (this.name) {
+          this.weapons.push(newWeapon);
+        } else if (newWargear.name) {
+          this.weapons.push(newWargear);
+        } else {
+          unclaimedWeapons.push(newWeapon);
         }
-      } else if (weapon.profiles && weapon.profiles != "") {
-        weaponFound = weapon.profiles[0].profile;
       }
-      // If it was a weapon
-      if (!Array.isArray(weaponFound)) weaponFound = [weaponFound];
-
-      for (let weapProf of weaponFound) {
-        if (!Object.keys(weapProf).length) continue;
-        if (weapProf.$.typeName != "Weapon") continue;
-        let charaParse = weapProf.characteristics[0].characteristic;
-        let newWeapon = new Weapon(
-          weapProf.$.name,
-          weapon.$.number,
-          charaParse
-        );
-        await newWeapon.setCustom(weapon);
-        await newWeapon.grabWeaponProfile();
-        await newWeapon.setKeywords();
-
-        //Add it to the weapons or wargear or unclaimed list
-        if (newWeapon.name) {
-          if (this.name) {
-            this.weapons.push(newWeapon);
-          } else if (newWargear.name) {
-            this.weapons.push(newWargear);
-          } else {
-            unclaimedWeapons.push(newWeapon);
-          }
-        }
-
-        //If it was a wargear/upgrade
-        else {
-          newWeapon.name = weapon.$.name;
-        }
+      //If it was a wargear/upgrade
+      else {
+        newWeapon.name = weapon.$.name;
       }
     }
   }
