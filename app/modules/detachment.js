@@ -95,7 +95,7 @@ class Detachment {
     }
     //Loop through every unit in the list
     for (bsUnit of unitData) {
-      let unitTest = helperGrabRules(bsUnit, 'typeName=="Unit"');
+      let unitTest = helperGrabRules(bsUnit, '@.typeName=="Unit"');
       if (!unitTest.length) continue;
       let unit = new Unit(
         bsUnit,
@@ -104,8 +104,8 @@ class Detachment {
         this.subfaction,
         this.wahaSubFaction
       );
-      unit.waha = await unit.grabDatasheet();
-      if (!unit.waha) continue;
+      // unit.waha =
+      // if (!unit.waha) continue;
       await unit.buildUnit();
       this.units.push(unit);
     }
