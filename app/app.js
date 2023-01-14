@@ -34,12 +34,6 @@ const server = http.createServer(app);
 const io = require("socket.io")(server);
 const calculator = require("./modules/calculator.js");
 
-const db = new sqlite3.Database('./data/database.db');
-var app = express();
-const server = http.createServer(app); //for socketio
-const io = require('socket.io')(server); //websockets server
-const calc = new calculator.Calculator();
-
 /*
 ██       ██████   ██████   ██████  ███████ ██████
 ██      ██    ██ ██       ██       ██      ██   ██
@@ -1631,7 +1625,7 @@ function parseBS(data) {
               keywords: [],
               weapons: [],
               wargear: [],
-              amount: 0,,
+              amount: 0,
 							marker: ''
             };
             if (selection.$.name == "Warlord") newUnit.warlord = true;
