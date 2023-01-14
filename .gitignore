@@ -13,3 +13,4 @@ app/shares/*
 exampledata/*
 app/public/uploads*
 *.log
+.env
