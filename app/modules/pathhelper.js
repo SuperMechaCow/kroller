@@ -5,7 +5,7 @@ const jp = require("jsonpath");
  * @returns an array of found DataNodes
  */
 function helperGrabRules(bsData, type) {
-  let nodes = jp.paths(bsData, `$..[?(@.${type})]`);
+  let nodes = jp.paths(bsData, `$..[?(${type})]`);
   let foundNodes = [];
   for (let node of nodes) {
     node.pop();

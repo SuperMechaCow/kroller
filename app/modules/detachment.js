@@ -95,7 +95,7 @@ class Detachment {
     }
     //Loop through every unit in the list
     for (bsUnit of unitData) {
-      let unitTest = helperGrabRules(bsUnit, 'typeName=="Unit"');
+      let unitTest = helperGrabRules(bsUnit, '@.typeName=="Unit"');
       if (!unitTest.length) continue;
       let unit = new Unit(
         bsUnit,
@@ -104,8 +104,8 @@ class Detachment {
         this.subfaction,
         this.wahaSubFaction
       );
-      unit.waha = await unit.grabDatasheet();
-      if (!unit.waha) continue;
+      // unit.waha = await unit.grabDatasheet();
+      // if (!unit.waha) continue;
       await unit.buildUnit();
       this.units.push(unit);
     }
@@ -124,10 +124,6 @@ class Detachment {
       // Check for army variants
       this.variant = unit.$.name.split(" - ")[1];
     // Get icon link by faction
-    console.log(`${__dirname}/../public/img/factions/${this.faction
-      .replaceAll(" ", "")
-      .replaceAll("'", "_")
-      .toLowerCase()}.svg`);
     if (this.faction)
       if (
         fs.existsSync(
@@ -145,7 +141,7 @@ class Detachment {
     if (this.subfaction)
       if (
         fs.existsSync(
-          `${__dirname}/public/img/factions/${this.subfaction
+          `${__dirname}/../public/img/factions/${this.subfaction
             .replaceAll(" ", "")
             .replaceAll("'", "_")
             .toLowerCase()}.svg`
