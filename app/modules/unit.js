@@ -31,7 +31,7 @@ class Unit {
   }
 
   async buildUnit() {
-    await this.setCostum();
+    await this.setCustom();
     await this.setCost();
     this.waha = await this.grabDatasheet();
     await this.grabKeywords();
@@ -46,7 +46,7 @@ class Unit {
   /**
    * If the Unit has custom names/notes
    */
-  setCostum() {
+  setCustom() {
     if (this.bsData.$.customName) this.customName = this.bsData.$.customName;
     if (this.bsData.customNotes) this.customNotes = this.bsData.customNotes[0];
   }

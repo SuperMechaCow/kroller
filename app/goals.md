@@ -1,7 +1,6 @@
 ## Bugs:
-- "Upgrade" units do not merge models (Plagueburst crawler and imperial gaurd infantry)
 - Does not show three profiles if degrading unit has a seperate table for degrading.
-- Daemons do not display detachments or statagems (no error)
+- Daemons do not display detachment rules (no error)
 - Tau degrading models with drones
 - Tau drone no weapons
 - Tau model bracket in [] and not ()

@@ -20,7 +20,7 @@ class Model {
   }
 
   async buildModelFromUnit(parentUnit) {
-    await this.setCostum();
+    await this.setCustom();
     await this.grabCost(parentUnit);
     await this.grabWeapon(parentUnit);
     await this.grabSpells(parentUnit);
@@ -45,7 +45,7 @@ class Model {
   /**
    * If the Model has custom names/notes
    */
-  setCostum() {
+  setCustom() {
     if (this.bsData.$.customName) this.customName = this.bsData.$.customName;
     if (this.bsData.customNotes) this.customNotes = this.bsData.customNotes;
   }

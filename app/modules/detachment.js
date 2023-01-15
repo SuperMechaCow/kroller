@@ -20,7 +20,7 @@ class Detachment {
 
   async buildDetachment() {
     await this.setDetachmentFaction();
-    await this.setCostum();
+    await this.setCustom();
     await this.grabRules();
     await this.grabUnits();
     await this.filterStratagems();
@@ -42,6 +42,9 @@ class Detachment {
     if (faction == "Craftworlds") {
       this.faction = "Aeldari";
     }
+    if (faction == "Daemons") {
+      this.faction = "Chaos Daemons";
+    }
     // Try to grab waha faction
     let wahaFaction = await getWahaFaction(this.faction);
     if (wahaFaction) {
@@ -58,7 +61,7 @@ class Detachment {
   /**
    * If the detachment has custom names/notes
    */
-  setCostum() {
+  setCustom() {
     if (this.detachment.$.customName) {
       this.customName = this.detachment.$.customName;
     }
