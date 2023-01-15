@@ -2,7 +2,6 @@ const jp = require("jsonpath");
 const { helperGrabRules } = require("./pathhelper");
 const {
   getWahaDatasheet,
-  getWahaFaction,
   getWahaUnitKeywords,
   getWahaStratagems,
   getWahaStratPhase,
@@ -32,7 +31,7 @@ class Unit {
   async buildUnit() {
     await this.setCostum();
     await this.setCost();
-    this.waha = await this.grabDatasheet();
+    // this.waha = await this.grabDatasheet();
     await this.grabKeywords();
     await this.grabUnitRules();
     await this.grabModels();
@@ -76,8 +75,9 @@ class Unit {
     datasheet = await getWahaDatasheet(tempName, this.wahaFaction);
     // If there was more than one possible datasheet
     if (datasheet) return datasheet;
-    // Datasheet not found, maybe it doesnt exist in waha
-    // or is something like an imperial agent and we used wrong faction
+    // Datasheet not found ??
+    else {
+    }
   }
 
   /**
@@ -99,7 +99,6 @@ class Unit {
     //Otherwise, pull from battlescribe
     else {
       if (this.bsData.categories) {
-        let oldFaction = this.faction;
         if (!Array.isArray(this.bsData.categories[0].category))
           this.bsData.categories[0].category = [
             this.bsData.categories[0].category,
@@ -112,24 +111,7 @@ class Unit {
             //Try to Split by ": ", and if the first word is "Faction"
             if (category.$.name.split(": ")[0] == "Faction") {
               //Dump the "Faction" and keep the "<faction name>"
-              let faction = category.$.name.split(":")[1].trim();
-              this.faction.push(faction);
-              if (!faction.includes("<") && faction != this.fact)
-                this.keywords.push(faction.toLowerCase());
-              if (!this.waha) {
-                //if it wasnt 
-                let factQuery = await getWahaFaction(faction);
-                if (factQuery && factQuery.id != this.wahaFaction) {
-                  this.wahaFaction = factQuery.id;
-                  let datasheet = await this.grabDatasheet(
-                    this.name,
-                    this.wahaFaction
-                  );
-                  if (datasheet) {
-                    this.waha = datasheet;
-                  }
-                }
-              }
+              this.faction = category.$.name.split(":")[1].trim();
             } else {
               //Otherwise, dump the keyword straight to the list
               this.keywords.push(category.$.name.toLowerCase());
@@ -169,7 +151,7 @@ class Unit {
       }
     }
     //The Path searches the whole json tree for every type, that should catch all Abilities
-    let abNodes = helperGrabRules(this.bsData, '@.typeName=="Abilities"');
+    let abNodes = helperGrabRules(this.bsData, 'typeName=="Abilities"');
     for (let rule of abNodes) {
       let charaParse = rule.characteristics[0].characteristic;
       if (!Array.isArray(charaParse)) charaParse = [charaParse];
@@ -179,25 +161,22 @@ class Unit {
         this.rules.push(newRule);
       }
     }
-    let pyNodes = helperGrabRules(this.bsData, '@.typeName=="Psyker"');
+    let pyNodes = helperGrabRules(this.bsData, 'typeName=="Psyker"');
     for (let rule of pyNodes) {
       let newRule = new UnitRule();
       newRule.grabPsykerRules(rule.characteristics[0].characteristic);
       this.rules.push(newRule);
     }
     //not realy sure when this ever triggers?
-    let exNodes = helperGrabRules(this.bsData, '@.typeName=="Explosion"');
+    let exNodes = helperGrabRules(this.bsData, 'typeName=="Explosion"');
     for (let rule of exNodes) {
       let newRule = new UnitRule();
       newRule.grabExplodeRules(rule.characteristics[0].characteristic);
       this.rules.push(newRule);
     }
-    let warlord = helperGrabRules(this.bsData, '@.name=="Warlord"');
+    let warlord = helperGrabRules(this.bsData, 'name=="Warlord"');
     if (warlord.length) {
-      let warNodes = helperGrabRules(
-        this.bsData,
-        '@.typeName=="Warlord Trait"'
-      );
+      let warNodes = helperGrabRules(this.bsData, 'typeName=="Warlord Trait"');
       for (let rule of warNodes) {
         let newRule = new UnitRule();
         newRule.grabAbilitRules(
@@ -214,45 +193,29 @@ class Unit {
    * Start collecting models
    */
   async grabModels() {
-    //first we try to find everything of type Model
-    let modelNodes = helperGrabRules(this.bsData, '@.type=="model"');
-    // if nothing is in the net then its maybe some kind of freak character?
-    if (!modelNodes.length)
-      modelNodes = helperGrabRules(this.bsData, '@.type=="unit"');
+    //The way this is handled is so whacky, leading to either
+    //Sometimes it loads as many weapons as there are models
+    //and sometimes is loads many models with one weapon
+    let selectionData = this.bsData.selections[0].selection;
+    if (!Array.isArray(selectionData)) selectionData = [selectionData];
+    if (this.bsData.profiles)
+      selectionData = selectionData.concat(this.bsData.profiles[0].profile);
+    let modelNodes = helperGrabRules(this.bsData, 'type=="model"');
     let charaParse = this.grabStatLine();
-    charaParse = this.checkForDegrading(charaParse);
+    //I know this next line seems weird, but single-model units'
+    //models and weapons are properties of the same object, so there is
+    //no model name for weapons in this case
+    //We'll throw all weapons without owners into a pile until it's
+    //done looping through all the profiles of the unit, then add them
+    //to every model found for single-model units
+    let unclaimedWeapons = [];
     for (let modelNode of modelNodes) {
-      await this.wrapModeCreation(modelNode, charaParse);
+      let model = new Model();
+      await model.setModelData(modelNode);
+      await model.grabProfile(charaParse);
+      await model.buildModelFromUnit(this);
+      this.models.push(model);
     }
-    // there some real freaky units out there that are an addon to something
-    // so battlescribe lists them as upgrade for some reason
-    for (let chara of charaParse) {
-      if (!chara.used) {
-        let lastResorts = helperGrabRules(
-          this.bsData,
-          `@.type=="upgrade" && @.name=="${chara.name}"`
-        );
-        if (!lastResorts.length)
-          //the last ditch effort to find the unit
-          lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
-        for (let modelNode of lastResorts) {
-          this.wrapModeCreation(modelNode, [chara]);
-        }
-      }
-    }
-  }
-
-  /**
-   * holds all functions to create a Model
-   * @param {Object} modelNode
-   * @param {Array} charaParse
-   */
-  async wrapModeCreation(modelNode, charaParse) {
-    let model = new Model();
-    await model.setModelData(modelNode);
-    await model.grabProfile(charaParse);
-    await model.buildModelFromUnit(this);
-    this.models.push(model);
   }
 
   /**
@@ -260,7 +223,7 @@ class Unit {
    * @returns statline
    */
   grabStatLine() {
-    let charaNodes = helperGrabRules(this.bsData, '@.typeName=="Unit"');
+    let charaNodes = helperGrabRules(this.bsData, 'typeName=="Unit"');
     let charaParse = [];
     for (let charaNode of charaNodes) {
       let chara = {};
@@ -282,65 +245,11 @@ class Unit {
       };
       charaParse.push(chara);
     }
+
     return charaParse;
   }
 
-  /**
-   * degrading profile show up as there own little unit
-   * so most if not all have wound in there name, for that we search
-   * and hopefully merg all of them back into one profile
-   * @param {Array} modelNodes
-   * @returns
-   */
-  checkForDegrading(modelNodes) {
-    let newModeNodes = [];
-    for (let model of modelNodes) {
-      if (!model.name.includes("wound")) {
-        newModeNodes.push(model);
-        continue;
-      }
-      let statline = model.statlines[0];
-      //just to replace in the degrading statline the * with a number
-      if (statline.W == "*") {
-        statline.W = model.name.split("-")[1].substr(0, 1);
-      }
-      //removing it from the name here should make searching the rules easier
-      model.name = model.name.split("(")[0].trim().split("[")[0].trim();
-      if (!newModeNodes.length) {
-        newModeNodes.push(model);
-        continue;
-      }
-      for (let merge of newModeNodes) {
-        if (merge.name == model.name) merge.statlines.push(model.statlines[0]);
-        else {
-          newModeNodes.push(model);
-          break;
-        }
-      }
-    }
-    for (let model of newModeNodes) {
-      if (model.statlines.length > 1)
-        model.statlines = this.sortByWounds(model.statlines);
-    }
-    return newModeNodes;
-  }
-
-  /**
-   * to make sure full wounds are up ..
-   * @param {*} arr
-   * @returns
-   */
-  sortByWounds(arr) {
-    return arr.sort((a, b) => {
-      return Number(a.W) < Number(b.W) ? 1 : -1;
-    });
-  }
-
-  /**
-   * Units with weapon options often have seperat Model entries,
-   * to have it less bloated merge everything with the same name together and
-   * add up there weapons
-   */
+  //TODO rework so it works on unit base
   mergeModels() {
     //If it found a model
     let newModelsList = [];

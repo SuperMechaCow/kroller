@@ -25,14 +25,19 @@ const url = require("url");
 const qrcode = require("qrcode");
 const crypto = require("crypto");
 const Fuse = require("fuse.js");
+const request = require("request");
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database("./data/database.db");
 const http = require("http");
 var app = express();
-const server = http.createServer(app); //for socketio
-const io = require("socket.io")(server); //websockets server
+const server = http.createServer(app);
+const io = require("socket.io")(server);
 const calculator = require("./modules/calculator.js");
-const Force = require("./modules/force");
+
+const db = new sqlite3.Database('./data/database.db');
+var app = express();
+const server = http.createServer(app); //for socketio
+const io = require('socket.io')(server); //websockets server
 const calc = new calculator.Calculator();
 
 /*
@@ -92,9 +97,9 @@ fs.readFile(__dirname + "/data/wahaData.json", "utf8", (err, data) => {
   wahaData = JSON.parse(data);
 });
 
-const URL = process.env.URL;
-const HOST = process.env.HOST;
-const PORT = parseInt(process.env.PORT);
+var URL = "http://40kroller.animetidd.is/";
+var HOST = "192.168.1.103";
+var PORT = 4040;
 
 app.set("view engine", "ejs");
 
@@ -227,28 +232,27 @@ app.get("/", async (req, res) => {
                         },
                       ];
                     // and send them both to forceFromBS using it's argument object pattern
-                    forcesFromBS(newForces).then((forceBSData) => {
-                      if (forceBSData.error) {
-                        newGame.error = forceBSData.error;
-                        newGame.outputPretty = forceBSData.outputPretty;
-                        newGame.output = forceBSData.output;
-                      }
-                      let outputSearch = forceBSData.filter(
-                        (output) => output.output
-                      );
-                      if (outputSearch.length)
-                        for (var output of outputSearch) {
-                          newGame.error = output.error;
-                          newGame.outputPretty = output.outputPretty;
-                          newGame.output = output.output;
-                        }
-                      // or add the returned forces to newGame
-                      else {
-                        newGame.forceData = forceBSData;
-                      }
-                      res.status(200).render("index", newGame);
-                    });
+                    let forceBSData = forcesFromBS(newForces);
                     // if there was a problem
+                    if (forceBSData.error) {
+                      newGame.error = forceBSData.error;
+                      newGame.outputPretty = forceBSData.outputPretty;
+                      newGame.output = forceBSData.output;
+                    }
+                    let outputSearch = forceBSData.filter(
+                      (output) => output.output
+                    );
+                    if (outputSearch.length)
+                      for (var output of outputSearch) {
+                        newGame.error = output.error;
+                        newGame.outputPretty = output.outputPretty;
+                        newGame.output = output.output;
+                      }
+                    // or add the returned forces to newGame
+                    else {
+                      newGame.forceData = forceBSData;
+                    }
+                    res.status(200).render("index", newGame);
                   }
                 }
               );
@@ -341,7 +345,7 @@ app.post(
   ]),
   async (req, res) => {
     try {
-      let forceBSData = await forcesFromBS(req.files);
+      let forceBSData = forcesFromBS(req.files);
       //If no errors, start by creating an empty game
       let newGame = new Game();
       // If no gameCode was provided, create a new battle to replace the empty game
@@ -1119,7 +1123,7 @@ async function createGame(req) {
   });
 }
 
-async function forcesFromBS(providedFiles) {
+function forcesFromBS(providedFiles) {
   let forceData = [];
   try {
     for (var i in Object.entries(providedFiles)) {
@@ -1139,15 +1143,29 @@ async function forcesFromBS(providedFiles) {
       var zip = new unzip(`public/uploads/${filedata.filename}`);
       var zipEntries = zip.getEntries(); // an array of ZipEntry records
       // Loop through each file in the zip
-      for (let zipEntry of zipEntries) {
+      zipEntries.forEach(function (zipEntry) {
         // If you find a roster file (the first one. I hope there aren't more)
-        if (zipEntry.entryName.split(".")[1] != "ros") continue;
-        // Try to convert from xml to json
-        let result = await wrapXmlToJson(zipEntry.getData().toString("utf8"));
-        let tempParse = await parseBS(result);
-        tempParse.filename = filedata.filename;
-        forceData.push(tempParse);
-      }
+        if (zipEntry.entryName.split(".")[1] == "ros") {
+          // Try to convert from xml to json
+          xml2js.parseString(
+            zipEntry.getData().toString("utf8"),
+            (err, result) => {
+              if (err) {
+                console.log(err);
+                logger.error(err);
+              } else {
+                let tempParse = parseBS(result);
+                tempParse.filename = filedata.filename;
+                forceData.push(tempParse);
+                //Immediately delete the file after parsing
+                // fs.unlink(`uploads/${filedata.filename}`, (err) => {
+                // 	if (err) logger.error(err)
+                // });
+              }
+            }
+          );
+        }
+      });
     }
   } catch (error) {
     logger.error(prepError(error));
@@ -1162,24 +1180,801 @@ async function forcesFromBS(providedFiles) {
   return forceData;
 }
 
-function wrapXmlToJson(data) {
-  return new Promise((resolve) => {
-    xml2js.parseString(data, (err, result) => {
-      if (err) {
-        console.log(err);
-        logger.error(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-}
-
-async function parseBS(data) {
+function parseBS(data) {
+  let phaseList = [
+    "Command",
+    "Movement",
+    "Psychic",
+    "Shooting",
+    "Charge",
+    "Fight",
+    "Morale",
+  ];
   try {
     //Each "tier" in the list hierarchy  starts with an empty object
-    var force = new Force(data.roster);
-    await force.buildForce();
+    var force = {
+      name: data.roster.$.name,
+      faction: "",
+      detachments: [],
+      costs: {},
+    };
+
+    //Grab customName
+    if (data.roster.$.customName) {
+      force.customName = data.roster.$.customName;
+    }
+    if (data.roster.customNotes) {
+      force.customNotes = data.roster.customNotes[0];
+    }
+
+    //Grab all of the army costs
+    for (cost of data.roster.costs[0].cost) {
+      force.costs[cost.$.name.replace(/\s/g, "")] = parseInt(cost.$.value);
+    }
+
+    //Grab all of the detachment data
+    let detachmentParse = data.roster.forces[0].force;
+    //If it's not an array, put it in one so the for loop can work
+    if (!Array.isArray(detachmentParse)) detachmentParse = [detachmentParse];
+
+    //Loop through every detachment in the list
+    for (detachment of detachmentParse) {
+      let faction = detachment.$.catalogueName;
+      //Imperium usually have two faction keywords
+      if (detachment.$.catalogueName.split(" - ").length > 1)
+        faction = detachment.$.catalogueName.split(" - ")[1];
+      //Start building the detachment object
+      let newDetachment = {
+        name: detachment.$.name,
+        faction: faction,
+        subfaction: "",
+        variant: "",
+        factionIcon: "",
+        units: [],
+        rules: [],
+      };
+      if (force.faction) {
+        force.faction = "Allied Forces";
+      } else {
+        force.faction = faction;
+      }
+      //Some factions have multiple names
+      if (faction == "Adeptus Astartes") faction = "Space Marines";
+      if (faction == "Craftworlds") {
+        force.faction = "Aeldari";
+        newDetachment.faction = "Aeldari";
+        faction = "Aeldari";
+      }
+      let factionLink = wahaData.Factions.find((fct) => fct.name == faction);
+      if (factionLink) newDetachment.factionLink = factionLink.link;
+
+      // Try to grab waha faction
+      let wahaFaction = wahaData.Factions.find(
+        (wahaFact) => wahaFact.name == faction
+      );
+      if (wahaFaction) newDetachment.wahaFaction = wahaFaction.id;
+
+      //If the detachment has custom names/notes
+      if (detachment.$.customName) {
+        newDetachment.customName = detachment.$.customName;
+      }
+      if (detachment.customNotes) {
+        newDetachment.customNotes = detachment.customNotes[0];
+      }
+
+      // Grab army rules (BattleScribe doesn't keep all of them in a rational place, so things like Armor of Contempt are missing)
+      if (detachment.rules) {
+        for (rule of detachment.rules[0].rule) {
+          newDetachment.rules.push({
+            name: rule.$.name,
+            desc: rule.description[0],
+          });
+        }
+      }
+
+      //If it's not a list, put it in one so it can be looped through
+      let unitData = detachment.selections[0].selection;
+      //Loop through every unit in the list
+      for (unit of unitData) {
+        let unitType = unit.$.type;
+        // Try to find subfactions and variants
+        if (unit.$.type == "upgrade") {
+          if (unit.selections)
+            if (unit.selections[0].selection)
+              // Searching for upgrade names is not consistent. Search by selection name
+              // Will always have at least one selection
+              for (var select of unit.selections[0].selection) {
+                // Look through all of the selections
+                if (
+                  wahaData.Subfactions.find(
+                    (subfaction) => subfaction.name == select.$.name
+                  )
+                )
+                  // If a subfaction name exists that matches this selection name
+                  newDetachment.subfaction =
+                    select.$.name; // Then you've found the subfaction
+                else if (
+                  wahaData.Subfactions.find(
+                    (subfaction) =>
+                      subfaction.name == select.$.name.split(": ")[1]
+                  )
+                )
+                  // Sometimes formatted as "Subfaction Type: Subfaction Name"
+                  newDetachment.subfaction = select.$.name.split(": ")[1];
+                else if (
+                  wahaData.Subfactions.find(
+                    (subfaction) =>
+                      subfaction.name == select.$.name.split(": ")[0]
+                  )
+                )
+                  // Sometimes formatted as "Subfaction Type: Subfaction Name"
+                  newDetachment.subfaction = select.$.name.split(": ")[0];
+                // Try to determine game type
+                if (unit.$.name == "Gametype") {
+                  let gameName = unit.selections[0].selection[0].$.name;
+                  // gameName = gameName.replace('Chapter Approved', 'Grand Tournament');
+                  let gameCheck = /(\d. )?(.*\: )?(.*$)/.exec(gameName);
+                  if (gameCheck) {
+                    force.gametype = gameCheck[3];
+										force.selectedSecondaries = [];
+                    force.secondaries = wahaData.Secondaries.filter((second) =>
+                      second.game.includes(gameCheck[3])
+                    );
+                    force.secondaries = force.secondaries.filter(
+                      (second) =>
+                        second.faction_name == force.faction ||
+                        second.faction_name == ""
+                    );
+                  } else {
+                    force.gametype = gameName;
+                  }
+                }
+                if (select.$.type == "unit") unitType = "unit";
+              }
+          if (unit.$.name.split(" - ")[0] == "Army of Renown")
+            // Check for army variants
+            newDetachment.variant = unit.$.name.split(" - ")[1];
+          // Get icon link by faction
+          if (newDetachment.faction)
+            if (
+              fs.existsSync(
+                `${__dirname}/public/img/factions/${newDetachment.faction
+                  .replaceAll(" ", "")
+                  .replaceAll("'", "_")
+                  .toLowerCase()}.svg`
+              )
+            )
+              newDetachment.factionIcon = `img/factions/${newDetachment.faction
+                .replaceAll(" ", "")
+                .replaceAll("'", "_")
+                .toLowerCase()}.svg`;
+          // Then try to overwrite with subfaction
+          if (newDetachment.subfaction)
+            if (
+              fs.existsSync(
+                `${__dirname}/public/img/factions/${newDetachment.subfaction
+                  .replaceAll(" ", "")
+                  .replaceAll("'", "_")
+                  .toLowerCase()}.svg`
+              )
+            )
+              newDetachment.factionIcon = `img/factions/${newDetachment.subfaction
+                .replaceAll(" ", "")
+                .replaceAll("'", "_")
+                .toLowerCase()}.svg`;
+        }
+        //Single model units are listed as a model rather than a unit
+        if (unitType == "model" || unitType == "unit") {
+          //Create a new blank unit
+          let newUnit = {
+            name: "",
+            costs: {},
+            slot: "",
+            faction: [],
+            keywords: [],
+            models: [],
+            rules: [],
+            spells: [],
+            stratagems: [],
+            marker: "",
+          };
+          //If the selection is not a unit (sometimes it's a configuration),
+          //this will remain "undefined".
+          newUnit.name = unit.$.name;
+          if (unit.$.customName) newUnit.customName = unit.$.customName;
+          if (unit.customNotes) newUnit.customNotes = unit.customNotes[0];
+
+          //Get costs (This code was only good for one model units, apparently)
+          if (unit.costs) {
+            for (var cost of unit.costs[0].cost) {
+              newUnit.costs[cost.$.name.trim().toLowerCase()] = Math.round(
+                cost.$.value
+              );
+            }
+          }
+
+          //
+          //  Start collecting keywords
+          //
+
+          //Try to pull from waha first
+          if (newUnit.waha) {
+            let unitKeys = wahaData.Datasheets_keywords.filter(function (key) {
+              return key.datasheet_id == newUnit.waha.id;
+            });
+            for (var key of unitKeys) {
+              if (key.is_faction_keyword == "true")
+                newUnit.faction.push(key.keyword);
+              else newUnit.keywords.push(key.keyword.toLowerCase());
+            }
+            newUnit.slot = newUnit.waha.role;
+          }
+          //Otherwise, pull from battlescribe
+          else {
+            if (unit.categories) {
+              if (!Array.isArray(unit.categories[0].category))
+                unit.categories[0].category = [unit.categories[0].category];
+              for (category of unit.categories[0].category) {
+                if (category.$.primary == "true") {
+                  newUnit.slot = category.$.name;
+                } else {
+                  //BS factions format: "Faction: <faction name>".
+                  //Try to Split by ": ", and if the first word is "Faction"
+                  if (category.$.name.split(": ")[0] == "Faction") {
+                    //Dump the "Faction" and keep the "<faction name>"
+                    newUnit.faction = category.$.name.split(":")[1].trim();
+                  } else {
+                    //Otherwise, dump the keyword straight to the list
+                    newUnit.keywords.push(category.$.name.toLowerCase());
+                  }
+                }
+              }
+            }
+          }
+
+          // Find the datasheet in the wahaData
+          let datasheet;
+          // Some units (especially daemons and CSM marines) are in multiple factions
+          // Find all possible datasheets
+          let datasheetList = wahaData.Datasheets.filter(
+            (datasheet) => datasheet.name == unit.$.name
+          );
+          // If you couldn't find one, try again with first unit's name (Chapter Master -> )
+          if (datasheetList.length == 0) {
+            if (unit.profiles) {
+              let tempName = unit.profiles[0].profile[0].$.name;
+              datasheetList = wahaData.Datasheets.filter(
+                (datasheet) => datasheet.name == tempName
+              );
+            }
+          }
+          // If you couldn't find one, try again without the 's' at the end ofthe name
+          if (datasheetList.length == 0) {
+            let tempName = unit.$.name.slice(0, -1);
+            datasheetList = wahaData.Datasheets.filter(
+              (datasheet) => datasheet.name == tempName
+            );
+          }
+          // If there was more than one possible datasheet
+          if (datasheetList.length > 1) {
+            // Check the datasheet keywords for each possible datasheet
+            for (var checkDatasheet of datasheetList) {
+              // See if it has a matching kayword AND datasheet id
+              let foundDS = wahaData.Datasheets_keywords.find(
+                (ds) =>
+                  ds.datasheet_id == checkDatasheet.id &&
+                  ds.keyword == newUnit.faction
+              );
+              // If you found a match, make that the datasheet and stop checking
+              if (foundDS) {
+                datasheet = checkDatasheet;
+                break;
+              }
+            }
+          }
+          // If there was only one datasheet found, that must be the correct one
+          else if (datasheetList.length == 1) {
+            datasheet = datasheetList[0];
+          }
+          // Datasheet not found
+          else {
+          }
+          if (datasheet) newUnit.waha = datasheet;
+          //Start collecting rules
+          //This is the most obvious place to put all of the rules for the entire unit,
+          //but there are two other places below
+          if (unit.rules && unit.rules != "") {
+            //If it's not a list, put it in one
+            if (!Array.isArray(unit.rules[0].rule))
+              unit.rules[0].rule = [unit.rules[0].rule];
+            //Loop through each rule
+            for (rule of unit.rules[0].rule) {
+              // If the rule does not have a description then we can't make a tag from it. It's probably BS junk
+              if (rule.description) {
+                //New blank object for the rules
+                let newRule = {
+                  name: rule.$.name,
+                  desc: rule.description[0],
+                  subkeys: rule.description[0].match(
+                    /(\b[A-Z][A-Z]+|\b[A-Z]\b)/g
+                  ),
+                  targets: rule.description[0].match(
+                    /([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g
+                  ),
+                  phases: [],
+                };
+                //Grab customName
+                if (rule.$.customName) {
+                  newRule.customName = rule.$.customName;
+                }
+                if (rule.customNotes) {
+                  newRule.customNotes = rule.customNotes[0];
+                }
+                //Look for specific mentions of a phase
+                for (phase of phaseList) {
+                  if (newRule.desc.includes(phase + " phase"))
+                    newRule.phases.push(phase);
+                }
+                newUnit.rules.push(newRule);
+              }
+            }
+          }
+          //This is number two of the three stupid places you can store unit rules
+          if (unit.profiles && unit.profiles[0] != "") {
+            let profileParse = unit.profiles[0].profile;
+            if (!Array.isArray(profileParse)) profileParse = [profileParse];
+            for (profile of profileParse) {
+              if (profile.$.typeName == "Abilities") {
+                let charaParse = profile.characteristics[0].characteristic;
+                if (!Array.isArray(charaParse)) charaParse = [charaParse];
+                for (chara of charaParse) {
+                  let newRule = {
+                    name: profile.$.name,
+                    desc: chara._,
+                    subkeys: chara._.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
+                    targets: chara._.match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
+                    phases: [],
+                  };
+                  //Grab customName
+                  if (profile.$.customName) {
+                    newRule.customName = profile.$.customName;
+                  }
+                  if (profile.customNotes) {
+                    newRule.customNotes = profile.customNotes[0];
+                  }
+                  for (phase of phaseList) {
+                    if (newRule.desc.includes(phase + "phase"))
+                      newRule.phases.push(phase);
+                  }
+                  newUnit.rules.push(newRule);
+                }
+              } else if (profile.$.typeName == "Psyker") {
+                let newRule = {
+                  name: "Psyker",
+                  desc: "",
+                  subkeys: [],
+                  targets: [],
+                  phases: ["psychic"],
+                };
+                newRule.psyker = {};
+                for (var chara of profile.characteristics[0].characteristic) {
+                  switch (chara.$.name) {
+                    case "Cast":
+                      newRule.cast = chara._;
+                      break;
+                    case "Deny":
+                      newRule.deny = chara._;
+                      break;
+                    case "Powers Known":
+                      newRule.desc = chara._;
+                      break;
+                    case "Other":
+                      newRule.other = chara._;
+                      break;
+                    default:
+                  }
+                }
+                newUnit.rules.push(newRule);
+              } else if (profile.$.typeName == "Explosion") {
+                let newRule = {
+                  name: "Explodes",
+                  desc: "When this model is destroyed, roll a D6. If it beats the Roll or is a 6, everything within Distance takes Mortal Wounds equal to the Damage.",
+                  subkeys: [],
+                  targets: [],
+                  phases: [],
+                };
+                for (var chara of profile.characteristics[0].characteristic) {
+                  switch (chara.$.name) {
+                    case "Dice Roll":
+                      newRule.roll = chara._;
+                      break;
+                    case "Distance":
+                      newRule.distance = chara._;
+                      break;
+                    case "Mortal Wounds":
+                      newRule.damage = chara._;
+                      break;
+                    default:
+                      break;
+                  }
+                }
+                newUnit.rules.push(newRule);
+              }
+            }
+          }
+
+          //
+          //  Start collecting models
+          //
+
+          //The way this is handled is so whacky, leading to either
+          //Sometimes it loads as many weapons as there are models
+          //and sometimes is loads many models with one weapon
+
+          let selectionData = unit.selections[0].selection;
+          if (!Array.isArray(selectionData)) selectionData = [selectionData];
+          if (unit.profiles)
+            selectionData = selectionData.concat(unit.profiles[0].profile);
+          //I know this next line seems weird, but single-model units'
+          //models and weapons are properties of the same object, so there is
+          //no model name for weapons in this case
+          //We'll throw all weapons without owners into a pile until it's
+          //done looping through all the profiles of the unit, then add them
+          //to every model found for single-model units
+          let unclaimedWeapons = [];
+          for (selection of selectionData) {
+            if (!selection) break;
+            let newModel = {
+              name: "",
+              faction: "",
+              costs: {},
+              keywords: [],
+              weapons: [],
+              wargear: [],
+              amount: 0,,
+							marker: ''
+            };
+            if (selection.$.name == "Warlord") newUnit.warlord = true;
+            newModel.amount = Number(selection.$.number);
+            if (selection.$.customName)
+              newModel.customName = selection.$.customName;
+            if (selection.customNotes)
+              newModel.customNotes = selection.customNotes;
+            //Get all costs of models and upgrades
+            if (selection.costs) {
+              for (var cost of selection.costs[0].cost) {
+                newModel.costs[cost.$.name.trim().toLowerCase()] = Math.round(
+                  cost.$.value
+                );
+                if (newUnit.costs[cost.$.name.trim().toLowerCase()])
+                  newUnit.costs[cost.$.name.trim().toLowerCase()] += Math.round(
+                    cost.$.value
+                  );
+                else
+                  newUnit.costs[cost.$.name.trim().toLowerCase()] = Math.round(
+                    cost.$.value
+                  );
+              }
+              newModel.costs.pts = Math.round(
+                newModel.costs.pts / newModel.amount
+              );
+            }
+            let profileParse = [];
+            if (newModel.amount) {
+              if (selection.profiles) {
+                profileParse = selection.profiles[0].profile;
+              }
+            } else if (selection.$.typeName == "Unit") {
+              profileParse = selection;
+            }
+
+            //If it's not an array, put it in one so the for loop can work
+            if (!Array.isArray(profileParse)) profileParse = [profileParse];
+
+            //Grab the model's statline and unique abilities
+            for (profile of profileParse) {
+              if (!profile) break;
+              if (profile.$.typeName == "Unit") {
+                newModel.name = profile.$.name;
+                if (profile.$.customName) {
+                  newModel.customName = profile.$.customName;
+                }
+                if (profile.$.customNotes) {
+                  newModel.customNotes = profile.$.customNotes[0];
+                }
+                let charaParse = profile.characteristics[0].characteristic;
+                newModel.statlines = [];
+                let statline = {};
+                for (chara of charaParse) {
+                  let statname = chara.$.name;
+                  if (statname == "Save") statname = "Sv";
+                  let stattext = chara._;
+                  stattext = stattext.replace("+", "");
+                  stattext = stattext.replace('"', "");
+                  if (stattext == "N/A") stattext = "*";
+                  statline[statname] = stattext;
+                }
+                newModel.statlines.push(statline);
+              }
+              //This is number three of the three stupid places you can store unit rules
+              else if (profile.$.typeName == "Abilities") {
+                let charaParse = profile.characteristics[0].characteristic;
+                if (!Array.isArray(charaParse)) charaParse = [charaParse];
+                for (chara of charaParse) {
+                  let newRule = {
+                    name: profile.$.name,
+                    desc: chara._,
+                    // subkeys: chara._.match(/(DDDDDDDDD)/g),
+                    // targets: chara._.match(/(DDDDDDDDD)/g),
+                    subkeys: chara._.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g),
+                    targets: chara._.match(/([A-Z]+\s?[A-Z]+[^a-z0-9\W])/g),
+                    phases: [],
+                  };
+                  //Grab customName
+                  if (profile.$.customName) {
+                    newRule.customName = profile.$.customName;
+                  }
+                  if (profile.customNotes) {
+                    newRule.customNotes = profile.customNotes[0];
+                  }
+                  for (phase of phaseList) {
+                    if (newRule.desc.includes(phase + "phase"))
+                      newRule.phases.push(phase);
+                  }
+                  newUnit.rules.push(newRule);
+                }
+              } else {
+              }
+            }
+            //
+            //  Start collecting weapons
+            //
+            let weaponGrab = [];
+            if (selection.selections) {
+              weaponGrab = selection.selections[0].selection;
+            } else {
+              if (selection.profiles) {
+                if (selection.profiles[0].profile[0].$.typeName == "Weapon")
+                  weaponGrab = selection;
+              }
+            }
+
+            if (!Array.isArray(weaponGrab)) weaponGrab = [weaponGrab];
+            for (weapon of weaponGrab) {
+              if (!weapon) break;
+              let weaponFound = {};
+              if (weapon.selections && weapon.selections[0] != "") {
+                weaponFound =
+                  weapon.selections[0].selection[0].profiles[0].profile[0];
+              } else if (weapon.profiles && weapon.profiles != "") {
+                weaponFound = weapon.profiles[0].profile;
+              }
+              // If it was a weapon
+              if (!Array.isArray(weaponFound)) weaponFound = [weaponFound];
+
+              for (weapProf of weaponFound) {
+                let newWeapon = {
+                  name: "",
+                  amount: weapon.$.number,
+                  cantrips: [],
+                };
+                let newWargear = {
+                  name: "",
+                  amount: weapon.$.number,
+                  cantrips: [],
+                };
+                if (Object.keys(weapProf).length) {
+                  let charaParse = weapProf.characteristics[0].characteristic;
+                  if (weapProf.$.typeName == "Weapon") {
+                    newWeapon.name = weapon.$.name;
+                    if (weapon.$.customName) {
+                      newWeapon.customName = weapon.$.customName;
+                    }
+                    if (weapon.customNotes) {
+                      newWeapon.customNotes = weapon.customNotes[0];
+                    }
+                    // newWeapon.amount = weapon.number
+                    for (chara of charaParse) {
+                      newWeapon[chara.$.name.toLowerCase()] = chara._;
+                      if (chara._) {
+                        //This trick will turn off adding this weapon to the list
+                        if (
+                          chara._.includes("select one of the profiles below")
+                        )
+                          newWeapon.name = "";
+                        if (chara.$.name.toLowerCase() == "abilities") {
+                          for (var ct of Object.keys(cantrips)) {
+                            if (chara._.includes(cantrips[ct])) {
+                              newWeapon.cantrips.push(ct);
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+
+                  //Add it to the weapons or wargear or unclaimed list
+                  if (newWeapon.name) {
+                    if (newModel.name) {
+                      newModel.weapons.push(newWeapon);
+                    } else if (newWargear.name) {
+                      newModel.weapons.push(newWargear);
+                    } else {
+                      unclaimedWeapons.push(newWeapon);
+                    }
+                  }
+                }
+                //If it was a wargear/upgrade
+                else {
+                  newWeapon.name = weapon.$.name;
+                }
+              }
+            }
+
+            //
+            //  Start collecting spells
+            //
+            let spellGrab = [];
+            if (selection.selections) {
+              spellGrab = selection.selections[0].selection;
+            } else {
+              if (selection.profiles) {
+                if (
+                  selection.profiles[0].profile[0].$.typeName == "Psychic Power"
+                )
+                  spellGrab = selection;
+              }
+            }
+
+            if (!Array.isArray(spellGrab)) spellGrab = [spellGrab];
+            for (spell of spellGrab) {
+              if (!spell) break;
+              let spellFound = {};
+              if (spell.selections && spell.selections[0] != "") {
+                spellFound =
+                  spell.selections[0].selection[0].profiles[0].profile[0];
+              } else if (spell.profiles && spell.profiles != "") {
+                spellFound = spell.profiles[0].profile;
+              }
+              if (!Array.isArray(spellFound)) spellFound = [spellFound];
+              for (spellProf of spellFound) {
+                let newSpell = {
+                  name: "",
+                  warpcharge: 0,
+                  range: 0,
+                };
+                if (Object.keys(spellProf).length) {
+                  let charaParse = spellProf.characteristics[0].characteristic;
+                  if (spellProf.$.typeName == "Psychic Power") {
+                    newSpell.name = spellProf.$.name;
+                    //Grab customName
+                    if (spell.$.customName) {
+                      newSpell.customName = spell.$.customName;
+                    }
+                    if (spell.customNotes) {
+                      newSpell.customNotes = spell.customNotes[0];
+                    }
+                    let spellChara =
+                      spellProf.characteristics[0].characteristic;
+
+                    for (chara of spellChara) {
+                      newSpell[chara.$.name.toLowerCase().replace(/\s/g, "")] =
+                        chara._;
+                    }
+
+                    if (newUnit.name) {
+                      //Add it to the spells list for the Unit if it exists
+                      newUnit.spells.push(newSpell);
+                    }
+                  }
+                }
+              }
+            }
+
+            //If it found a model
+            if (newModel.name) {
+              if (newUnit.models.length) {
+                //Check to see if it matches the previous model
+                if (
+                  matchModel(
+                    newUnit.models[newUnit.models.length - 1],
+                    newModel
+                  )
+                ) {
+                  if (newUnit.models[newUnit.models.length - 1].amount)
+                    newUnit.models[newUnit.models.length - 1].amount++;
+                  else newUnit.models[newUnit.models.length - 1] = 1;
+                } else {
+                  newUnit.models.push(newModel);
+                }
+              } else {
+                newUnit.models.push(newModel);
+              }
+            }
+          }
+
+          //
+          //Stratagems
+          //
+
+          if (newUnit.waha) {
+            // Find all strat ID's on the datasheet
+            let stratIDfind = wahaData.Datasheets_stratagems.filter(
+              (strat) => strat.datasheet_id == newUnit.waha.id
+            );
+            for (var stratID of stratIDfind) {
+              //Find all data by strat ID
+              let stratDatafind = wahaData.Stratagems.filter(
+                (strat) => strat.id == stratID.stratagem_id
+              );
+              for (var stratData of stratDatafind) {
+                let strat = stratData;
+                stratData.keys = [];
+                stratData.activate = [];
+                stratData.descText = stratData.description.replaceAll(
+                  "<[^>]*>",
+                  ""
+                );
+								stratData.description = stratData.description.replaceAll('href="/', 'href="https://wahapedia.ru/');
+                //Find all phases of stratagems
+                let stratPhasefind = wahaData.StratagemPhases.filter(
+                  (strat) => strat.stratagem_id == stratData.id
+                );
+                for (var stratPhase of stratPhasefind) {
+                  stratData.activate.push(stratPhase.phase);
+                }
+                // Search for all keywords in the waha description
+                // Find a group of words inside a span if those words are also in a span
+                let span = strat.description.replace(/<span [^>]+>/g, "ス");
+                span = span.replace(/<\/span>/g, "ミ");
+                span = span.matchAll(/スス.*?ミミ/g);
+                for (var sp of span) {
+                  sp[0] = sp[0].replaceAll("ス", "");
+                  sp[0] = sp[0].replaceAll("ミ", "");
+                  sp[0] = sp[0].toLowerCase();
+                  if (!stratData.keys.includes(sp[0]))
+                    stratData.keys.push(sp[0]);
+                }
+                for (var key of stratData.description.matchAll(
+                  /<span [^>]+>([^<]+)<\/span>/g
+                )) {
+                  if (!stratData.keys.includes(key[1]))
+                    stratData.keys.push(key[1].toLowerCase());
+                }
+                let typeData = stratData.type.split(" – ");
+                if (typeData.length > 1) {
+                  stratData.subfaction = typeData[0];
+                  let subCheck = /(.*)+\((.*)\)/g.exec(stratData.subfaction);
+                  if (subCheck) stratData.subfaction = subCheck[2];
+                  stratData.type = typeData[1].replace(" Stratagem", "");
+                }
+                newUnit.stratagems.push(stratData);
+              }
+            }
+          }
+
+          if (newUnit.models) {
+            // Check for bracketting models
+            newUnit = combineBrackets(newUnit);
+            // Give them the unclaimed weapons
+            for (model in newUnit.models) {
+              if (unclaimedWeapons.length)
+                if (!newUnit.models[model].weapons.length)
+                  // This one adds unclaimed weapons to each model's existing list
+                  // newUnit.models[model].weapons = newUnit.models[model].weapons.concat(unclaimedWeapons);
+                  // This one sets each model's list to unclaimed models
+                  // newUnit.models[model].weapons = unclaimedWeapons;
+                  // But I think the correct answer is to give the weapons to anyone who does not have weapons
+                  newUnit.models[model].weapons =
+                    combineWeapons(unclaimedWeapons);
+            }
+          }
+          newDetachment.units.push(newUnit);
+        }
+      }
+      newDetachment.units = newDetachment.units;
+      force.detachments.push(newDetachment);
+    }
     return {
       force: force,
       error: "",

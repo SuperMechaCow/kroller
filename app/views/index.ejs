@@ -134,9 +134,223 @@
       ██      ██   ██ ██      ██      ██    ██ ██      ██   ██    ██    ██    ██ ██   ██
        ██████ ██   ██ ███████  ██████  ██████  ███████ ██   ██    ██     ██████  ██   ██
       -->
-      
-
-
+      <a href="#calculator"></a>
+      <!-- <div class="accordion-header bg0 banner" style="display: none;">Calculator</div> -->
+      <div class="accordion-header bg0 banner">Calculator</div>
+      <!-- Attacker -->
+      <!-- <div class="accordion-content bg4" style="display: none;"> -->
+      <div class="accordion-content bg4">
+        <h2 id="attackerName" class="cCenter io" title="Abilities will show here if they are detected.">Attacker's Stats
+        </h2>
+        <div class="statRow bg5">
+          <div class="statTag" id="attackerModels" title="The number of models in the attacking unit.">
+            <label for="sim_atkr_mdls" class="bg4">Mdls</label>
+            <input type="number" class="spinner io bg7" name="sim_atkr_mdls" id="sim_atkr_mdls" size=2 value=12>
+          </div>
+          <div class="statTag" id="attackerA"
+            title="The number of attacks each model can make. [For random attacks, see 'Hit Modifiers' tab]">
+            <label for="sim_atkr_a" class="bg4">A</label>
+            <input type="number" class="spinner io bg7" name="sim_atkr_a" id="sim_atkr_a" size=1 value=1>
+          </div>
+          <div class="statTag" id="attackerAS" title="The WS or BS of the attack (Attack Skill).">
+            <label for="sim_atkr_as" class="bg4">AS</label>
+            <input type="number" class="spinner io bg7" name="sim_atkr_as" id="sim_atkr_as" size=1 value=3>
+          </div>
+          <div class="statTag" id="attackerS" title="The Strength of the model OR weapon used.">
+            <label for="sim_atkr_s" class="bg4">S</label>
+            <input type="number" class="spinner io bg7" name="sim_atkr_s" id="sim_atkr_s" size=1 value=4>
+          </div>
+          <div class="statTag" id="attackerAP" title="The AP (no \'-\' symbol!) of the weapon used.">
+            <label for="sim_atkr_ap" class="bg4">AP</label>
+            <input type="number" class="spinner io bg7" name="sim_atkr_ap" id="sim_atkr_ap" size=1 value=1>
+          </div>
+        </div>
+        <select id="weaponsBox" name="weaponsBox" class="io">
+        </select>
+        <!-- Defender -->
+        <div class="statRow bg5">
+          <div class="statTag" id="defenderModels">
+            <label for="sim_dfdr_mdls" class="bg4">Mdls</label>
+            <input type="number" class="spinner io bg7" name="sim_dfdr_mdls" id="sim_dfdr_mdls" size=2 value=10>
+          </div>
+          <div class="statTag" id="defenderT" title="The toughness of models in the defending unit.">
+            <label for="sim_dfdr_t" class="bg4">T</label>
+            <input type="number" class="spinner io bg7" name="sim_dfdr_t" id="sim_dfdr_t" size=1 value=4>
+          </div>
+          <div class="statTag" id="defenderW" title="The number of Wounds each model in the defending unit has.">
+            <label for="sim_dfdr_w" class="bg4">W</label>
+            <input type="number" class="spinner io bg7" name="sim_dfdr_w" id="sim_dfdr_w" size=2 value=1>
+          </div>
+          <div class="statTag" id="defenderSv" title="The Save characteristic of the models in the defending unit.">
+            <label for="sim_dfdr_sv" class="bg4">Sv</label>
+            <input type="number" class="spinner io bg7" name="sim_dfdr_sv" id="sim_dfdr_sv" size=1 value=3>
+          </div>
+          <div class="statTag" id="attackerAP" title="The Damage of the weapon used.">
+            <label for="sim_atkr_d" class="bg4">D</label>
+            <input type="number" class="spinner io bg7" name="sim_atkr_d" id="sim_atkr_d" size=1 value=1>
+          </div>
+        </div>
+        <h2 id="defenderName" class="cCenter io">Defender's Stats</h2>
+        <div class="accordion-button bg0" onclick="output(calc.calculate(ioList));">Calculate</div>
+        <!-- <div style="display: flex;">
+          <div class="accordion-button bg0" onclick="output(calc.calculate(ioList));">Simulate 1</div>
+          <div class="accordion-button bg0" onclick="output(calc.calculate(ioList));">Simul. 10k</div>
+        </div> -->
+        <!--
+        ██   ██ ██ ████████     ███    ███  ██████  ██████  ███████
+        ██   ██ ██    ██        ████  ████ ██    ██ ██   ██ ██
+        ███████ ██    ██        ██ ████ ██ ██    ██ ██   ██ ███████
+        ██   ██ ██    ██        ██  ██  ██ ██    ██ ██   ██      ██
+        ██   ██ ██    ██        ██      ██  ██████  ██████  ███████
+        -->
+        <div class="accordion-header bg1 banner">Hit</div>
+        <div class="accordion-content bg2">
+          <div class="block bg6" title="Add this to the die roll.">
+            Add <input type="number" class="spinner io bg7" name="sim_hit_mod" id="sim_hit_mod" size=1 value=0> to the
+            hit roll
+          </div>
+          <div class="block bg6" title="Roll xDy+z attacks for each model instead of the flat Attack characteristic.">
+            <input type="checkbox" class="selectMod io" id="sim_hit_attacks"> Random number of attacks:<br>
+            <input type="number" class="spinner io bg7" name="sim_hit_attacks_dice" id="sim_hit_attacks_dice" size=1
+              value=1> D
+            <input type="number" class="spinner io bg7" name="sim_hit_attacks_faces" id="sim_hit_attacks_faces" size=1
+              value=6> +
+            <input type="number" class="spinner io bg7" name="sim_hit_attacks_mod" id="sim_hit_attacks_mod" size=1
+              value=0>
+          </div>
+          <div class="block bg6" title="These attacks always hit. Do not roll.">
+            <input type="checkbox" class="selectMod io" id="sim_hit_autohit"> Auto-hit without rolling
+          </div>
+          <div class="block bg6" title="Reroll the hit roll if it's lower than this number.">
+            <input type="checkbox" class="selectMod io" id="sim_hit_reroll"> Re-roll
+            <br><input type="radio" name="sim_hit_reroll_type" id="sim_hit_reroll_less" value="less" checked><input type="number" class="spinner io bg7" name="sim_hit_reroll_target" id="sim_hit_reroll_target" size=1 value=1> or lower <br><input type="radio" name="sim_hit_reroll_type" id="sim_hit_reroll_all" value="all"> all failures
+            <!-- <input type="number" class="spinner io bg7" name="sim_hit_reroll_target" id="sim_hit_reroll_target" size=1 value=1> or lower -->
+          </div>
+          <!-- HIDDEN! -->
+          <div class="block bg6" style="display: none;" title="Attack again if you roll a higher than the provided number">
+            <input type="checkbox" class="selectMod io" id="sim_hit_exploding">
+            <input type="number" class="spinner io bg7" name="sim_hit_exploding_amount" id="sim_hit_exploding_amount"
+              size=1 value=1> bonus Attacks on
+            <input type="number" class="spinner io bg7" name="sim_hit_exploding_target" id="sim_hit_exploding_target"
+              size=1 value=6> +
+          </div>
+          <!-- Extra hits on natural-->
+          <!-- <div class="block bg6" title="This hit always hits on this number or higher">
+            <input type="checkbox" class="selectMod io" id="sim_hit_extrahit">
+            <input type="number" class="spinner io bg7" name="sim_hit_extrahit_amount" id="sim_hit_extrahit_amount" size=1 value=1> bonus Hits on
+            <input type="number" class="spinner io bg7" name="sim_hit_extrahit_target" id="sim_hit_extrahit_target" size=1 value=6> +
+          </div> -->
+          <div class="block bg6" title="This hit automatically hits and wounds on this number or higher">
+            <input type="checkbox" class="selectMod io" id="sim_hit_autowound"> Auto-wound on
+            <input type="number" class="spinner io bg7" name="sim_hit_autowound_target" id="sim_hit_autowound_target"
+              size=1 value=6> +
+          </div>
+          <!-- <div class="block bg6" title="Inflict a Mortal Wound on a wound roll greater than this number">
+              <input type="checkbox" class="selectMod io" id="sim_hit_mortals"> Mortals on
+              <input type="number" class="spinner io bg7" name="sim_hit_mortals_target" id="sim_hit_mortals_target" size=1
+              value=6> + 
+              <input type="checkbox" class="selectMod io" id="sim_hit_endattack"> end attack
+          </div> -->
+        </div>
+        <!--
+          ██     ██  ██████  ██    ██ ███    ██ ██████      ███    ███  ██████  ██████  ███████
+          ██     ██ ██    ██ ██    ██ ████   ██ ██   ██     ████  ████ ██    ██ ██   ██ ██
+          ██  █  ██ ██    ██ ██    ██ ██ ██  ██ ██   ██     ██ ████ ██ ██    ██ ██   ██ ███████
+          ██ ███ ██ ██    ██ ██    ██ ██  ██ ██ ██   ██     ██  ██  ██ ██    ██ ██   ██      ██
+           ███ ███   ██████   ██████  ██   ████ ██████      ██      ██  ██████  ██████  ███████
+          -->
+        <div class="accordion-header bg1 banner">Wound</div>
+        <div class="accordion-content bg2">
+          <div class="block bg6" title="Add this to the die roll.">
+            Add <input type="number" class="spinner io bg7" name="sim_wound_mod" id="sim_wound_mod" size=1 value=0> to
+            the wound roll
+          </div>
+          <div class="block bg6" title="Reroll the wound roll if it\'s lower than this number.">
+            <input type="checkbox" class="selectMod io" id="sim_wound_reroll"> Re-roll
+            <input type="number" class="spinner io bg7" name="sim_wound_reroll_target" id="sim_wound_reroll_target"
+              size=1 value=1> or less
+          </div>
+          <div class="block bg6" title="Ignore all wound rolls at or below this number (like Transhuman Physiology)">
+            <input type="checkbox" class="selectMod io" id="sim_wound_ignore"> Ignore rolls 
+            <input type="number" class="spinner io bg7" name="sim_wound_ignore_target" id="sim_wound_ignore_target"
+              size=1 value=3> or below
+          </div>
+          <div class="block bg6" title="Hit with additional AP on this number or higher">
+            <input type="checkbox" class="selectMod io" id="sim_wound_bonusap">
+            <input type="number" class="spinner io bg7" name="sim_wound_bonusap_amount" id="sim_wound_bonusap_amount"
+              size=1 value=1> Bonus AP on
+            <input type="number" class="spinner io bg7" name="sim_wound_bonusap_target" id="sim_wound_bonusap_target"
+              size=1 value=6> +
+          </div>
+          <div class="block bg6" title="Target cannot use their invuln save against this">
+            <input type="checkbox" class="selectMod io" id="sim_wound_noinvuln"> Target can't use invulnerable saves
+          </div>
+          <!-- <div class="block bg6" title="Inflict a Mortal Wound on a wound roll greater than this number">
+            <input type="checkbox" class="selectMod io" id="sim_wound_mortals">
+            <input type="number" class="spinner io bg7" name="sim_wound_mortals_amount" id="sim_wound_mortals_amount"
+              size=1 value=1> Mortals on
+            <input type="number" class="spinner io bg7" name="sim_wound_mortals_target" id="sim_wound_mortals_target"
+              size=1 value=6> +
+            <input type="checkbox" class="selectMod io" id="sim_hit_endattack"> end attack
+          </div> -->
+        </div>
+        <!--
+          ███████  █████  ██    ██ ███████     ███    ███  ██████  ██████  ███████
+          ██      ██   ██ ██    ██ ██          ████  ████ ██    ██ ██   ██ ██
+          ███████ ███████ ██    ██ █████       ██ ████ ██ ██    ██ ██   ██ ███████
+               ██ ██   ██  ██  ██  ██          ██  ██  ██ ██    ██ ██   ██      ██
+          ███████ ██   ██   ████   ███████     ██      ██  ██████  ██████  ███████
+          -->
+        <div class="accordion-header bg1 banner">Save</div>
+        <div class="accordion-content bg2">
+          <div class="block bg6" title="Add this to the die roll.">
+            Add <input type="number" class="spinner io bg7" name="SvMod" id="sim_save_mod" size=1 value=0> to the Save roll
+          </div>
+          <div class="block bg6" title="Defender has an Invulnerable save.">
+            <input type="checkbox" class="selectMod io" id="sim_save_invuln"> Invulnerable Save
+            <input type="number" class="spinner io bg7" name="invuln_target" id="sim_save_invuln_target" size=1 value=5>
+          </div>
+          <div class="block bg6" title="You have the Space Marine Band-aids.">
+            <input type="checkbox" class="selectMod io" id="sim_save_aoc"> Armor of Contemp
+          </div>
+        </div>
+        <!--
+          ██████   █████  ███    ███  █████   ██████  ███████     ███    ███  ██████  ██████  ███████
+          ██   ██ ██   ██ ████  ████ ██   ██ ██       ██          ████  ████ ██    ██ ██   ██ ██
+          ██   ██ ███████ ██ ████ ██ ███████ ██   ███ █████       ██ ████ ██ ██    ██ ██   ██ ███████
+          ██   ██ ██   ██ ██  ██  ██ ██   ██ ██    ██ ██          ██  ██  ██ ██    ██ ██   ██      ██
+          ██████  ██   ██ ██      ██ ██   ██  ██████  ███████     ██      ██  ██████  ██████  ███████
+          -->
+        <div class="accordion-header bg1 banner">Damage</div>
+        <div class="accordion-content bg2">
+          <div class="block bg6" title="Roll xDy+z attacks for each model instead of the flat Damage characteristic.">
+            <input type="checkbox" class="selectMod io" id="sim_damage_random"> Random number of damage:<br>
+            <input type="number" class="spinner io bg7" name="sim_damage_random_dice" id="sim_damage_random_dice" size=1
+              value=1> D
+            <input type="number" class="spinner io bg7" name="sim_damage_random_faces" id="sim_damage_random_faces"
+              size=1 value=6> +
+            <input type="number" class="spinner io bg7" name="sim_damage_random_mod" id="sim_damage_random_mod" size=1
+              value=0>
+          </div>
+          <div class="block bg6" title="Roll a D6 for each point of damage. If it's higher than this number remove that point of damage.">
+            <input type="checkbox" class="selectMod io" id="fnp"> Feel No Pain
+            <input type="number" class="spinner io bg7" name="fnp_target" id="fnp_target" size=1 value=6>
+          </div>
+          <div class="block bg6" title="Reduce damage by this much, to a minimum of 1. (Serpent Shield or Disgustingly Resilient)">
+             Reduce Damge by <input type="number" class="spinner io bg7" name="sim_damage_reduction" id="sim_damage_reduction" size=1 value=0>
+          </div>
+          <!-- <div class="block bg6" title="Model can fight back if killed if they roll this number or higher on a D6.">
+            <input type="checkbox" class="selectMod io" id="sim_damage_fightback_check"> Fight on death on
+            <input type="number" class="spinner io bg7" name="sim_damage_fightback_target" id="sim_damage_fightback_target" size=1 value=4>+
+          </div>
+          <div class="block bg6" title="When defending models die, attempt to use Reanimation Protocols.">
+            <input type="checkbox" class="selectMod io" id="sim_damage_reanimate"> Reanimate on
+            <input type="number" class="spinner io bg7" name="sim_damage_reanimate_target" id="sim_damage_reanimate_target" size=1 value=5>+
+            re-rolling <input type="number" class="spinner io"name="reanimatereroll" id="reanimatereroll" size=1 value=1> or lower
+            adding <input type="number" class="spinner io"name="reanimatemod" id="reanimatemod" size=1 value=1> to roll.
+          </div> -->
+        </div>
+      </div>
       <!--
        ██████  ██    ██ ████████ ██████  ██    ██ ████████
       ██    ██ ██    ██    ██    ██   ██ ██    ██    ██
@@ -177,7 +391,6 @@
               </div>
               </p>
               <p class="cCenter">Feel free to host, contribute, and share!</p>
-              <p class="cCenter">Thanks to <a href="https://github.com/Otwald">Otwald</a> for reviving this project.</p>
               <% } %>
       </div>
 

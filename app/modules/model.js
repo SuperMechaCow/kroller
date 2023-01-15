@@ -21,7 +21,7 @@ class Model {
   async buildModelFromUnit(parentUnit) {
     await this.setCostum();
     await this.grabCost(parentUnit);
-    await this.grabWeapon(parentUnit);
+    await this.grabWeapon();
     await this.grabSpells(parentUnit);
     return true;
   }
@@ -69,61 +69,51 @@ class Model {
     }
   }
 
-  grabProfile(charaParse) {
+  grabProfile(charaNodes) {
     //grab the name of the Dataset
     this.name = this.bsData.$.name;
-    for (let chara of charaParse) {
-      //lets check if the Model name includes WeaponOption
-      //there is surely a better way to do this, send help
-      if (this.name.includes("w/")) this.name = this.name.split("w/")[0].trim();
-      if (this.name.includes("(")) this.name = this.name.split("(")[0].trim();
-      if (this.name.includes("with"))
-        this.name = this.name.split("with")[0].trim();
-      //search statline with model name
-      if (this.nameMatcher(this.name, chara)) {
-        this.statlines = chara.statlines;
-        chara.used = true;
-      }
-      if (this.nameMatcher(this.name.replace("-", " "), chara)) {
-        this.statlines = chara.statlines;
-        chara.used = true;
-      }
-    }
-    //ohboy what ever this Model is now its super Special
-  }
 
-  /**
-   * only exists to match somehow a unit name to the profile
-   */
-  nameMatcher(unitName, chara) {
-    //first check for degrading profiles
-    if (chara.name == unitName) {
-      this.statlines = chara.statlines;
-      return true;
+    //lets check if the Model name includes WeaponOption
+    //there is surely a better way to do this, send help
+    if (this.name.includes("w/")) this.name = this.name.split("w/")[0].trim();
+    if (this.name.includes("(")) this.name = this.name.split("(")[0].trim();
+    //search statline with model name
+    for (let chara of charaNodes) {
+      //first check for degrading profiles
+      if (chara.name.includes("[")) {
+        if (chara.name.split("[")[0].trim() == this.name) {
+          let statline = chara.statlines[0];
+          //just to replace in the degrading statline the * with a number
+          if (statline.W == "*") {
+            statline.W = chara.name.split("-")[1].substr(0, 1);
+          }
+          this.statlines.push(statline);
+          continue;
+        }
+      }
+      if (chara.name == this.name) {
+        this.statlines = chara.statlines;
+        continue;
+      }
+      //in some cases the model and there character dont fully share names...
+      if (chara.name.includes(this.name)) {
+        this.statlines = chara.statlines;
+        continue;
+      }
+      //same as above
+      if (this.name.includes(chara.name)) {
+        this.statlines = chara.statlines;
+        continue;
+      }
     }
-    //in some cases the model and there character dont fully share names...
-    if (chara.name.includes(unitName)) {
-      this.statlines = chara.statlines;
-      return true;
-    }
-    //same as above
-    if (unitName.includes(chara.name)) {
-      this.statlines = chara.statlines;
-      return true;
-    }
-    // now for those who have a stupid - in there names
-    return false;
+    return true;
   }
 
   /**
    * Start collecting weapons
    */
-  async grabWeapon(parentUnit) {
-    let weaponNode = helperGrabRules(this.bsData, '@.typeName=="Weapon"');
-    //there seems to be rare cases where a unit has models but some idiot decided to mess up BS
-    //data, so there weapons are somehow directly unter the unit, looking at you agressor squad
-    if (!weaponNode.length)
-      weaponNode = helperGrabRules(parentUnit, '@.typeName=="Weapon"');
+  async grabWeapon() {
+    let weaponNode = helperGrabRules(this.bsData, 'typeName=="Weapon"');
     let amount;
     //that part is only here to grab the correct amount
     for (let node of weaponNode) {

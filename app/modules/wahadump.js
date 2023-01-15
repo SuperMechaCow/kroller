@@ -2,8 +2,6 @@ const csv = require("csvtojson");
 const { parse } = require("csv-parse");
 const fs = require("fs");
 const https = require("https");
-const { resolve } = require("path");
-const { get } = require("request");
 const sqlite3 = require("sqlite3").verbose();
 const dataFolder = __dirname + "/../data/";
 const db = new sqlite3.Database(`${dataFolder}database.db`);
@@ -142,44 +140,16 @@ async function scraper(readData) {
 // });
 
 /**
- * simple Wrapper to keep order of droping table and filling them again
- * @param {Object} table jsonObject from db_init
- * @returns void
- */
-async function wrapDBInit(table) {
-  if (table.is_csv) await dropTable(table.name);
-  await createTable(table.name, table.columns);
-  if (!table.is_csv) return;
-  collectWahaData(table);
-}
-
-/**
- * for a WAHApedia update, first drop its tables
- * @param {string} name of the Table
- */
-function dropTable(name) {
-  return new Promise((resolve) => {
-    db.run(`DROP TABLE IF EXISTS ${name}`, (err, result) => {
-      resolve("succes");
-    });
-  });
-}
-
-/**
  * @param {string} name of the Table
  * @param {Array} columns Array of Strings, String holds Column Name and Type
  */
-function createTable(name, columns) {
-  return new Promise((resolve) => {
-    let insert = `CREATE TABLE IF NOT EXISTS ${name} (`;
-    columns.forEach((key) => {
-      insert += `${key}, `;
-    });
-    insert = insert.substring(0, insert.length - 2) + ");";
-    db.run(insert, (err, result) => {
-      resolve("success");
-    });
+async function createTable(name, columns) {
+  let insert = `CREATE TABLE IF NOT EXISTS ${name} (`;
+  columns.forEach((key) => {
+    insert += `${key}, `;
   });
+  insert = insert.substring(0, insert.length - 2) + ");";
+  await db.run(insert);
 }
 
 /**
@@ -189,41 +159,38 @@ function createTable(name, columns) {
  * @param {int} columns for the Table, used for InsertChunks
  */
 async function getCSV(name, file, columns) {
-  return new Promise((resolve, reject) => {
-    let limit = 30000;
-    let parameters = [];
-    let placeholders = [];
-    fs.createReadStream(file)
-      .pipe(parse({ delimiter: "|", from_line: 2, relax_quotes: true }))
-      .on("data", (row) => {
-        row = row.slice(0, -1);
-        let row_ph = [];
-        parameters.push(row);
-        row.forEach((value) => {
-          row_ph.push(" ?");
-          return value;
-        });
-        placeholders.push(row_ph);
-      })
-      .on("end", () => {
-        if (parameters.flat().length > limit) {
-          let cut_off = Math.ceil(limit / columns);
-          let index = 0;
-          let chunk = Math.ceil(parameters.length / cut_off);
-          for (let i = 0; i < chunk; i++) {
-            insertChunk(
-              name,
-              parameters.slice(index, index + cut_off),
-              placeholders.slice(index, index + cut_off)
-            );
-            index += cut_off;
-          }
-        } else {
-          insertChunk(name, parameters, placeholders);
-        }
-        resolve();
+  let limit = 30000;
+  let parameters = [];
+  let placeholders = [];
+  fs.createReadStream(file)
+    .pipe(parse({ delimiter: "|", from_line: 2, relax_quotes: true }))
+    .on("data", (row) => {
+      row = row.slice(0, -1);
+      let row_ph = [];
+      parameters.push(row);
+      row.forEach((value) => {
+        row_ph.push(" ?");
+        return value;
       });
-  });
+      placeholders.push(row_ph);
+    })
+    .on("end", () => {
+      if (parameters.flat().length > limit) {
+        let cut_off = Math.ceil(limit / columns);
+        let index = 0;
+        let chunk = Math.ceil(parameters.length / cut_off);
+        for (let i = 0; i < chunk; i++) {
+          insertChunk(
+            name,
+            parameters.slice(index, index + cut_off),
+            placeholders.slice(index, index + cut_off)
+          );
+          index += cut_off;
+        }
+      } else {
+        insertChunk(name, parameters, placeholders);
+      }
+    });
 }
 
 /**
@@ -247,18 +214,7 @@ async function insertChunk(name, parameters, placeholders) {
  */
 async function collectWahaData(table) {
   await grabSheet(table.path);
-  await getCSV(table.name, dataFolder + table.path, table.columns.length).then(
-    function () {
-      fs.unlink(dataFolder + table.path, (err) => {
-        if (err) console.log(err);
-        console.log(`${table.path} is deleted.`);
-      });
-    }
-  );
-}
-
-function getJson() {
-  return new Promise((reject, resolve));
+  getCSV(table.name, dataFolder + table.path, table.columns.length);
 }
 
 fs.readFile(dataFolder + "db_init.json", (err, data) => {
@@ -267,7 +223,12 @@ fs.readFile(dataFolder + "db_init.json", (err, data) => {
   } else {
     let context = JSON.parse(data);
     Object.keys(context).forEach((key) => {
-      wrapDBInit(context[key]);
+      let table = context[key];
+      createTable(table.name, table.columns);
+      if (!table.is_csv) {
+        return;
+      }
+      collectWahaData(table);
     });
     db.run(
       `CREATE VIEW IF NOT EXISTS datasheet_to_stratagem AS SELECT ds.datasheet_id as datasheet_id , sg.id as stratagem_id, sg.name as name , sg.description, sg.type as type, sg.subfaction_id as subfaction_id, sg.cp_cost as cp_cost  FROM datasheets_stratagems as ds LEFT JOIN stratagems as sg ON ds.stratagem_id = sg.id`
