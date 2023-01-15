@@ -34,6 +34,7 @@ class UnitRule {
   buildWahaRules(rule) {
     this.name = rule.name;
     this.desc = rule.description;
+    this.desc.replaceAll('<a href="/wh40k9ed/', '<a href="https://wahapedia.ru/wh40k9ed/');
     this.wahaId = rule.ability_id;
     this.subkeys = this.setSubKeys(rule.description);
     this.targets = this.setTargets(rule.description);
@@ -44,6 +45,7 @@ class UnitRule {
   grabAbilitRules(profile, chara) {
     this.name = profile.$.name;
     this.desc = chara._;
+    this.desc.replaceAll('<a href="/wh40k9ed/', '<a href="https://wahapedia.ru/wh40k9ed/');
     this.subkeys = this.setSubKeys(chara._);
     this.targets = this.setTargets(chara._);
     this.phases = [];

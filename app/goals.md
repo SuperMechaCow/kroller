@@ -1,5 +1,4 @@
 ## Bugs:
-- Not showing correct CP cost of stratagems
 - "Upgrade" units do not merge models (Plagueburst crawler and imperial gaurd infantry)
 - Daemons do not display detachments or statagems (no error)
 - Tau bracketing models with drones
