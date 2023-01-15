@@ -151,9 +151,9 @@ class Unit {
     //first try get Abilities from Waha
     if (this.waha) {
       let abilities = await getWahaDsheetAbilities(this.waha.id);
-      for (let abilitie of abilities) {
+      for (let ability of abilities) {
         let newRule = new UnitRule();
-        newRule.buildWahaRules(abilitie);
+        newRule.buildWahaRules(ability);
         this.rules.push(newRule);
       }
     }
@@ -206,6 +206,7 @@ class Unit {
           rule,
           rule.characteristics[0].characteristic[0]
         );
+        this.newRule.trait = true;
         this.rules.push(newRule);
       }
       this.warlord = true;
@@ -508,6 +509,7 @@ class Unit {
       if (typeData.length > 1) {
         stratData.type = typeData[1].replace(" Stratagem", "");
       }
+      stratData.description = stratData.description.replaceAll('<a target="_blank" href="/wh40k9ed/', '<a href="https://wahapedia.ru/wh40k9ed/');
       this.stratagems.push(stratData);
     }
   }

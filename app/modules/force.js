@@ -14,6 +14,9 @@ class Force {
     await this.grabDetachment();
     await this.createDetachments();
     await this.grabForceMetaData();
+    // Reduce redundant information
+    delete this.detachmentParse;
+    delete this.roster;
   }
 
   initForce() {

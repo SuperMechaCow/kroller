@@ -1327,6 +1327,9 @@ function listBuild() {
               "bg6",
               "hlSome"
             );
+            if (rule.trait) {
+              newRule.classList.add("permaUse");
+            }
             if (rule.name == "Explodes") {
               newRule.classList.add("permaUse");
               newRuleContent.innerHTML += `
@@ -1379,7 +1382,7 @@ function listBuild() {
           ███████ ████████ ██████   █████  ████████  █████   ██████  ███████ ███    ███ ███████
           ██         ██    ██   ██ ██   ██    ██    ██   ██ ██       ██      ████  ████ ██
           ███████    ██    ██████  ███████    ██    ███████ ██   ███ █████   ██ ████ ██ ███████
-             ██    ██    ██   ██ ██   ██    ██    ██   ██ ██    ██ ██      ██  ██  ██      ██
+               ██    ██    ██   ██ ██   ██    ██    ██   ██ ██    ██ ██      ██  ██  ██      ██
           ███████    ██    ██   ██ ██   ██    ██    ██   ██  ██████  ███████ ██      ██ ███████
           */
           if (settings.stratagems) {
