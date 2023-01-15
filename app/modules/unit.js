@@ -433,7 +433,7 @@ class Unit {
       if (typeData.length > 1) {
         stratData.type = typeData[1].replace(" Stratagem", "");
       }
-      stratData.description = stratData.description.replaceAll('<a href="/wh40k9ed/', '<a href="https://wahapedia.ru/wh40k9ed/');
+      stratData.description = stratData.description.replaceAll('<a target="_blank" href="/wh40k9ed/', '<a href="https://wahapedia.ru/wh40k9ed/');
       this.stratagems.push(stratData);
     }
   }

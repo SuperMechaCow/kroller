@@ -1,7 +1,8 @@
 ## Bugs:
 - "Upgrade" units do not merge models (Plagueburst crawler and imperial gaurd infantry)
+- Does not show three profiles if degrading unit has a seperate table for degrading.
 - Daemons do not display detachments or statagems (no error)
-- Tau bracketing models with drones
+- Tau degrading models with drones
 - Tau drone no weapons
 - Tau model bracket in [] and not ()
 - fix wahalinks (some 'http' and some '/who40ken')
@@ -31,13 +32,7 @@
 
 ## To Do:
 
-
-FIX WAHALINKS TO CORE RULES DINGUS!
-(clicking on a core rule in a stratagem or ability directs to animetidd and not wahapedia.
- either scan and replace the rules when found in database, or scan to replace before adding to database)
-
-- FACTION keywords
-- toggle showing (faction) keywords
+- Needs new CSS for waha-provided tabkes (and remove images?)
 - copy link/code/output
 - New Game Button
 - Secondary selector
@@ -47,11 +42,10 @@ FIX WAHALINKS TO CORE RULES DINGUS!
 - print stylesheet
 - Button maker/injector
 - Find cantrips from a list in interface, onclick to show effect in OUTPUT
-- Wound tracker per model type
+- Wound tracker per model
 - Click on a Keyword to find abilities that mention that keyword
 - Filter Stratagems by type?
-- ul/ol in markdown
-- accurately count models and weapons
+- ul/ol in custom markdown
 - What can be highlighted or copied?
 - onclick tooltip
 - setup tab (auto-open settings, reset, etc.)
@@ -60,7 +54,7 @@ FIX WAHALINKS TO CORE RULES DINGUS!
 - Doctrine/Rites/C'tan powers listing
 - detachment/army rules (Angels of Death, Sacred Rites, etc.)
 - Game/Force list? (Would require an admin lock)
-- wound tracker/combine bracketing profiles
+- wound tracker/combine degrading profiles
 - combine duplicate weapons (blighthaulers)
 - highlight warlord traits and relics
 - competitive game clock
