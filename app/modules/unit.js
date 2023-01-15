@@ -10,6 +10,7 @@ const {
 } = require("./../Connectors/SqliteConnector");
 const UnitRule = require("./unitrule");
 const Model = require("./model");
+const Spell = require("./spell");
 class Unit {
   constructor(data, faction, factionId, subfaction, subfactionId) {
     this.bsData = data;
@@ -38,6 +39,7 @@ class Unit {
     await this.grabModels();
     await this.mergeModels();
     await this.grabStratagems();
+    await this.grabUnitPsy();
     await this.cleanUpRules();
   }
 
@@ -117,7 +119,7 @@ class Unit {
               if (!faction.includes("<") && faction != this.fact)
                 this.keywords.push(faction.toLowerCase());
               if (!this.waha) {
-                //if it wasnt 
+                //if it wasnt
                 let factQuery = await getWahaFaction(faction);
                 if (factQuery && factQuery.id != this.wahaFaction) {
                   this.wahaFaction = factQuery.id;
@@ -215,39 +217,56 @@ class Unit {
    */
   async grabModels() {
     //first we try to find everything of type Model
-    let selectionData = this.bsData.selections[0].selection;
-    if (!Array.isArray(selectionData)) selectionData = [selectionData];
-    if (this.bsData.profiles)
-      selectionData = selectionData.concat(this.bsData.profiles[0].profile);
     let modelNodes = helperGrabRules(this.bsData, '@.type=="model"');
     // if nothing is in the net then its maybe some kind of freak character?
     if (!modelNodes.length)
       modelNodes = helperGrabRules(this.bsData, '@.type=="unit"');
     let charaParse = this.grabStatLine();
-    let unclaimedWeapons = [];
     charaParse = this.checkForDegrading(charaParse);
+    charaParse = this.checkForDupStatLines(charaParse);
     for (let modelNode of modelNodes) {
+      modelNode.used = true;
       await this.wrapModelCreation(modelNode, charaParse);
     }
     // there some real freaky units out there that are an addon to something
     // so battlescribe lists them as upgrade for some reason
     for (let chara of charaParse) {
-      if (!chara.used) {
-        let lastResorts = helperGrabRules(
-          this.bsData,
-          `@.type=="upgrade" && @.name=="${chara.name}"`
-        );
-        //the last ditch effort to find the unit
-        if (!lastResorts.length)
-          lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
-        for (let modelNode of lastResorts) {
-          // This "if" prevents weapons from being detected as models
-          // Models will not merge, however
-          if (modelNode.profiles[0].profile[0].$.typeName == "Unit")
-          this.wrapModelCreation(modelNode, [chara]);
+      if (chara.used) continue;
+      //this will find plenty of stuff besides units
+      let lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
+      //the last ditch effort to find the unit
+      for (let modelNode of lastResorts) {
+        // This "if" prevents weapons from being detected as models
+        // Models will not merge, however
+        let checkUnit = helperGrabRules(modelNode, `@.typeName=="Unit"`);
+        if (!checkUnit.length) continue;
+        if (modelNode.used) continue;
+        let nameCheck = modelNode.$.name;
+        if (nameCheck.includes("w/"))
+          nameCheck = nameCheck.split("w/")[0].trim();
+        if (nameCheck.includes("W/"))
+          nameCheck = nameCheck.split("W/")[0].trim();
+        if (nameCheck.includes("(")) nameCheck = nameCheck.split("(")[0].trim();
+        if (nameCheck.includes("with"))
+          nameCheck = nameCheck.split("with")[0].trim();
+        let helper = new Model();
+        if (helper.nameMatcher(nameCheck, chara)) {
+          await this.wrapModelCreation(modelNode, [chara]);
+          modelNode.used = true;
+          continue;
+        }
+        if (nameCheck.includes("Team"))
+          nameCheck = nameCheck.replace("Weapon", "Weapons");
+        if (helper.nameMatcher(nameCheck, chara)) {
+          await this.wrapModelCreation(modelNode, [chara]);
+          modelNode.used = true;
+          continue;
         }
       }
     }
+    //if (!lastResorts.length)
+    //lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
+    //  if (modelNode.profiles[0].profile[0].$.typeName == "Unit")
   }
 
   /**
@@ -294,12 +313,36 @@ class Unit {
   }
 
   /**
- * degrading profile show up as there own little unit
- * so most if not all have wound in there name, for that we search
- * and hopefully merg all of them back into one profile
- * @param {Array} modelNodes
- * @returns
- */
+   * in some Armys every Model gets its own statline, even so
+   * its  just identical to other statlines, this will bring confusion
+   * looking at you astra militarum
+   */
+  checkForDupStatLines(modelNodes) {
+    let newModelNodes = [];
+    for (let model of modelNodes) {
+      let nameCheck = jp.query(modelNodes, `$..[?(@.name=="${model.name}")]`);
+      if (nameCheck.length == 1) {
+        newModelNodes.push(model);
+        continue;
+      }
+      //just to make sure we have something in the new one
+      if (!newModelNodes.length) {
+        newModelNodes.push(nameCheck[0]);
+        continue;
+      }
+      let newCheck = jp.query(newModelNodes, `$..[?(@.name=="${model.name}")]`);
+      if (!newCheck.length) newModelNodes.push(model);
+    }
+    return newModelNodes;
+  }
+
+  /**
+   * degrading profile show up as there own little unit
+   * so most if not all have wound in there name, for that we search
+   * and hopefully merg all of them back into one profile
+   * @param {Array} modelNodes
+   * @returns
+   */
   checkForDegrading(modelNodes) {
     let newModeNodes = [];
     for (let model of modelNodes) {
@@ -308,12 +351,30 @@ class Unit {
         continue;
       }
       let statline = model.statlines[0];
+      let checkDegrad = false;
       //just to replace in the degrading statline the * with a number
+      model.name = model.name.split("wound")[0];
       if (statline.W == "*") {
-        statline.W = model.name.split("-")[1].substr(0, 1);
+        checkDegrad = true;
+        statline.W = model.name.substr(model.name.length - 2, 1).trim();
       }
-      //removing it from the name here should make searching the rules easier
-      model.name = model.name.split("(")[0].trim().split("[")[0].trim();
+      // maybe for later use
+      // if (model.name.includes("+")) {
+      //   statline.W = `${model.name.substr(model.name.length - 3, 2).trim()}${
+      //     statline.W
+      //   }`.replace("+", "-");
+      // }
+      //everything before the word wound isnt consistent in battlescribe
+      //so we split there and throw every most likely special character out
+      model.name = model.name
+        .replace(/[0-9]/g, "")
+        .replace(/[+(\[]/g, "")
+        .trim();
+      if (checkDegrad) {
+        //some units have an - in there name so here i try to carefully strip away the -
+        //for the degrading wounds
+        model.name = model.name.substr(0, model.name.length - 1).trim();
+      }
       if (!newModeNodes.length) {
         newModeNodes.push(model);
         continue;
@@ -333,12 +394,11 @@ class Unit {
     return newModeNodes;
   }
 
-
   /**
- * to make sure full wounds are up ..
- * @param {*} arr
- * @returns
- */
+   * to make sure full wounds are up ..
+   * @param {*} arr
+   * @returns
+   */
   sortByWounds(arr) {
     return arr.sort((a, b) => {
       return Number(a.W) < Number(b.W) ? 1 : -1;
@@ -379,6 +439,22 @@ class Unit {
       newModelsList.push(model);
     }
     this.models = newModelsList;
+  }
+
+  /**
+   * some units have a psyker hidden in a squad
+   * so there psy power is under the unit and not the model
+   */
+  async grabUnitPsy() {
+    if (!this.keywords.includes("psyker")) return;
+    //just here to move away those with already fetched psy
+    if (this.spells.length > 0) return;
+    let psyNodes = helperGrabRules(this.bsData, '@.typeName=="Psychic Power"');
+    for (let psy of psyNodes) {
+      let newSpell = new Spell();
+      await newSpell.buildSpell(psy);
+      this.spells.push(newSpell);
+    }
   }
 
   async grabStratagems() {
