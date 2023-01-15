@@ -217,39 +217,56 @@ class Unit {
    */
   async grabModels() {
     //first we try to find everything of type Model
-    let selectionData = this.bsData.selections[0].selection;
-    if (!Array.isArray(selectionData)) selectionData = [selectionData];
-    if (this.bsData.profiles)
-      selectionData = selectionData.concat(this.bsData.profiles[0].profile);
     let modelNodes = helperGrabRules(this.bsData, '@.type=="model"');
     // if nothing is in the net then its maybe some kind of freak character?
     if (!modelNodes.length)
       modelNodes = helperGrabRules(this.bsData, '@.type=="unit"');
     let charaParse = this.grabStatLine();
-    let unclaimedWeapons = [];
     charaParse = this.checkForDegrading(charaParse);
+    charaParse = this.checkForDupStatLines(charaParse);
     for (let modelNode of modelNodes) {
+      modelNode.used = true;
       await this.wrapModelCreation(modelNode, charaParse);
     }
     // there some real freaky units out there that are an addon to something
     // so battlescribe lists them as upgrade for some reason
     for (let chara of charaParse) {
-      if (!chara.used) {
-        let lastResorts = helperGrabRules(
-          this.bsData,
-          `@.type=="upgrade" && @.name=="${chara.name}"`
-        );
-        //the last ditch effort to find the unit
-        if (!lastResorts.length)
-          lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
-        for (let modelNode of lastResorts) {
-          // This "if" prevents weapons from being detected as models
-          // Models will not merge, however
-          if (modelNode.profiles[0].profile[0].$.typeName == "Unit")
-            this.wrapModelCreation(modelNode, [chara]);
+      if (chara.used) continue;
+      //this will find plenty of stuff besides units
+      let lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
+      //the last ditch effort to find the unit
+      for (let modelNode of lastResorts) {
+        // This "if" prevents weapons from being detected as models
+        // Models will not merge, however
+        let checkUnit = helperGrabRules(modelNode, `@.typeName=="Unit"`);
+        if (!checkUnit.length) continue;
+        if (modelNode.used) continue;
+        let nameCheck = modelNode.$.name;
+        if (nameCheck.includes("w/"))
+          nameCheck = nameCheck.split("w/")[0].trim();
+        if (nameCheck.includes("W/"))
+          nameCheck = nameCheck.split("W/")[0].trim();
+        if (nameCheck.includes("(")) nameCheck = nameCheck.split("(")[0].trim();
+        if (nameCheck.includes("with"))
+          nameCheck = nameCheck.split("with")[0].trim();
+        let helper = new Model();
+        if (helper.nameMatcher(nameCheck, chara)) {
+          await this.wrapModelCreation(modelNode, [chara]);
+          modelNode.used = true;
+          continue;
+        }
+        if (nameCheck.includes("Team"))
+          nameCheck = nameCheck.replace("Weapon", "Weapons");
+        if (helper.nameMatcher(nameCheck, chara)) {
+          await this.wrapModelCreation(modelNode, [chara]);
+          modelNode.used = true;
+          continue;
         }
       }
     }
+    //if (!lastResorts.length)
+    //lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
+    //  if (modelNode.profiles[0].profile[0].$.typeName == "Unit")
   }
 
   /**
@@ -293,6 +310,30 @@ class Unit {
       charaParse.push(chara);
     }
     return charaParse;
+  }
+
+  /**
+   * in some Armys every Model gets its own statline, even so
+   * its  just identical to other statlines, this will bring confusion
+   * looking at you astra militarum
+   */
+  checkForDupStatLines(modelNodes) {
+    let newModelNodes = [];
+    for (let model of modelNodes) {
+      let nameCheck = jp.query(modelNodes, `$..[?(@.name=="${model.name}")]`);
+      if (nameCheck.length == 1) {
+        newModelNodes.push(model);
+        continue;
+      }
+      //just to make sure we have something in the new one
+      if (!newModelNodes.length) {
+        newModelNodes.push(nameCheck[0]);
+        continue;
+      }
+      let newCheck = jp.query(newModelNodes, `$..[?(@.name=="${model.name}")]`);
+      if (!newCheck.length) newModelNodes.push(model);
+    }
+    return newModelNodes;
   }
 
   /**

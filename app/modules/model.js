@@ -73,21 +73,30 @@ class Model {
   grabProfile(charaParse) {
     //grab the name of the Dataset
     this.name = this.bsData.$.name;
+    //lets check if the Model name includes WeaponOption
+    //there is surely a better way to do this, send help
+    if (this.name.includes("w/")) this.name = this.name.split("w/")[0].trim();
+    if (this.name.includes("W/")) this.name = this.name.split("W/")[0].trim();
+    if (this.name.includes("(")) this.name = this.name.split("(")[0].trim();
+    if (this.name.includes("with"))
+      this.name = this.name.split("with")[0].trim();
     for (let chara of charaParse) {
-      //lets check if the Model name includes WeaponOption
-      //there is surely a better way to do this, send help
-      if (this.name.includes("w/")) this.name = this.name.split("w/")[0].trim();
-      if (this.name.includes("(")) this.name = this.name.split("(")[0].trim();
-      if (this.name.includes("with"))
-        this.name = this.name.split("with")[0].trim();
       //search statline with model name
       if (this.nameMatcher(this.name, chara)) {
         this.statlines = chara.statlines;
         chara.used = true;
+        return;
       }
       if (this.nameMatcher(this.name.replace("-", " "), chara)) {
         this.statlines = chara.statlines;
         chara.used = true;
+        return;
+      }
+      //some where in the middle of the name of a model, why battlescribe why
+      if (this.nameMatcher(this.name.replace("Weapon", "Weapons"), chara)) {
+        this.statlines = chara.statlines;
+        chara.used = true;
+        return;
       }
     }
     //ohboy what ever this Model is now its super Special
