@@ -76,9 +76,8 @@ class Unit {
     datasheet = await getWahaDatasheet(tempName, this.wahaFaction);
     // If there was more than one possible datasheet
     if (datasheet) return datasheet;
-    // Datasheet not found ??
-    else {
-    }
+    // Datasheet not found, maybe it doesnt exist in waha
+    // or is something like an imperial agent and we used wrong faction
   }
 
   /**
@@ -118,6 +117,7 @@ class Unit {
               if (!faction.includes("<") && faction != this.fact)
                 this.keywords.push(faction.toLowerCase());
               if (!this.waha) {
+                //if it wasnt 
                 let factQuery = await getWahaFaction(faction);
                 if (factQuery && factQuery.id != this.wahaFaction) {
                   this.wahaFaction = factQuery.id;
@@ -214,28 +214,18 @@ class Unit {
    * Start collecting models
    */
   async grabModels() {
-    //The way this is handled is so whacky, leading to either
-    //Sometimes it loads as many weapons as there are models
-    //and sometimes is loads many models with one weapon
-    let selectionData = this.bsData.selections[0].selection;
-    if (!Array.isArray(selectionData)) selectionData = [selectionData];
-    if (this.bsData.profiles)
-      selectionData = selectionData.concat(this.bsData.profiles[0].profile);
+    //first we try to find everything of type Model
     let modelNodes = helperGrabRules(this.bsData, '@.type=="model"');
+    // if nothing is in the net then its maybe some kind of freak character?
     if (!modelNodes.length)
       modelNodes = helperGrabRules(this.bsData, '@.type=="unit"');
     let charaParse = this.grabStatLine();
-    //I know this next line seems weird, but single-model units'
-    //models and weapons are properties of the same object, so there is
-    //no model name for weapons in this case
-    //We'll throw all weapons without owners into a pile until it's
-    //done looping through all the profiles of the unit, then add them
-    //to every model found for single-model units
-    let unclaimedWeapons = [];
     charaParse = this.checkForDegrading(charaParse);
     for (let modelNode of modelNodes) {
       await this.wrapModeCreation(modelNode, charaParse);
     }
+    // there some real freaky units out there that are an addon to something
+    // so battlescribe lists them as upgrade for some reason
     for (let chara of charaParse) {
       if (!chara.used) {
         let lastResorts = helperGrabRules(
@@ -295,6 +285,13 @@ class Unit {
     return charaParse;
   }
 
+  /**
+   * degrading profile show up as there own little unit
+   * so most if not all have wound in there name, for that we search
+   * and hopefully merg all of them back into one profile
+   * @param {Array} modelNodes
+   * @returns
+   */
   checkForDegrading(modelNodes) {
     let newModeNodes = [];
     for (let model of modelNodes) {
@@ -328,13 +325,22 @@ class Unit {
     return newModeNodes;
   }
 
+  /**
+   * to make sure full wounds are up ..
+   * @param {*} arr
+   * @returns
+   */
   sortByWounds(arr) {
     return arr.sort((a, b) => {
       return Number(a.W) < Number(b.W) ? 1 : -1;
     });
   }
 
-  //TODO rework so it works on unit base
+  /**
+   * Units with weapon options often have seperat Model entries,
+   * to have it less bloated merge everything with the same name together and
+   * add up there weapons
+   */
   mergeModels() {
     //If it found a model
     let newModelsList = [];
