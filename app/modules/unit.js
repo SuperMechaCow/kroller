@@ -10,6 +10,7 @@ const {
 } = require("./../Connectors/SqliteConnector");
 const UnitRule = require("./unitrule");
 const Model = require("./model");
+const Spell = require("./spell");
 class Unit {
   constructor(data, faction, factionId, subfaction, subfactionId) {
     this.bsData = data;
@@ -38,6 +39,7 @@ class Unit {
     await this.grabModels();
     await this.mergeModels();
     await this.grabStratagems();
+    await this.grabUnitPsy();
     await this.cleanUpRules();
   }
 
@@ -396,6 +398,22 @@ class Unit {
       newModelsList.push(model);
     }
     this.models = newModelsList;
+  }
+
+  /**
+   * some units have a psyker hidden in a squad
+   * so there psy power is under the unit and not the model
+   */
+  async grabUnitPsy() {
+    if (!this.keywords.includes("psyker")) return;
+    //just here to move away those with already fetched psy
+    if (this.spells.length > 0) return;
+    let psyNodes = helperGrabRules(this.bsData, '@.typeName=="Psychic Power"');
+    for (let psy of psyNodes) {
+      let newSpell = new Spell();
+      await newSpell.buildSpell(psy);
+      this.spells.push(newSpell);
+    }
   }
 
   async grabStratagems() {

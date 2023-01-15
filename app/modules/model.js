@@ -1,6 +1,7 @@
 const jp = require("jsonpath");
 const { helperGrabRules } = require("./pathhelper");
 const Weapon = require("./weapon");
+const Spell = require("./spell");
 class Model {
   constructor() {
     this.name = "";
@@ -164,50 +165,15 @@ class Model {
   /**
    * Start collecting spells
    */
-  grabSpells(parentUnit) {
+  async grabSpells(parentUnit) {
     let spellGrab = [];
-    if (this.bsData.selections) {
-      spellGrab = this.bsData.selections[0].selection;
-    } else {
-      if (this.bsData.profiles) {
-        if (this.bsData.profiles[0].profile[0].$.typeName == "Psychic Power")
-          spellGrab = this.bsData;
-      }
-    }
-    if (!Array.isArray(spellGrab)) spellGrab = [spellGrab];
-    for (let spell of spellGrab) {
-      if (!spell) break;
-      let spellFound = {};
-      if (spell.selections && spell.selections[0] != "") {
-        spellFound = spell.selections[0].selection[0].profiles[0].profile[0];
-      } else if (spell.profiles && spell.profiles != "") {
-        spellFound = spell.profiles[0].profile;
-      }
-      if (!Array.isArray(spellFound)) spellFound = [spellFound];
-      for (let spellProf of spellFound) {
-        if (!Object.keys(spellProf).length) continue;
-        if (spellProf.$.typeName != "Psychic Power") continue;
-        let newSpell = {
-          name: "",
-          warpcharge: 0,
-          range: 0,
-        };
-        newSpell.name = spellProf.$.name;
-        //Grab customName
-        if (spell.$.customName) {
-          newSpell.customName = spell.$.customName;
-        }
-        if (spell.customNotes) {
-          newSpell.customNotes = spell.customNotes[0];
-        }
-        let spellChara = spellProf.characteristics[0].characteristic;
-        for (let chara of spellChara) {
-          newSpell[chara.$.name.toLowerCase().replace(/\s/g, "")] = chara._;
-        }
-        if (parentUnit.name) {
-          //Add it to the spells list for the Unit if it exists
-          parentUnit.spells.push(newSpell);
-        }
+    let psyNodes = helperGrabRules(this.bsData, '@.typeName=="Psychic Power"');
+    for (let psy of psyNodes) {
+      let newSpell = new Spell();
+      await newSpell.buildSpell(psy);
+      if (parentUnit.name) {
+        //Add it to the spells list for the Unit if it exists
+        parentUnit.spells.push(newSpell);
       }
     }
   }
