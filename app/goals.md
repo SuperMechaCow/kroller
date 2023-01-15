@@ -1,43 +1,36 @@
 ## Bugs:
-- Daemons do not display detachments (no error)
-- Tau bracketing models with drones
-- Tau drone no weapons
+
+- Tau bracketing models with drones (see armiger bug)
 - Tau model bracket in [] and not ()
+- Costs of upgrades is not 100% accurate
+- No Force Org Slot / Warglaives have redundant rules tags
 - fix wahalinks (some 'http' and some '/who40ken')
-- Multiple model bracketting unit have multiple profiles (Armiger Warglaives)
+- Can only find one armiger in app.js
+- Convert gameCode query to lowercase
 - don't update tracker on swipe or spin
+- T'au not found in factionLinks
 - Not parsing Plagueburst crawlers (listed as upgrade and not unit) (check to see if "upgrade profile has statline characteristic")
 - Greyknights doesn't show built-in spell
+- <brotherhood></brotherhood> in Greyknights
 - can't copy output/gamecode by button on android
-- Plural Unit names not matching Singular unit names (bs/waha names)
-- SM character upgrades change unit name and cannot find on waha
-- aeldari subfaction not found
-- unit link icons ONLY WORK IN CHROME (touch?)
+  ~ Plural Unit names not matching Singular unit names (bs/waha names)
 
-
-## Profiles not found / errors
-- IG Tank Commander uses seperate profile table
-- Space Marine Assautl Squad can't find profiles
-- Greyknights has many units without profiles
-- Battle Sisters Preacher missing profiles
-
-## Calculator To DO
-
-- data[8] isn't getting anything for rollCalc
-- Finish calculator/simulator MVP
-- load defender model into calculator
-- leadership roll in calculator
+* aeldari subfaction not found
+* Eldar lists are putting HQ at the bottom? Out of order?
+* SM character upgrades change unit name and cannot find on waha
+* unit link icons ONLY WORK IN CHROME (touch?)
+* Error in accordion when copying from button
+* copy link/code/output
 
 ## To Do:
 
-
 FIX WAHALINKS TO CORE RULES DINGUS!
-(clicking on a core rule in a stratagem or ability directs to animetidd and not wahapedia.
- either scan and replace the rules when found in database, or scan to replace before adding to database)
 
-- FACTION keywords
-- toggle showing (faction) keywords
-- copy link/code/output
+data[8] isn't getting anything for rollCalc
+1 Finish calculator/simulator MVP
+2 load defender model into calculator
+3 leadership roll in calculator
+
 - New Game Button
 - Secondary selector
 - Expanded scoreboard when using Secondaries
@@ -75,14 +68,15 @@ FIX WAHALINKS TO CORE RULES DINGUS!
 - Daily download/cleaning
 - Battlescribe ingestor (with classes/constructors)
 - Battlescribe read direct or search on wahapedia
-~ [Reference] Rules (some still not showing)
-~ Weapon Ability icons (Blast. Plague Weapon.) Need more
-~ tech priest control panel (needs more tools/logger)
-~ Game tracker
-~ MARKDOWN IN CUSTOM NOTES (only does basic markdown?!)
-~ Wahapedia Codex scraper
-~ Wahapedia download/ingestor (automated)
-~ Logger for debug (Doesn't show complete sql errors)
+  ~ [Reference] Rules (some still not showing)
+  ~ Weapon Ability icons (Blast. Plague Weapon.) Need more
+  ~ tech priest control panel (needs more tools/logger)
+  ~ Game tracker
+  ~ MARKDOWN IN CUSTOM NOTES (only does basic markdown?!)
+  ~ Wahapedia Codex scraper
+  ~ Wahapedia download/ingestor (automated)
+  ~ Logger for debug (Doesn't show complete sql errors)
+
 * Sort units by categories (costs, name, marker, role, etc.)
 * Weapon Type Icons
 * paste game code to go to game
@@ -98,6 +92,7 @@ FIX WAHALINKS TO CORE RULES DINGUS!
 * UI without jquery
 
 ## Maybe?
+
 - bullet points are custom/faction icons instead
 - Add admin lock
 - stream overlay view
