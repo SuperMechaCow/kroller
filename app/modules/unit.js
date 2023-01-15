@@ -117,7 +117,7 @@ class Unit {
               if (!faction.includes("<") && faction != this.fact)
                 this.keywords.push(faction.toLowerCase());
               if (!this.waha) {
-                //if it wasnt 
+                //if it wasnt
                 let factQuery = await getWahaFaction(faction);
                 if (factQuery && factQuery.id != this.wahaFaction) {
                   this.wahaFaction = factQuery.id;
@@ -244,7 +244,7 @@ class Unit {
           // This "if" prevents weapons from being detected as models
           // Models will not merge, however
           if (modelNode.profiles[0].profile[0].$.typeName == "Unit")
-          this.wrapModelCreation(modelNode, [chara]);
+            this.wrapModelCreation(modelNode, [chara]);
         }
       }
     }
@@ -294,12 +294,12 @@ class Unit {
   }
 
   /**
- * degrading profile show up as there own little unit
- * so most if not all have wound in there name, for that we search
- * and hopefully merg all of them back into one profile
- * @param {Array} modelNodes
- * @returns
- */
+   * degrading profile show up as there own little unit
+   * so most if not all have wound in there name, for that we search
+   * and hopefully merg all of them back into one profile
+   * @param {Array} modelNodes
+   * @returns
+   */
   checkForDegrading(modelNodes) {
     let newModeNodes = [];
     for (let model of modelNodes) {
@@ -312,8 +312,13 @@ class Unit {
       if (statline.W == "*") {
         statline.W = model.name.split("-")[1].substr(0, 1);
       }
-      //removing it from the name here should make searching the rules easier
-      model.name = model.name.split("(")[0].trim().split("[")[0].trim();
+      //everything before the word wound isnt consistent in battlescribe
+      //so we split there and throw every most likely special character out
+      model.name = model.name
+        .split("wound")[0]
+        .replace(/[0-9]/g, "")
+        .replace(/[+(\[-]/g, "")
+        .trim();
       if (!newModeNodes.length) {
         newModeNodes.push(model);
         continue;
@@ -333,12 +338,11 @@ class Unit {
     return newModeNodes;
   }
 
-
   /**
- * to make sure full wounds are up ..
- * @param {*} arr
- * @returns
- */
+   * to make sure full wounds are up ..
+   * @param {*} arr
+   * @returns
+   */
   sortByWounds(arr) {
     return arr.sort((a, b) => {
       return Number(a.W) < Number(b.W) ? 1 : -1;
