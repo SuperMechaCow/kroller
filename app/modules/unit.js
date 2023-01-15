@@ -308,17 +308,30 @@ class Unit {
         continue;
       }
       let statline = model.statlines[0];
+      let checkDegrad = false;
       //just to replace in the degrading statline the * with a number
+      model.name = model.name.split("wound")[0];
       if (statline.W == "*") {
-        statline.W = model.name.split("-")[1].substr(0, 1);
+        checkDegrad = true;
+        statline.W = model.name.substr(model.name.length - 2, 1).trim();
       }
+      // maybe for later use
+      // if (model.name.includes("+")) {
+      //   statline.W = `${model.name.substr(model.name.length - 3, 2).trim()}${
+      //     statline.W
+      //   }`.replace("+", "-");
+      // }
       //everything before the word wound isnt consistent in battlescribe
       //so we split there and throw every most likely special character out
       model.name = model.name
-        .split("wound")[0]
         .replace(/[0-9]/g, "")
-        .replace(/[+(\[-]/g, "")
+        .replace(/[+(\[]/g, "")
         .trim();
+      if (checkDegrad) {
+        //some units have an - in there name so here i try to carefully strip away the -
+        //for the degrading wounds
+        model.name = model.name.substr(0, model.name.length - 1).trim();
+      }
       if (!newModeNodes.length) {
         newModeNodes.push(model);
         continue;

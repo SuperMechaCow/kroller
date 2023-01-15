@@ -104,7 +104,7 @@ class Model {
     //in some cases the model and there character dont fully share names...
     if (chara.name.includes(unitName)) {
       this.statlines = chara.statlines;
-      return true;;
+      return true;
     }
     //same as above
     if (unitName.includes(chara.name)) {
