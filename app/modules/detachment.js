@@ -1,5 +1,4 @@
 const fs = require("fs");
-const { helperGrabRules } = require("./pathhelper");
 
 const {
   getWahaFaction,
