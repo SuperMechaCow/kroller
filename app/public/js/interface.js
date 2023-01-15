@@ -581,12 +581,10 @@ function customMarkdown(notesString) {
       if (headerColor) styler = `style="background-color: ${headerColor[0]}"`;
       notesString = notesString.replaceAll(
         `#[${checkMatch[1]}](${checkMatch[2]})`,
-        `<div ${styler} class="accordion-header tag mini ruleTag clickable">${
-          headerColor
-            ? checkMatch[1].replace(headerColor[0], "")
-            : checkMatch[1]
-        }</div><div class="accordion-content hide bg6 hlSome textSmall cCenter">${
-          checkMatch[2]
+        `<div ${styler} class="accordion-header tag mini ruleTag clickable">${headerColor
+          ? checkMatch[1].replace(headerColor[0], "")
+          : checkMatch[1]
+        }</div><div class="accordion-content hide bg6 hlSome textSmall cCenter">${checkMatch[2]
         }</div>`
       );
     }
@@ -671,8 +669,7 @@ function customMarkdown(notesString) {
       if ("123456".includes(checkMatch[1]))
         notesString = notesString.replaceAll(
           `[${checkMatch[1]}]`,
-          `<span style="font-size:1.4em;">${
-            diceList[Number(checkMatch[1]) - 1]
+          `<span style="font-size:1.4em;">${diceList[Number(checkMatch[1]) - 1]
           }</span>`
         );
     }
@@ -686,7 +683,7 @@ function customMarkdown(notesString) {
 ███████  ██████   ██████ ██   ██ ███████ ████████ ███████
 ██      ██    ██ ██      ██  ██  ██         ██    ██
 ███████ ██    ██ ██      █████   █████      ██    ███████
-	 ██ ██    ██ ██      ██  ██  ██         ██         ██
+   ██ ██    ██ ██      ██  ██  ██         ██         ██
 ███████  ██████   ██████ ██   ██ ███████    ██    ███████
 */
 const socket = io();
@@ -857,23 +854,21 @@ function listBuild() {
       for (var cost of Object.keys(force.force.costs)) {
         appendList.innerHTML += `
                 <div class="statTag" title="">
-                  <label for="${
-                    thisListIndex ? "dfdr" : "atkr"
-                  }_${cost}" class="bg4">${cost.toUpperCase()}</label>
-                  <span class="bg7" id="${
-                    thisListIndex ? "dfdr" : "atkr"
-                  }_${cost}">${force.force.costs[cost]}</span>
+                  <label for="${thisListIndex ? "dfdr" : "atkr"
+          }_${cost}" class="bg4">${cost.toUpperCase()}</label>
+                  <span class="bg7" id="${thisListIndex ? "dfdr" : "atkr"
+          }_${cost}">${force.force.costs[cost]}</span>
                 </div>`;
       }
       forceContent.append(appendList);
 
       /*
-			██████  ███████ ████████  █████   ██████ ██   ██ ███    ███ ███████ ███    ██ ████████
-			██   ██ ██         ██    ██   ██ ██      ██   ██ ████  ████ ██      ████   ██    ██
-			██   ██ █████      ██    ███████ ██      ███████ ██ ████ ██ █████   ██ ██  ██    ██
-			██   ██ ██         ██    ██   ██ ██      ██   ██ ██  ██  ██ ██      ██  ██ ██    ██
-			██████  ███████    ██    ██   ██  ██████ ██   ██ ██      ██ ███████ ██   ████    ██
-			*/
+      ██████  ███████ ████████  █████   ██████ ██   ██ ███    ███ ███████ ███    ██ ████████
+      ██   ██ ██         ██    ██   ██ ██      ██   ██ ████  ████ ██      ████   ██    ██
+      ██   ██ █████      ██    ███████ ██      ███████ ██ ████ ██ █████   ██ ██  ██    ██
+      ██   ██ ██         ██    ██   ██ ██      ██   ██ ██  ██  ██ ██      ██  ██ ██    ██
+      ██████  ███████    ██    ██   ██  ██████ ██   ██ ██      ██ ███████ ██   ████    ██
+      */
 
       for (var detachment of force.force.detachments) {
         if (settings.forceSort == "slot")
@@ -957,12 +952,12 @@ function listBuild() {
         thisList.append(unitContent);
         // Start listing units
         /*
-				██    ██ ███    ██ ██ ████████
-				██    ██ ████   ██ ██    ██
-				██    ██ ██ ██  ██ ██    ██
-				██    ██ ██  ██ ██ ██    ██
-				 ██████  ██   ████ ██    ██
-				*/
+        ██    ██ ███    ██ ██ ████████
+        ██    ██ ████   ██ ██    ██
+        ██    ██ ██ ██  ██ ██    ██
+        ██    ██ ██  ██ ██ ██    ██
+         ██████  ██   ████ ██    ██
+        */
 
         for (var unit of detachment.units) {
           if (!settings.slotIcons && settings.forceSort == "slot") {
@@ -1010,8 +1005,8 @@ function listBuild() {
           ) {
             unitHeader.innerHTML += `
 						<img src="img/roles/${unit.slot
-              .replaceAll(" ", "")
-              .toLowerCase()}.png" class="roleImg">
+                .replaceAll(" ", "")
+                .toLowerCase()}.png" class="roleImg">
 						`;
           }
           // Unit name
@@ -1033,24 +1028,22 @@ function listBuild() {
             for (var cost of Object.keys(unit.costs)) {
               costDiv.innerHTML += `
 			                <div class="statTag" title="">
-			                  <label for="${
-                          thisListIndex ? "dfdr" : "atkr"
-                        }_${cost}" class="bg4">${cost.toUpperCase()}</label>
-			                  <span class="bg7" id="${
-                          thisListIndex ? "dfdr" : "atkr"
-                        }_${cost}">${unit.costs[cost]}</span>
+			                  <label for="${thisListIndex ? "dfdr" : "atkr"
+                }_${cost}" class="bg4">${cost.toUpperCase()}</label>
+			                  <span class="bg7" id="${thisListIndex ? "dfdr" : "atkr"
+                }_${cost}">${unit.costs[cost]}</span>
 			                </div>
 			                `;
             }
             unitContent.append(costDiv);
           }
           /*
-					███    ███  ██████  ██████  ███████ ██      ███████
-					████  ████ ██    ██ ██   ██ ██      ██      ██
-					██ ████ ██ ██    ██ ██   ██ █████   ██      ███████
-					██  ██  ██ ██    ██ ██   ██ ██      ██           ██
-					██      ██  ██████  ██████  ███████ ███████ ███████
-					*/
+          ███    ███  ██████  ██████  ███████ ██      ███████
+          ████  ████ ██    ██ ██   ██ ██      ██      ██
+          ██ ████ ██ ██    ██ ██   ██ █████   ██      ███████
+          ██  ██  ██ ██    ██ ██   ██ ██      ██           ██
+          ██      ██  ██████  ██████  ███████ ███████ ███████
+          */
           // Start listing models in this unit
           for (var model of unit.models) {
             let appendModel = document.createElement("div");
@@ -1104,12 +1097,12 @@ function listBuild() {
             let modelContent = document.createElement("div");
             modelContent.classList.add("accordion-content", "bg2", "cCenter");
             /*
-						██     ██ ███████  █████  ██████   ██████  ███    ██ ███████
-						██     ██ ██      ██   ██ ██   ██ ██    ██ ████   ██ ██
-						██  █  ██ █████   ███████ ██████  ██    ██ ██ ██  ██ ███████
-						██ ███ ██ ██      ██   ██ ██      ██    ██ ██  ██ ██      ██
-						 ███ ███  ███████ ██   ██ ██       ██████  ██   ████ ███████
-						*/
+            ██     ██ ███████  █████  ██████   ██████  ███    ██ ███████
+            ██     ██ ██      ██   ██ ██   ██ ██    ██ ████   ██ ██
+            ██  █  ██ █████   ███████ ██████  ██    ██ ██ ██  ██ ███████
+            ██ ███ ██ ██      ██   ██ ██      ██    ██ ██  ██ ██      ██
+             ███ ███  ███████ ██   ██ ██       ██████  ██   ████ ███████
+            */
             for (var weapon of model.weapons) {
               let weaponDiv = document.createElement("div");
               weaponDiv.classList.add("weaponBox", "wide", "bg6");
@@ -1204,8 +1197,7 @@ function listBuild() {
                     weaponDiv.innerHTML += `<img src='img/icons/weapon_abils/flamer.png' title='Flamer: Each time an attack is made with this weapon, that attack automatically hits the target.' class='weaponIcon_abil'>`;
                   }
                   if (
-                    abilText.includes(
-                      "Each time an attack is made with this weapon profile, make"
+                    abilText.includes("Each time an attack is made with this weapon profile, make"
                     )
                   ) {
                     let multi =
@@ -1218,7 +1210,8 @@ function listBuild() {
                         ""
                       )
                       .trim();
-                    weaponDiv.innerHTML += `<img src='img/icons/weapon_abils/Ax${multi[1]}.svg' title='Multi-Attack ${multi[1]}: Each time an attack is made with this weapon profile, make ${multi[1]} hit rolls instead of 1.' class='weaponIcon_abil'>`;
+                    if (multi)
+                      weaponDiv.innerHTML += `<img src='img/icons/weapon_abils/Ax${multi[1]}.svg' title='Multi-Attack ${multi[1]}: Each time an attack is made with this weapon profile, make ${multi[1]} hit rolls instead of 1.' class='weaponIcon_abil'>`;
                   }
                 }
                 weaponDiv.innerHTML += `<p class='textSmall textSans'>${abilText}</p>`;
@@ -1230,12 +1223,12 @@ function listBuild() {
           }
 
           /*
-					██   ██ ███████ ██    ██ ██     ██  ██████  ██████  ██████  ███████
-					██  ██  ██       ██  ██  ██     ██ ██    ██ ██   ██ ██   ██ ██
-					█████   █████     ████   ██  █  ██ ██    ██ ██████  ██   ██ ███████
-					██  ██  ██         ██    ██ ███ ██ ██    ██ ██   ██ ██   ██      ██
-					██   ██ ███████    ██     ███ ███   ██████  ██   ██ ██████  ███████
-					*/
+          ██   ██ ███████ ██    ██ ██     ██  ██████  ██████  ██████  ███████
+          ██  ██  ██       ██  ██  ██     ██ ██    ██ ██   ██ ██   ██ ██
+          █████   █████     ████   ██  █  ██ ██    ██ ██████  ██   ██ ███████
+          ██  ██  ██         ██    ██ ███ ██ ██    ██ ██   ██ ██   ██      ██
+          ██   ██ ███████    ██     ███ ███   ██████  ██   ██ ██████  ███████
+          */
           // unitContent.innerHTML += `<h2>Keywords</h2>`;
           if (unit.warlord) {
             let newKeyword = document.createElement("div");
@@ -1257,12 +1250,12 @@ function listBuild() {
             unitContent.append(newKeyword);
           }
           /*
-					███████ ██████  ███████ ██      ██      ███████
-					██      ██   ██ ██      ██      ██      ██
-					███████ ██████  █████   ██      ██      ███████
-						 ██ ██      ██      ██      ██           ██
-					███████ ██      ███████ ███████ ███████ ███████
-					*/
+          ███████ ██████  ███████ ██      ██      ███████
+          ██      ██   ██ ██      ██      ██      ██
+          ███████ ██████  █████   ██      ██      ███████
+             ██ ██      ██      ██      ██           ██
+          ███████ ██      ███████ ███████ ███████ ███████
+          */
           // unitContent.innerHTML += `<h2>Spells</h2>`;
           for (var spell of unit.spells) {
             let newSpell = document.createElement("div");
@@ -1300,9 +1293,9 @@ function listBuild() {
 							</div>
 							</div>
 							<div class="textSmall cLeft textSans">${spell.details.replaceAll(
-                currentPhase + " phase",
-                `<span class="oR" title="${currentPhase}">${currentPhase} phase</span>`
-              )}</div>`;
+              currentPhase + " phase",
+              `<span class="oR" title="${currentPhase}">${currentPhase} phase</span>`
+            )}</div>`;
             for (phase of Object.keys(phaseList)) {
               if (makeUseTag(spell.details, phase))
                 newSpell.classList.add(phase);
@@ -1310,12 +1303,12 @@ function listBuild() {
             unitContent.append(newSpellContent);
           }
           /*
-					██████  ██    ██ ██      ███████ ███████
-					██   ██ ██    ██ ██      ██      ██
-					██████  ██    ██ ██      █████   ███████
-					██   ██ ██    ██ ██      ██           ██
-					██   ██  ██████  ███████ ███████ ███████
-					*/
+          ██████  ██    ██ ██      ███████ ███████
+          ██   ██ ██    ██ ██      ██      ██
+          ██████  ██    ██ ██      █████   ███████
+          ██   ██ ██    ██ ██      ██           ██
+          ██   ██  ██████  ███████ ███████ ███████
+          */
           for (var rule of unit.rules) {
             let newRule = document.createElement("div");
             newRule.classList.add(
@@ -1371,12 +1364,11 @@ function listBuild() {
 								</div>
 								<div class="textSmall cCenter textSans">${rule.desc}</div>`;
             } else {
-              newRuleContent.innerHTML += `<div class="textSmall cLeft textSans">${
-                rule.customNotes ? customMarkdown(rule.customNotes) : ""
-              }<br>${rule.desc.replaceAll(
-                currentPhase + " phase",
-                `<span class="oR" title="${currentPhase}">${currentPhase} phase</span>`
-              )}</div>`;
+              newRuleContent.innerHTML += `<div class="textSmall cLeft textSans">${rule.customNotes ? customMarkdown(rule.customNotes) : ""
+                }<br>${rule.desc.replaceAll(
+                  currentPhase + " phase",
+                  `<span class="oR" title="${currentPhase}">${currentPhase} phase</span>`
+                )}</div>`;
             }
             for (phase of Object.keys(phaseList)) {
               if (makeUseTag(rule.desc, phase)) newRule.classList.add(phase);
@@ -1384,12 +1376,12 @@ function listBuild() {
             unitContent.append(newRuleContent);
           }
           /*
-					███████ ████████ ██████   █████  ████████  █████   ██████  ███████ ███    ███ ███████
-					██         ██    ██   ██ ██   ██    ██    ██   ██ ██       ██      ████  ████ ██
-					███████    ██    ██████  ███████    ██    ███████ ██   ███ █████   ██ ████ ██ ███████
-						 ██    ██    ██   ██ ██   ██    ██    ██   ██ ██    ██ ██      ██  ██  ██      ██
-					███████    ██    ██   ██ ██   ██    ██    ██   ██  ██████  ███████ ██      ██ ███████
-					*/
+          ███████ ████████ ██████   █████  ████████  █████   ██████  ███████ ███    ███ ███████
+          ██         ██    ██   ██ ██   ██    ██    ██   ██ ██       ██      ████  ████ ██
+          ███████    ██    ██████  ███████    ██    ███████ ██   ███ █████   ██ ████ ██ ███████
+             ██    ██    ██   ██ ██   ██    ██    ██   ██ ██    ██ ██      ██  ██  ██      ██
+          ███████    ██    ██   ██ ██   ██    ██    ██   ██  ██████  ███████ ██      ██ ███████
+          */
           if (settings.stratagems) {
             if (settings.filterstrata)
               unit.usestratagems = unit.filterSratagems;
@@ -1522,49 +1514,41 @@ function listBuild() {
 			<h2>Sort Units:</h2>
 			Role<input type="radio" name="sortBy${forceData.indexOf(
         force
-      )}" onchange="settings.forceSort = this.value; reload();" value="slot"${
-        settings.forceSort == "slot" ? " checked" : ""
-      }>
+      )}" onchange="settings.forceSort = this.value; reload();" value="slot"${settings.forceSort == "slot" ? " checked" : ""
+        }>
 			Marker<input type="radio" name="sortBy${forceData.indexOf(
-        force
-      )}" onchange="settings.forceSort = this.value; reload();" value="marker"${
-        settings.forceSort == "marker" ? " checked" : ""
-      }>
+          force
+        )}" onchange="settings.forceSort = this.value; reload();" value="marker"${settings.forceSort == "marker" ? " checked" : ""
+        }>
 			Name<input type="radio" name="sortBy${forceData.indexOf(
-        force
-      )}" onchange="settings.forceSort = this.value; reload();" value="name"${
-        settings.forceSort == "name" ? " checked" : ""
-      }>
+          force
+        )}" onchange="settings.forceSort = this.value; reload();" value="name"${settings.forceSort == "name" ? " checked" : ""
+        }>
 			<br>
 			Points<input type="radio" name="sortBy${forceData.indexOf(
-        force
-      )}" onchange="settings.forceSort = this.value; reload();" value="pts"${
-        settings.forceSort == "pts" ? " checked" : ""
-      }>
+          force
+        )}" onchange="settings.forceSort = this.value; reload();" value="pts"${settings.forceSort == "pts" ? " checked" : ""
+        }>
 			Power<input type="radio" name="sortBy${forceData.indexOf(
-        force
-      )}" onchange="settings.forceSort = this.value; reload();" value="pl"${
-        settings.forceSort == "pl" ? " checked" : ""
-      }>
+          force
+        )}" onchange="settings.forceSort = this.value; reload();" value="pl"${settings.forceSort == "pl" ? " checked" : ""
+        }>
 			<hr>
 			<h2>Import</h2>
 			<form action="/upload" enctype="multipart/form-data" method="post">
-			${
-        thisListIndex
+			${thisListIndex
           ? '<label for="dfdr_file">Defender File</label><input type="file" class="fileSpot fileWidget bg7" name="dfdr_file" id="dfdr_file" accept="rosz"><br>'
           : '<label for="atkr_file">Attacker File</label><input type="file" class="fileSpot fileWidget bg7" name="atkr_file" id="atkr_file" accept="rosz"><br>'
-      }
+        }
 			<input type="hidden" name="gameCode" id="gameCode" value="${gameCode}">
 			<input type="submit" value="Upload BattleScribe Roster" class="fileBtn fileWidget">
 			<!-- <input type="button" value="Upload BattleScribe Rosters" class="fileBtn" onclick="uploadArmies()"> -->
 			<hr>
 			<h2>Export</h2>
-			<button type="button" class="cCenter" onclick="window.location='uploads/${
-        force.filename
-      }'">Download .rosz</button>
-			<a href="${downloadKFON}" download="${
-        force.force.name
-      }.kfon"><button type="button" class="cCenter"">Download .kfon</button></a>
+			<button type="button" class="cCenter" onclick="window.location='uploads/${force.filename
+        }'">Download .rosz</button>
+			<a href="${downloadKFON}" download="${force.force.name
+        }.kfon"><button type="button" class="cCenter"">Download .kfon</button></a>
 			</form>
 			</div>`;
     }

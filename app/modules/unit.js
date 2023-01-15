@@ -227,7 +227,7 @@ class Unit {
     let unclaimedWeapons = [];
     charaParse = this.checkForDegrading(charaParse);
     for (let modelNode of modelNodes) {
-      await this.wrapModeCreation(modelNode, charaParse);
+      await this.wrapModelCreation(modelNode, charaParse);
     }
     // there some real freaky units out there that are an addon to something
     // so battlescribe lists them as upgrade for some reason
@@ -237,11 +237,14 @@ class Unit {
           this.bsData,
           `@.type=="upgrade" && @.name=="${chara.name}"`
         );
+        //the last ditch effort to find the unit
         if (!lastResorts.length)
-          //the last ditch effort to find the unit
           lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
         for (let modelNode of lastResorts) {
-          this.wrapModeCreation(modelNode, [chara]);
+          // This "if" prevents weapons from being detected as models
+          // Models will not merge, however
+          if (modelNode.profiles[0].profile[0].$.typeName == "Unit")
+          this.wrapModelCreation(modelNode, [chara]);
         }
       }
     }
@@ -252,7 +255,7 @@ class Unit {
    * @param {Object} modelNode
    * @param {Array} charaParse
    */
-  async wrapModeCreation(modelNode, charaParse) {
+  async wrapModelCreation(modelNode, charaParse) {
     let model = new Model();
     await model.setModelData(modelNode);
     await model.grabProfile(charaParse);
