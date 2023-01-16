@@ -51,6 +51,17 @@ function getWahaDatasheet(unitName, factionId = "") {
   });
 }
 
+function getWahaDsheetModels(datasheetId) {
+  return new Promise((resolve) => {
+    db.all(
+      `SELECT * FROM datasheets_models WHERE datasheet_id = "${datasheetId}"`,
+      (err, result) => {
+        resolve(result);
+      }
+    );
+  });
+}
+
 function getWahaUnitKeywords(datasheetId) {
   return new Promise((resolve) => {
     db.all(
@@ -86,6 +97,17 @@ function getWahaStratagems(datasheetId, mainId, subId) {
   });
 }
 
+function getWahaDsheetWeapons(datasheetId) {
+  return new Promise((resolve) => {
+    db.all(
+      `SELECT * FROM datasheet_to_weapons WHERE datasheet_id = "${datasheetId}"`,
+      (err, result) => {
+        resolve(result);
+      }
+    );
+  });
+}
+
 function getWahaStratPhase(stratId) {
   return new Promise((resolve) => {
     db.all(
@@ -100,7 +122,9 @@ exports.getWahaFaction = getWahaFaction;
 exports.getWahaSubFaction = getWahaSubFaction;
 exports.getWahaSecondaries = getWahaSecondaries;
 exports.getWahaDatasheet = getWahaDatasheet;
+exports.getWahaDsheetModels = getWahaDsheetModels;
 exports.getWahaUnitKeywords = getWahaUnitKeywords;
 exports.getWahaDsheetAbilities = getWahaDsheetAbilities;
 exports.getWahaStratagems = getWahaStratagems;
+exports.getWahaDsheetWeapons = getWahaDsheetWeapons;
 exports.getWahaStratPhase = getWahaStratPhase;

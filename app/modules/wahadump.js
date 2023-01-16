@@ -275,5 +275,8 @@ fs.readFile(dataFolder + "db_init.json", (err, data) => {
     db.run(
       `CREATE VIEW IF NOT EXISTS datasheet_to_abilities AS SELECT ds.datasheet_id as datasheet_id , ab.id as ability_id, ab.name as name , ab.description, ab.type as type, ab.is_other_wargear as is_other_wargear  FROM datasheets_abilities as ds LEFT JOIN abilities as ab ON ds.ability_id = ab.id`
     );
+    db.run(
+      `CREATE VIEW IF NOT EXISTS datasheet_to_weapons AS SELECT * FROM datasheets_wargear LEFT JOIN wargear ON datasheets_wargear.wargear_id = wargear.id LEFT JOIN wargear_list ON datasheets_wargear.wargear_id = wargear_list.wargear_id;`
+    );
   }
 });

@@ -1,6 +1,7 @@
 /*
 ありがとうございました
 Thanks
+Danke
 http://myminiaturemischief.blogspot.com/2017/07/warhammer-40k-8th-edition-rending-pony.html
 https://www.battlescribe.net/
 */
