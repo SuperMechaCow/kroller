@@ -347,6 +347,11 @@ class Unit {
   checkForDegrading(modelNodes) {
     let newModeNodes = [];
     for (let model of modelNodes) {
+      if (model.statlines[0].M == "*") {
+        this.createDegradingProfile(model);
+        newModeNodes.push(model);
+        continue;
+      }
       if (!model.name.includes("wound")) {
         newModeNodes.push(model);
         continue;
@@ -359,12 +364,6 @@ class Unit {
         checkDegrad = true;
         statline.W = model.name.substr(model.name.length - 2, 1).trim();
       }
-      // maybe for later use
-      // if (model.name.includes("+")) {
-      //   statline.W = `${model.name.substr(model.name.length - 3, 2).trim()}${
-      //     statline.W
-      //   }`.replace("+", "-");
-      // }
       //everything before the word wound isnt consistent in battlescribe
       //so we split there and throw every most likely special character out
       model.name = model.name
@@ -404,6 +403,42 @@ class Unit {
     return arr.sort((a, b) => {
       return Number(a.W) < Number(b.W) ? 1 : -1;
     });
+  }
+
+  /**
+   * the degrading Statline is hidden behind M/BS/A type
+   * @param {*} model
+   */
+  createDegradingProfile(model) {
+    let degradeNodes = helperGrabRules(
+      this.bsData,
+      `@.typeName=="Stat Damage - M/BS/A"`
+    );
+    if (degradeNodes.length) {
+      let newStatlines = [];
+      for (let degrade of degradeNodes) {
+        //that line only exist so we create an new Object and not just a ref
+        let statline = JSON.parse(JSON.stringify(model.statlines[0]));
+        for (let chara of degrade.characteristics[0].characteristic) {
+          let statname = chara.$.name;
+          if (statname == "Save") statname = "Sv";
+          let stattext = chara._;
+          stattext = stattext.replace("+", "");
+          stattext = stattext.replace('"', "");
+          if (stattext == "N/A") stattext = "*";
+          if (statname == "Remaining W") {
+            statname = "W";
+            if (!stattext.includes("-")) continue;
+            stattext = stattext.split("-")[1];
+          }
+          if (statname == "Attacks") statname = "A";
+          if (statname == "Movement") statname = "M";
+          statline[statname] = stattext;
+        }
+        newStatlines.push(statline);
+      }
+      model.statlines = newStatlines;
+    }
   }
 
   /**
@@ -509,7 +544,10 @@ class Unit {
       if (typeData.length > 1) {
         stratData.type = typeData[1].replace(" Stratagem", "");
       }
-      stratData.description = stratData.description.replaceAll('<a target="_blank" href="/wh40k9ed/', '<a href="https://wahapedia.ru/wh40k9ed/');
+      stratData.description = stratData.description.replaceAll(
+        '<a target="_blank" href="/wh40k9ed/',
+        '<a href="https://wahapedia.ru/wh40k9ed/'
+      );
       this.stratagems.push(stratData);
     }
   }
