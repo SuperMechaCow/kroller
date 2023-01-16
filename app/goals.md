@@ -1,5 +1,4 @@
 ## Bugs:
-- Does not show three profiles if degrading unit has a seperate table for degrading.
 - Daemons do not display detachment rules (no error)
 - Tau degrading models with drones
 - Tau drone no weapons
@@ -7,7 +6,6 @@
 - fix wahalinks (some 'http' and some '/who40ken')
 - Multiple model bracketting unit have multiple profiles (Armiger Warglaives)
 - don't update tracker on swipe or spin
-- Not parsing Plagueburst crawlers (listed as upgrade and not unit) (check to see if "upgrade profile has statline characteristic")
 - Greyknights doesn't show built-in spell
 - can't copy output/gamecode by button on android
 - Plural Unit names not matching Singular unit names (bs/waha names)
@@ -15,9 +13,7 @@
 - aeldari subfaction not found
 - unit link icons ONLY WORK IN CHROME (touch?)
 
-
 ## Profiles not found / errors
-- IG Tank Commander uses seperate profile table
 - Space Marine Assautl Squad can't find profiles
 - Greyknights has many units without profiles
 - Battle Sisters Preacher missing profiles
