@@ -24,6 +24,7 @@ class Model {
     await this.grabCost(parentUnit);
     await this.grabWeapon(parentUnit);
     await this.grabSpells(parentUnit);
+    delete this.bsData;
     return true;
   }
 
