@@ -1,5 +1,5 @@
 const jp = require("jsonpath");
-const { helperGrabRules } = require("./pathhelper");
+const { helperGrabRules, levenshteinDistance } = require("./pathhelper");
 const Weapon = require("./weapon");
 const Spell = require("./spell");
 class Model {
@@ -83,7 +83,7 @@ class Model {
       if (regex.test(this.name)) this.name = this.name.split(regex)[0].trim();
       for (let chara of charaParse) {
         //search statline with model name
-        let distance = this.levenshteinDistance(this.name, chara.name);
+        let distance = levenshteinDistance(this.name, chara.name);
         let threshold = Math.max(this.name.length, chara.name.length) * 0.3;
         if (distance <= threshold) {
           if (chara.statlines) {
@@ -97,41 +97,6 @@ class Model {
     } catch (err) {
       console.log(err);
     }
-  }
-
-  /**
-   * Calculates the Levenshtein distance between two strings
-   * @param {string} a - The first string to compare
-   * @param {string} b - The second string to compare
-   * @returns {number} - The Levenshtein distance between the two strings
-   */
-  levenshteinDistance(a, b) {
-    if (!a.length) return b.length;
-    if (!b.length) return a.length;
-    let matrix = [];
-    for (let i = 0; i <= b.length; i++) {
-      matrix[i] = [i];
-    }
-    for (let j = 0; j <= a.length; j++) {
-      matrix[0][j] = j;
-    }
-    for (let i = 1; i <= b.length; i++) {
-      for (let j = 1; j <= a.length; j++) {
-        if (b.charAt(i - 1) == a.charAt(j - 1)) {
-          matrix[i][j] = matrix[i - 1][j - 1];
-        } else {
-          matrix[i][j] = Math.min(
-            matrix[i - 1][j - 1] + 1, // substitution
-            Math.min(
-              matrix[i][j - 1] + 1, // insertion
-              matrix[i - 1][j] + 1
-            )
-          ); // deletion
-        }
-      }
-    }
-
-    return matrix[b.length][a.length];
   }
 
   /**

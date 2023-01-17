@@ -1,5 +1,5 @@
 const jp = require("jsonpath");
-const { helperGrabRules } = require("./pathhelper");
+const { helperGrabRules, levenshteinDistance } = require("./pathhelper");
 const {
   getWahaDatasheet,
   getWahaFaction,
@@ -206,7 +206,7 @@ class Unit {
           rule,
           rule.characteristics[0].characteristic[0]
         );
-        this.newRule.trait = true;
+        newRule.trait = true;
         this.rules.push(newRule);
       }
       this.warlord = true;
@@ -245,8 +245,7 @@ class Unit {
         let nameCheck = modelNode.$.name;
         let regex = /w\/|W\/|\(.*|with.*|With/g;
         if (regex.test(nameCheck)) nameCheck = nameCheck.split(regex)[0].trim();
-        let helper = new Model();
-        let distance = helper.levenshteinDistance(nameCheck, chara.name);
+        let distance = levenshteinDistance(nameCheck, chara.name);
         let threshold = Math.max(this.name.length, chara.name.length) * 0.3;
         if (distance <= threshold) {
           await this.wrapModelCreation(modelNode, [chara]);

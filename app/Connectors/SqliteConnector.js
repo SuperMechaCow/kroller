@@ -14,13 +14,13 @@ function getWahaFaction(factionname) {
   });
 }
 
-function getWahaSubFaction(subFaction) {
+function getWahaSubFaction(subFaction, parentId) {
   return new Promise((resolve) => {
     //since there a couple of ways to end up here
     //this seems the best place to replace this cause tau <.<
     if (subFaction) subFaction = subFaction.replace("'", "’");
-    db.get(
-      `SELECT name, id FROM factions WHERE name LIKE "%${subFaction}%" AND is_subfaction = "true"`,
+    db.all(
+      `SELECT name, id FROM factions WHERE name LIKE "%${subFaction}%" AND parent_id = "${parentId}" AND is_subfaction = "true"`,
       (err, result) => {
         resolve(result);
       }
