@@ -77,6 +77,7 @@ class Detachment {
     // Grab army rules (BattleScribe doesn't keep all of them in a rational place, so things like Armor of Contempt are missing)
     if (this.detachment.rules) {
       let rule;
+      if (!this.detachment.rules[0].rule) return;
       for (rule of this.detachment.rules[0].rule) {
         this.rules.push({
           name: rule.$.name,
