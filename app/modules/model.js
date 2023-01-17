@@ -55,72 +55,83 @@ class Model {
    * Get all costs of models and upgrades
    */
   grabCost(parentUnit) {
-    let costsNode = jp.query(this.bsData, "$..cost")[0];
-    for (let cost of costsNode) {
-      this.costs[cost.$.name.trim().toLowerCase()] = Math.round(cost.$.value);
-      if (parentUnit.costs[cost.$.name.trim().toLowerCase()])
-        parentUnit.costs[cost.$.name.trim().toLowerCase()] += Math.round(
-          cost.$.value
-        );
-      else
-        parentUnit.costs[cost.$.name.trim().toLowerCase()] = Math.round(
-          cost.$.value
-        );
-
-      this.costs.pts = Math.round(this.costs.pts / this.amount);
+    try {
+      let costsNode = jp.query(this.bsData, "$..cost")[0];
+      for (let cost of costsNode) {
+        if (!cost.$.name || !cost.$.value) {
+          throw new Error("Invalid cost data, expected a name and a value");
+        }
+        let costName = cost.$.name.trim().toLowerCase();
+        let costValue = Math.round(cost.$.value);
+        this.costs[costName] = costValue;
+        if (parentUnit.costs[costName]) parentUnit.costs[costName] += costValue;
+        else parentUnit.costs[costName] = costValue;
+        this.costs.pts = Math.round(this.costs.pts / this.amount);
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 
   grabProfile(charaParse) {
-    //grab the name of the Dataset
-    this.name = this.bsData.$.name;
-    //lets check if the Model name includes WeaponOption
-    //there is surely a better way to do this, send help
-    let regex = /w\/|W\/|\(.*|with.*|With/g;
-    if (regex.test(this.name)) this.name = this.name.split(regex)[0].trim();
-    for (let chara of charaParse) {
-      //search statline with model name
-      if (this.nameMatcher(this.name, chara)) {
-        this.statlines = chara.statlines;
-        chara.used = true;
-        return;
+    try {
+      //grab the name of the Dataset
+      this.name = this.bsData.$.name;
+      //lets check if the Model name includes WeaponOption
+      //there is surely a better way to do this, send help
+      let regex = /w\/|W\/|\(.*|with.*|With/g;
+      if (regex.test(this.name)) this.name = this.name.split(regex)[0].trim();
+      for (let chara of charaParse) {
+        //search statline with model name
+        let distance = this.levenshteinDistance(this.name, chara.name);
+        let threshold = Math.max(this.name.length, chara.name.length) * 0.3;
+        if (distance <= threshold) {
+          if (chara.statlines) {
+            this.statlines = chara.statlines;
+            chara.used = true;
+            return true;
+          }
+        }
       }
-      if (this.nameMatcher(this.name.replace("-", " "), chara)) {
-        this.statlines = chara.statlines;
-        chara.used = true;
-        return;
-      }
-      //some where in the middle of the name of a model, why battlescribe why
-      if (this.nameMatcher(this.name.replace("Weapon", "Weapons"), chara)) {
-        this.statlines = chara.statlines;
-        chara.used = true;
-        return;
-      }
+      //ohboy what ever this Model is now its super Special
+    } catch (err) {
+      console.log(err);
     }
-    //ohboy what ever this Model is now its super Special
   }
 
   /**
-   * only exists to match somehow a unit name to the profile
+   * Calculates the Levenshtein distance between two strings
+   * @param {string} a - The first string to compare
+   * @param {string} b - The second string to compare
+   * @returns {number} - The Levenshtein distance between the two strings
    */
-  nameMatcher(unitName, chara) {
-    //first check for degrading profiles
-    if (chara.name == unitName) {
-      this.statlines = chara.statlines;
-      return true;
+  levenshteinDistance(a, b) {
+    if (!a.length) return b.length;
+    if (!b.length) return a.length;
+    let matrix = [];
+    for (let i = 0; i <= b.length; i++) {
+      matrix[i] = [i];
     }
-    //in some cases the model and there character dont fully share names...
-    if (chara.name.includes(unitName)) {
-      this.statlines = chara.statlines;
-      return true;
+    for (let j = 0; j <= a.length; j++) {
+      matrix[0][j] = j;
     }
-    //same as above
-    if (unitName.includes(chara.name)) {
-      this.statlines = chara.statlines;
-      return true;
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        if (b.charAt(i - 1) == a.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1, // substitution
+            Math.min(
+              matrix[i][j - 1] + 1, // insertion
+              matrix[i - 1][j] + 1
+            )
+          ); // deletion
+        }
+      }
     }
-    // now for those who have a stupid - in there names
-    return false;
+
+    return matrix[b.length][a.length];
   }
 
   /**

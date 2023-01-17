@@ -246,14 +246,9 @@ class Unit {
         let regex = /w\/|W\/|\(.*|with.*|With/g;
         if (regex.test(nameCheck)) nameCheck = nameCheck.split(regex)[0].trim();
         let helper = new Model();
-        if (helper.nameMatcher(nameCheck, chara)) {
-          await this.wrapModelCreation(modelNode, [chara]);
-          modelNode.used = true;
-          continue;
-        }
-        if (nameCheck.includes("Team"))
-          nameCheck = nameCheck.replace("Weapon", "Weapons");
-        if (helper.nameMatcher(nameCheck, chara)) {
+        let distance = helper.levenshteinDistance(nameCheck, chara.name);
+        let threshold = Math.max(this.name.length, chara.name.length) * 0.3;
+        if (distance <= threshold) {
           await this.wrapModelCreation(modelNode, [chara]);
           modelNode.used = true;
           continue;
