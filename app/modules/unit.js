@@ -243,13 +243,8 @@ class Unit {
         if (!checkUnit.length) continue;
         if (modelNode.used) continue;
         let nameCheck = modelNode.$.name;
-        if (nameCheck.includes("w/"))
-          nameCheck = nameCheck.split("w/")[0].trim();
-        if (nameCheck.includes("W/"))
-          nameCheck = nameCheck.split("W/")[0].trim();
-        if (nameCheck.includes("(")) nameCheck = nameCheck.split("(")[0].trim();
-        if (nameCheck.includes("with"))
-          nameCheck = nameCheck.split("with")[0].trim();
+        let regex = /w\/|W\/|\(.*|with.*|With/g;
+        if (regex.test(nameCheck)) nameCheck = nameCheck.split(regex)[0].trim();
         let helper = new Model();
         if (helper.nameMatcher(nameCheck, chara)) {
           await this.wrapModelCreation(modelNode, [chara]);
@@ -454,7 +449,7 @@ class Unit {
       let modelNodes = jp.query(this.models, `$..[?(@.name=="${model.name}")]`);
       for (let modelIndex in modelNodes) {
         if (modelIndex == 0) continue; //the first should be the one in the model var
-        if (!modelNodes[modelIndex].bsData) continue; //its possible that we battlescribe data so lets skip it
+        if (!modelNodes[modelIndex].keywords) continue; //its possible that we battlescribe data so lets skip it
         let double = modelNodes[modelIndex];
         for (let weapon of double.weapons) {
           let weaponcheck;

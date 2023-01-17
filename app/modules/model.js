@@ -76,11 +76,8 @@ class Model {
     this.name = this.bsData.$.name;
     //lets check if the Model name includes WeaponOption
     //there is surely a better way to do this, send help
-    if (this.name.includes("w/")) this.name = this.name.split("w/")[0].trim();
-    if (this.name.includes("W/")) this.name = this.name.split("W/")[0].trim();
-    if (this.name.includes("(")) this.name = this.name.split("(")[0].trim();
-    if (this.name.includes("with"))
-      this.name = this.name.split("with")[0].trim();
+    let regex = /w\/|W\/|\(.*|with.*|With/g;
+    if (regex.test(this.name)) this.name = this.name.split(regex)[0].trim();
     for (let chara of charaParse) {
       //search statline with model name
       if (this.nameMatcher(this.name, chara)) {
