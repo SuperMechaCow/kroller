@@ -9,6 +9,11 @@ class Force {
     this.costs = {};
   }
 
+  /**
+   * Builds the Force object by initializing, grabbing detachment, creating detachments, and grabbing force metadata
+   * @async
+   * @returns {Promise<void>}
+   */
   async buildForce() {
     await this.initForce();
     await this.grabDetachment();
@@ -19,6 +24,10 @@ class Force {
     delete this.roster;
   }
 
+  /**
+   * Initializes the Force object by setting custom name/notes and costs
+   * @returns {void}
+   */
   initForce() {
     this.setForceCustom();
     this.setForceCost();
@@ -26,6 +35,7 @@ class Force {
 
   /**
    * Checks if CustomeName or Notes exist and adds them as Attr
+   * @returns {void}
    */
   setForceCustom() {
     if (this.roster.$.customName) {
@@ -50,21 +60,27 @@ class Force {
    * Parses all Detachments in one Array
    */
   grabDetachment() {
-    //Grab all of the detachment data
-    this.detachmentParse = this.roster.forces[0].force;
-    //If it's not an array, put it in one so the for loop can work
-    if (!Array.isArray(this.detachmentParse))
-      this.detachmentParse = [this.detachmentParse];
+    try {
+      //Grab all of the detachment data
+      this.detachmentParse = this.roster.forces[0].force;
+      //If it's not an array, put it in one so the for loop can work
+      if (!Array.isArray(this.detachmentParse))
+        this.detachmentParse = [this.detachmentParse];
+    } catch (err) {
+      this.detachmentParse = [];
+      console.log("Error: ", err);
+    }
   }
 
   async createDetachments() {
     //Loop through every detachment in the list
-    for (let detach of this.detachmentParse) {
-      let detachment = new Detachment(detach);
-      await detachment.buildDetachment();
-      this.detachments.push(detachment);
-    }
-    // newDetachment.units = newDetachment.units;
+    this.detachments = await Promise.all(
+      this.detachmentParse.map(async (detach) => {
+        let detachment = new Detachment(detach);
+        await detachment.buildDetachment();
+        return detachment;
+      })
+    );
   }
 
   /**
