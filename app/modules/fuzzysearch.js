@@ -1,5 +1,5 @@
-const fs = require('fs');
-const Fuse = require('fuse.js');
+const fs = require("fs");
+const Fuse = require("fuse.js");
 
 // For Standalone Usage
 /*
@@ -42,7 +42,7 @@ const categories = [
 */
 
 function fuzzysearch(searchString, dataset, numResults) {
-  let newData = []
+  let newData = [];
   // Convert dataset object to array
   for (var category of Object.keys(dataset)) {
     newData = newData.concat(dataset[category]);
@@ -61,19 +61,31 @@ function fuzzysearch(searchString, dataset, numResults) {
     // ignoreLocation: false,
     // ignoreFieldNorm: false,
     // fieldNormWeight: 1,
-    keys: [{
+    keys: [
+      {
         name: `name`,
-        weight: 1
-      }
-    ]
-  })
+        weight: 1,
+      },
+    ],
+  });
 
   let allResult = fuse.search(searchString);
   let result = [];
   for (var i = 0; i < numResults && i < allResult.length; i++) {
-    result.push(allResult[i])
+    result.push(allResult[i]);
   }
   return result;
 }
 
+function fuseSearch(toSearchSet, searchString) {
+  const fuse = new Fuse(toSearchSet, {
+    includeScore: true,
+    isCaseSensitive: false,
+    keys: ["name"],
+  });
+  const results = fuse.search(searchString);
+  return results;
+}
+
 exports.fuzzysearch = fuzzysearch;
+exports.fuseSearch = fuseSearch;

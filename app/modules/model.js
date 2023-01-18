@@ -1,5 +1,6 @@
 const jp = require("jsonpath");
-const { helperGrabRules, levenshteinDistance } = require("./pathhelper");
+const { fuseSearch } = require("./fuzzysearch");
+const { helperGrabRules } = require("./pathhelper");
 const Weapon = require("./weapon");
 const Spell = require("./spell");
 class Model {
@@ -25,21 +26,6 @@ class Model {
     await this.grabWeapon(parentUnit);
     await this.grabSpells(parentUnit);
     delete this.bsData;
-    return true;
-  }
-
-  /**
-   * to check the top in selection is actualy a model
-   */
-  checkMainModel() {
-    if (!this.bsData.profiles) return false;
-    for (let profile of this.bsData.profiles[0].profile) {
-      if (profile.$.typeName != "Unit") continue;
-      //its more an asumption that his model would have the same name as the unit
-      if (profile.$.name == this.bsData.$.name) {
-        return false;
-      }
-    }
     return true;
   }
 
@@ -81,16 +67,14 @@ class Model {
       //there is surely a better way to do this, send help
       let regex = /w\/|W\/|\(.*|with.*|With/g;
       if (regex.test(this.name)) this.name = this.name.split(regex)[0].trim();
-      for (let chara of charaParse) {
-        //search statline with model name
-        let distance = levenshteinDistance(this.name, chara.name);
-        let threshold = Math.max(this.name.length, chara.name.length) * 0.3;
-        if (distance <= threshold) {
-          if (chara.statlines) {
-            this.statlines = chara.statlines;
-            chara.used = true;
-            return true;
-          }
+      const results = fuseSearch(charaParse, this.name);
+      let minSubDistance = Number.MAX_SAFE_INTEGER;
+      if (results.length) {
+        for (let result of results) {
+          if (result.score > minSubDistance) continue;
+          this.statlines = result.item.statlines;
+          result.item.used = true;
+          return true;
         }
       }
       //ohboy what ever this Model is now its super Special

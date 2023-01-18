@@ -1,5 +1,6 @@
 const jp = require("jsonpath");
-const { helperGrabRules, levenshteinDistance } = require("./pathhelper");
+const { fuseSearch } = require("./fuzzysearch");
+const { helperGrabRules } = require("./pathhelper");
 const {
   getWahaDatasheet,
   getWahaFaction,
@@ -231,32 +232,26 @@ class Unit {
     }
     // there some real freaky units out there that are an addon to something
     // so battlescribe lists them as upgrade for some reason
-    for (let chara of charaParse) {
-      if (chara.used) continue;
-      //this will find plenty of stuff besides units
-      let lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
-      //the last ditch effort to find the unit
-      for (let modelNode of lastResorts) {
-        // This "if" prevents weapons from being detected as models
-        // Models will not merge, however
-        let checkUnit = helperGrabRules(modelNode, `@.typeName=="Unit"`);
-        if (!checkUnit.length) continue;
-        if (modelNode.used) continue;
-        let nameCheck = modelNode.$.name;
-        let regex = /w\/|W\/|\(.*|with.*|With/g;
-        if (regex.test(nameCheck)) nameCheck = nameCheck.split(regex)[0].trim();
-        let distance = levenshteinDistance(nameCheck, chara.name);
-        let threshold = Math.max(this.name.length, chara.name.length) * 0.3;
-        if (distance <= threshold) {
-          await this.wrapModelCreation(modelNode, [chara]);
-          modelNode.used = true;
-          continue;
+    const lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
+    for (let modelNode of lastResorts) {
+      const checkUnit = helperGrabRules(modelNode, `@.typeName=="Unit"`);
+      if (!checkUnit.length) continue;
+      if (modelNode.used) continue;
+      let nameCheck = modelNode.$.name;
+      let regex = /w\/|W\/|\(.*|with.*|With/g;
+      if (regex.test(nameCheck)) nameCheck = nameCheck.split(regex)[0].trim();
+      const results = fuseSearch(charaParse, nameCheck);
+      let minSubDistance = Number.MAX_SAFE_INTEGER;
+      let chara;
+      if (results.length) {
+        for (let result of results) {
+          if (result.score > minSubDistance) continue;
+          chara = result.item;
         }
       }
+      await this.wrapModelCreation(modelNode, [chara]);
+      modelNode.used = true;
     }
-    //if (!lastResorts.length)
-    //lastResorts = helperGrabRules(this.bsData, `@.type=="upgrade"`);
-    //  if (modelNode.profiles[0].profile[0].$.typeName == "Unit")
   }
 
   /**
@@ -412,14 +407,15 @@ class Unit {
           let statname = chara.$.name;
           if (statname == "Save") statname = "Sv";
           let stattext = chara._;
-          stattext = stattext.replace("+", "");
           stattext = stattext.replace('"', "");
           if (stattext == "N/A") stattext = "*";
           if (statname == "Remaining W") {
             statname = "W";
+            if (stattext.includes("+")) stattext = statline.W;
             if (!stattext.includes("-")) continue;
             stattext = stattext.split("-")[1];
           }
+          stattext = stattext.replace("+", "");
           if (statname == "Attacks") statname = "A";
           if (statname == "Movement") statname = "M";
           statline[statname] = stattext;
@@ -548,10 +544,13 @@ class Unit {
   cleanUpRules() {
     let newRule = [];
     for (let rule of this.rules) {
-      let filter = newRule.filter(
-        (el) => el.name.toLowerCase() == rule.name.toLowerCase()
-      );
-      if (filter.length == 0) newRule.push(rule);
+      if (rule.dupe) continue;
+      const results = fuseSearch(this.rules, rule.name);
+      for (let result of results) {
+        if (result.score > 0.3) continue;
+        result.item.dupe = true;
+      }
+      newRule.push(results[0].item);
     }
     this.rules = newRule;
   }

@@ -1,5 +1,6 @@
 const fs = require("fs");
-const { helperGrabRules, levenshteinDistance } = require("./pathhelper");
+const { fuseSearch } = require("./fuzzysearch");
+const { helperGrabRules } = require("./pathhelper");
 
 const {
   getWahaFaction,
@@ -176,24 +177,15 @@ class Detachment {
     }
     //if no name was found we grab all possible Names of Subfactions
     //then we check what name fits the closest
-    let closestSubFaction;
-    if (possibleName.includes(":")) possibleName = possibleName.split(":")[1];
     let subFactions = await getWahaSubFaction("", this.wahaFaction);
-    for (let i = 0; i < subFactions.length; i++) {
-      let distance = levenshteinDistance(
-        subFactions[i].name.replace("’", "'"),
-        possibleName
-      );
-      if (distance < this.minSubDistance) {
-        this.minSubDistance = distance;
-        closestSubFaction = subFactions[i];
+    const results = fuseSearch(subFactions, possibleName);
+    if (results.length) {
+      for (let result of results) {
+        if (result.score > this.minSubDistance) continue;
+        this.minSubDistance = result.score;
+        this.subfaction = result.item.name;
+        this.wahaSubFaction = result.item.id;
       }
-    }
-    if (this.minSubDistance < 5 && closestSubFaction) {
-      this.subfaction = closestSubFaction.name;
-      this.subfactionLink = closestSubFaction.link;
-      this.wahaSubFaction = closestSubFaction.id;
-      return;
     }
   }
 
