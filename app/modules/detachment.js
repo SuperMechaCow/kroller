@@ -101,20 +101,24 @@ class Detachment {
       await this.grabLastMetaData(bsUnit);
     }
     //Loop through every unit in the list
-    for (bsUnit of unitData) {
+    let unitCreationPromises = unitData.map(async (bsUnit) => {
       let unitTest = helperGrabRules(bsUnit, '@.typeName=="Unit"');
-      if (!unitTest.length) continue;
-      let unit = new Unit(
-        bsUnit,
-        this.faction,
-        this.wahaFaction,
-        this.subfaction,
-        this.wahaSubFaction
-      );
-      // unit.waha = await unit.grabDatasheet();
-      // if (!unit.waha) continue;
-      await unit.buildUnit();
-      this.units.push(unit);
+      if (unitTest.length) {
+        let unit = new Unit(
+          bsUnit,
+          this.faction,
+          this.wahaFaction,
+          this.subfaction,
+          this.wahaSubFaction
+        );
+        await unit.buildUnit();
+        return unit;
+      }
+    });
+    let newUnitList = await Promise.all(unitCreationPromises);
+    for (let newUnit of newUnitList) {
+      if (!newUnit) continue;
+      this.units.push(newUnit);
     }
   }
 
