@@ -372,9 +372,15 @@ class Unit {
       }
     }
     for (let model of newModeNodes) {
-      if (model.statlines.length > 1)
-        model.statlines = this.sortByWounds(model.statlines);
+      if (model.statlines.length <= 1) continue;
+      let cleanStatlines = [];
+      var seen = {};
+      cleanStatlines = model.statlines.filter(function (item) {
+        return seen.hasOwnProperty(item.W) ? false : (seen[item.W] = true);
+      });
+      model.statlines = this.sortByWounds(cleanStatlines);
     }
+
     return newModeNodes;
   }
 
