@@ -79,6 +79,14 @@ class Unit {
     datasheet = await getWahaDatasheet(tempName, this.wahaFaction);
     // If there was more than one possible datasheet
     if (datasheet) return datasheet;
+    // knight units are called different, so lets see if we maybe get a datasheet with a model
+    let modelNodes = helperGrabRules(this.bsData, '@.type=="model"');
+    if (modelNodes) {
+      for (let model of modelNodes) {
+        datasheet = await getWahaDatasheet(model.$.name, this.wahaFaction);
+        if (datasheet) return datasheet;
+      }
+    }
     // Datasheet not found, maybe it doesnt exist in waha
     // or is something like an imperial agent and we used wrong faction
   }
