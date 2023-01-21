@@ -14,12 +14,8 @@ class Weapon {
   }
 
   setCustom(weapon) {
-    if (weapon.$.customName) {
-      this.customName = weapon.$.customName;
-    }
-    if (weapon.customNotes) {
-      this.customNotes = weapon.customNotes[0];
-    }
+    if (weapon.$.customName) this.customName = weapon.$.customName;
+    if (weapon.customNotes) this.customNotes = weapon.customNotes[0];
   }
 
   grabWeaponProfile() {

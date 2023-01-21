@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { fuseSearch } = require("./fuzzysearch");
 const { helperGrabRules } = require("./pathhelper");
 
 const {
@@ -11,7 +12,7 @@ class Detachment {
     this.detachment = data;
     this.name = this.detachment.$.name;
     this.faction = "";
-    this.subfaction = "";
+    this.subfaction = "None/Custom";
     this.variant = "";
     this.factionIcon = "";
     this.units = [];
@@ -27,26 +28,29 @@ class Detachment {
   }
 
   async setDetachmentFaction() {
-    let faction = this.detachment.$.catalogueName;
+    let factionName = this.detachment.$.catalogueName;
+    this.minSubDistance = Number.MAX_SAFE_INTEGER;
     //Imperium usually have two faction keywords
     if (this.detachment.$.catalogueName.split(" - ").length > 1)
-      faction = this.detachment.$.catalogueName.split(" - ")[1];
+      factionName = this.detachment.$.catalogueName.split(" - ")[1];
     //Start building the detachment object
-    this.faction = faction;
     //Some factions have multiple names
-    if (faction == "Adeptus Astartes") {
-      this.faction = "Space Marines";
-      if (this.detachment.$.catalogueName.split(" - ")[2])
-        this.subfaction = this.detachment.$.catalogueName.split(" - ")[2];
-    }
-    if (faction == "Craftworlds") {
-      this.faction = "Aeldari";
-    }
-    if (faction == "Daemons") {
-      this.faction = "Chaos Daemons";
+    switch (factionName) {
+      case "Adeptus Astartes":
+        this.faction = "Space Marines";
+        this.subfaction = this.detachment.$.catalogueName.split(" - ")[2] || "";
+        break;
+      case "Craftworlds":
+        this.faction = "Aeldari";
+        break;
+      case "Daemons":
+        this.faction = "Chaos Daemons";
+        break;
+      default:
+        this.faction = factionName;
     }
     // Try to grab waha faction
-    let wahaFaction = await getWahaFaction(this.faction);
+    const wahaFaction = await getWahaFaction(this.faction);
     if (wahaFaction) {
       this.factionLink = wahaFaction.link;
       this.wahaFaction = wahaFaction.id;
@@ -98,20 +102,24 @@ class Detachment {
       await this.grabLastMetaData(bsUnit);
     }
     //Loop through every unit in the list
-    for (bsUnit of unitData) {
+    let unitCreationPromises = unitData.map(async (bsUnit) => {
       let unitTest = helperGrabRules(bsUnit, '@.typeName=="Unit"');
-      if (!unitTest.length) continue;
-      let unit = new Unit(
-        bsUnit,
-        this.faction,
-        this.wahaFaction,
-        this.subfaction,
-        this.wahaSubFaction
-      );
-      // unit.waha = await unit.grabDatasheet();
-      // if (!unit.waha) continue;
-      await unit.buildUnit();
-      this.units.push(unit);
+      if (unitTest.length) {
+        let unit = new Unit(
+          bsUnit,
+          this.faction,
+          this.wahaFaction,
+          this.subfaction,
+          this.wahaSubFaction
+        );
+        await unit.buildUnit();
+        return unit;
+      }
+    });
+    let newUnitList = await Promise.all(unitCreationPromises);
+    for (let newUnit of newUnitList) {
+      if (!newUnit) continue;
+      this.units.push(newUnit);
     }
   }
 
@@ -159,7 +167,7 @@ class Detachment {
 
   async findSubFaction(possibleName) {
     let subFaction = "";
-    subFaction = await getWahaSubFaction(possibleName);
+    subFaction = await getWahaSubFaction(possibleName, this.wahaFaction)[0];
     if (subFaction) {
       // If a subfaction name exists that matches this selection name
       this.subfaction = subFaction.name;
@@ -167,23 +175,17 @@ class Detachment {
       return;
       // Then you've found the subfaction
     }
-    subFaction = await getWahaSubFaction(possibleName.split(": ")[1]);
-    if (subFaction) {
-      // If a subfaction name exists that matches this selection name
-      this.subfaction = subFaction.name;
-      this.wahaSubFaction = subFaction.id;
-      return;
-      // Then you've found the subfaction
-    }
-    subFaction = await getWahaSubFaction(possibleName.split(": ")[0]);
-    if (subFaction) {
-      this.subfaction = subFaction.name;
-      this.wahaSubFaction = subFaction.id;
-      return;
-    }
-    if (!this.subfaction) {
-      // if nothing worked, lets hope for the best here
-      this.subfaction = possibleName.split(": ")[0];
+    //if no name was found we grab all possible Names of Subfactions
+    //then we check what name fits the closest
+    let subFactions = await getWahaSubFaction("", this.wahaFaction);
+    const results = fuseSearch(subFactions, possibleName);
+    if (results.length) {
+      for (let result of results) {
+        if (result.score > this.minSubDistance) continue;
+        this.minSubDistance = result.score;
+        this.subfaction = result.item.name;
+        this.wahaSubFaction = result.item.id;
+      }
     }
   }
 
